@@ -307,6 +307,11 @@ class Utils
         return Yii::$app->session->get(Constants::SELECTED_COMPANY_ID);
     }
 
+    public static function hasCompanySelected()
+    {
+        return Yii::$app->session->has(Constants::SELECTED_COMPANY_ID);
+    }
+
     public static function validateCompanyMatches($company_id)
     {
         if ($company_id != self::getCompanySelected()) {
