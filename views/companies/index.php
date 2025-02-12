@@ -62,6 +62,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{select} {view} {update} {list-users} {create-user}',
                 'buttons' => [
                     'select' => function ($url, $model, $key) {
+                            if (Utils::hasCompanySelected() && Utils::getCompanySelected() == $model->company->company_id) {
+                                return null;
+                            }
                             $label = Yii::t('app', 'Select');
                             $question = Yii::t('app', "Are you sure you want to select the company {name}?", ['name' => $model->company->name]);
                             return Html::a($label, ['select', 'company_id' => $model->company_id], [
