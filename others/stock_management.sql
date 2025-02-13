@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 03, 2024 at 05:12 AM
+-- Generation Time: Feb 13, 2025 at 06:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -271,6 +271,7 @@ CREATE TABLE `product` (
   `description` varchar(100) DEFAULT NULL,
   `has_existences` varchar(1) NOT NULL,
   `tax_rate` double DEFAULT NULL,
+  `discount_rate` double DEFAULT NULL,
   `minimum_stock` int(11) DEFAULT NULL,
   `sugested_value` int(11) DEFAULT NULL,
   `company_id` int(10) UNSIGNED NOT NULL,
@@ -285,8 +286,8 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`product_id`, `code`, `name`, `description`, `has_existences`, `tax_rate`, `minimum_stock`, `sugested_value`, `company_id`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
-(1, '12345ASD', 'Chocoramo', 'Producto increiblemente popular y delicioso', 'Y', 19, 10, 2000, 1, 'A', 5, '2024-09-03 00:16:14', 5, '2024-09-03 09:16:40');
+INSERT INTO `product` (`product_id`, `code`, `name`, `description`, `has_existences`, `tax_rate`, `discount_rate`, `minimum_stock`, `sugested_value`, `company_id`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
+(1, '12345ASD', 'Chocoramo', 'Producto increiblemente popular y delicioso', 'Y', 19, NULL, 10, 2000, 1, 'A', 5, '2024-09-03 00:16:14', 5, '2024-09-03 09:16:40');
 
 -- --------------------------------------------------------
 
@@ -386,6 +387,7 @@ CREATE TABLE `transaction_item` (
   `amount` int(11) NOT NULL,
   `unit_value` double NOT NULL,
   `tax_rate` double DEFAULT NULL,
+  `discount_rate` double DEFAULT NULL,
   `product_id` int(10) UNSIGNED NOT NULL,
   `warehouse_id` int(10) UNSIGNED DEFAULT NULL,
   `company_id` int(10) UNSIGNED NOT NULL,

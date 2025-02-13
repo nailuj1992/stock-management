@@ -176,7 +176,7 @@ class CityController extends Controller
     {
         if (Yii::$app->request->isGet) {
             $cities = City::getCities($state_id);
-            $resp = Html::tag('option', Html::encode('Select...'), ['value' => '']);
+            $resp = Html::tag('option', Html::encode(Yii::t('app', 'Select...')), ['value' => '']);
             foreach ($cities as $key => $value) {
                 $resp .= Html::tag('option', Html::encode($value), ['value' => $key, 'selected' => $city_id !== '' && $city_id == $key]);
             }

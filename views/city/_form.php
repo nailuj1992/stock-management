@@ -31,15 +31,15 @@ use app\models\entities\State;
     ?>
 
     <?= $form->field($model, 'country')->dropDownList($countries, [
-        'prompt' => 'Select...',
+        'prompt' => Yii::t('app', 'Select...'),
         'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/state/dynamic-states']) . '/?country_id=" + $(this).val(), function(data) {
                     $("#cityform-state").html(data);
-                    $("#cityform-city").html("<option value=\"\">Select...</option>");
+                    $("#cityform-city").html("<option value=\"\">' . Yii::t('app', 'Select...') . '</option>");
                 });',
     ]) ?>
 
-    <?= $form->field($model, 'state')->dropDownList($states, ['prompt' => 'Select...']) ?>
+    <?= $form->field($model, 'state')->dropDownList($states, ['prompt' => Yii::t('app', 'Select...')]) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

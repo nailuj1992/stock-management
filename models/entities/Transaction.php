@@ -2,6 +2,7 @@
 
 namespace app\models\entities;
 
+use app\models\Utils;
 use Yii;
 
 /**
@@ -126,5 +127,20 @@ class Transaction extends \yii\db\ActiveRecord
     public function getTransactions()
     {
         return $this->hasMany(Transaction::class, ['linked_transaction_id' => 'transaction_id']);
+    }
+
+    public function isActive()
+    {
+        return Utils::isActive($this->status);
+    }
+
+    public function isInactive()
+    {
+        return Utils::isInactive($this->status);
+    }
+
+    public function getFullStatus()
+    {
+        return Utils::getFullStatus($this->status);
     }
 }

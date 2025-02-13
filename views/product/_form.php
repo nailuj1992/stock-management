@@ -25,6 +25,8 @@ use yii\bootstrap5\ActiveForm;
 
     <?= $form->field($model, 'tax_rate')->textInput(['type' => 'number', 'min' => 0, 'max' => 100]) ?>
 
+    <?= $form->field($model, 'discount_rate')->textInput(['type' => 'number', 'min' => 0, 'max' => 100]) ?>
+
     <?= $form->field($model, 'minimum_stock')->textInput(['type' => 'number', 'min' => 0]) ?>
 
     <?= $form->field($model, 'sugested_value')->textInput(['type' => 'number', 'min' => 0]) ?>

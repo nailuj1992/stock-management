@@ -15,6 +15,7 @@ use Yii;
  * @property string|null $description
  * @property string $has_existences
  * @property float|null $tax_rate
+ * @property float|null $discount_rate
  * @property int|null $minimum_stock
  * @property int|null $sugested_value
  * @property int $company_id
@@ -44,7 +45,7 @@ class Product extends \yii\db\ActiveRecord
     {
         return [
             [['code', 'name', 'has_existences', 'company_id'], 'required'],
-            [['tax_rate'], 'number'],
+            [['tax_rate', 'discount_rate'], 'number'],
             [['minimum_stock', 'sugested_value', 'company_id', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['code'], 'string', 'max' => 20],
@@ -68,6 +69,7 @@ class Product extends \yii\db\ActiveRecord
             'description' => Yii::t('app', 'Description'),
             'has_existences' => Yii::t('app', 'Has Existences?'),
             'tax_rate' => Yii::t('app', 'Tax Rate'),
+            'discount_rate' => Yii::t('app', 'Discount Rate'),
             'minimum_stock' => Yii::t('app', 'Minimum Stock'),
             'sugested_value' => Yii::t('app', 'Suggested Value'),
             'company_id' => Yii::t('app', 'Company ID'),

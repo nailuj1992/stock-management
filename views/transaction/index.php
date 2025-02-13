@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php
-        if (Utils::isMemberOfCompany($companyId)) {
+        if (Utils::belongsToCompany($companyId)) {
             echo Html::a(Yii::t('app', 'Create Transaction'), ['create'], ['class' => 'btn btn-success']);
         }
         ?>

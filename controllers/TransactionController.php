@@ -4,9 +4,13 @@ namespace app\controllers;
 
 use app\models\Constants;
 use app\models\entities\Document;
+use app\models\entities\Product;
 use app\models\entities\Supplier;
 use app\models\entities\Transaction;
 use app\models\entities\TransactionItem;
+use app\models\entities\Warehouse;
+use app\models\TransactionDto;
+use app\models\TransactionItemDto;
 use app\models\Utils;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -83,9 +87,8 @@ class TransactionController extends Controller
         Utils::validateCompanySelected();
         $company_id = Utils::getCompanySelected();
 
-        Utils::isMemberOfCompany($company_id);
-        $model = new Transaction();
-        $model->company_id = $company_id;
+        Utils::belongsToCompany($company_id);
+        $model = new TransactionDto();
 
         $documentsQuery = Document::find()->select(['document_id', 'concat(code, \' - \', name) as name'])
             ->where(['=', 'company_id', $company_id])
@@ -107,17 +110,30 @@ class TransactionController extends Controller
             ->asArray()->all();
         $other_transactions = ArrayHelper::map($other_transactionsQuery, 'transaction_id', 'num_transaction');
 
-        $transaction_items = [];
-        $transactionItem = new TransactionItem();
-        $transactionItem->transaction_id = $model->transaction_id;
-        $transaction_items[] = $transactionItem;
+        $productsQuery = Product::find()->select(['product_id', 'concat(code, \' - \', name) as name'])
+            ->where(['=', 'company_id', $company_id])
+            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
+            ->asArray()->all();
+        $products = ArrayHelper::map($productsQuery, 'product_id', 'name');
+
+        $warehousesQuery = Warehouse::find()->select(['warehouse_id', 'concat(code, \' - \', name) as name'])
+            ->where(['=', 'company_id', $company_id])
+            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
+            ->asArray()->all();
+        $warehouses = ArrayHelper::map($warehousesQuery, 'warehouse_id', 'name');
+
+        $model->transaction_items = [];
+        for ($i = 0; $i < 1; $i++) {
+            $transactionItem = new TransactionItemDto();
+            $model->transaction_items[] = $transactionItem;
+        }
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $user_id = Yii::$app->user->identity->user_id;
-                $model->status = Constants::STATUS_ACTIVE_DB;
-                $model->created_by = $user_id;
-                $model->updated_by = $user_id;
+                // $model->status = Constants::STATUS_ACTIVE_DB;
+                // $model->created_by = $user_id;
+                // $model->updated_by = $user_id;
                 // if ($model->validate() && $model->save()) {
                 //     return $this->redirect(['view', 'transaction_id' => $model->transaction_id]);
                 // }
@@ -131,7 +147,8 @@ class TransactionController extends Controller
             'documents' => $documents,
             'suppliers' => $suppliers,
             'other_transactions' => $other_transactions,
-            'transaction_items' => $transaction_items,
+            'products' => $products,
+            'warehouses' => $warehouses,
         ]);
     }
 
