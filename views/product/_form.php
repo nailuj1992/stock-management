@@ -23,11 +23,11 @@ use yii\bootstrap5\ActiveForm;
     <?php $existences = Utils::getYesNoOptions(); ?>
     <?= $form->field($model, 'has_existences')->radioList($existences) ?>
 
-    <?= $form->field($model, 'tax_rate')->textInput() ?>
+    <?= $form->field($model, 'tax_rate')->textInput(['type' => 'number', 'min' => 0, 'max' => 100]) ?>
 
-    <?= $form->field($model, 'minimum_stock')->textInput() ?>
+    <?= $form->field($model, 'minimum_stock')->textInput(['type' => 'number', 'min' => 0]) ?>
 
-    <?= $form->field($model, 'sugested_value')->textInput() ?>
+    <?= $form->field($model, 'sugested_value')->textInput(['type' => 'number', 'min' => 0]) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

@@ -59,6 +59,8 @@ class Constants
 
     const SELECTED_COMPANY_ID = 'selected_company_id';
 
+    const MAX_LENGTH_NUM_TRANSACTION = 10;
+
     const MESSAGE_PAGE_NOT_EXISTS = 'The requested page does not exist.';
     const MESSAGE_INCORRECT_LOGIN = 'Incorrect email or password.';
     const MESSAGE_PASSWORD_VALIDATION = 'New password must contain at least one lower and upper case character and a digit.';

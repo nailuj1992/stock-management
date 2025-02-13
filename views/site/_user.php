@@ -124,6 +124,15 @@ use yii\helpers\Html;
                             </p>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-3 mb-3">
+                            <h2><?= Yii::t('app', 'Transactions') ?></h2>
+
+                            <p><?= Yii::t('app', 'Here you can see the transactions made in your company.') ?></p>
+
+                            <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/transaction/'], ['class' => 'btn btn-outline-info']) ?>
+                        </div>
+                    </div>
                     <?php
                 }
             }
