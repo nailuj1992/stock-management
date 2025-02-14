@@ -38,7 +38,7 @@ class TransactionController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['view', 'index', 'create', 'get-next-num-transaction', 'is-document-for-suppliers', 'is-document-linked-with-other-transaction', 'document-has-expiration'],
+                            'actions' => ['view', 'index', 'create', 'get-next-num-transaction', 'is-document-for-suppliers', 'is-document-linked-with-other-transaction', 'document-has-expiration', 'get-product-info'],
                             'roles' => [Constants::ROLE_USER],
                         ],
                     ],
@@ -89,6 +89,7 @@ class TransactionController extends Controller
 
         Utils::belongsToCompany($company_id);
         $model = new TransactionDto();
+        // $model->creation_date = date_create('now')->format('Y-m-d H:i:s');
 
         $documentsQuery = Document::find()->select(['document_id', 'concat(code, \' - \', name) as name'])
             ->where(['=', 'company_id', $company_id])
@@ -122,12 +123,17 @@ class TransactionController extends Controller
             ->asArray()->all();
         $warehouses = ArrayHelper::map($warehousesQuery, 'warehouse_id', 'name');
 
-        $model->transaction_items = [];
-        for ($i = 0; $i < 1; $i++) {
-            $transactionItem = new TransactionItemDto();
-            $model->transaction_items[] = $transactionItem;
+        if (!isset($model->transaction_items)) {
+            $model->transaction_items = [];
+            for ($i = 0; $i < 1; $i++) {
+                $model->transaction_items[] = new TransactionItemDto();
+            }
         }
+        // TODO include a draft view to add transaction items
 
+        // if (Yii::$app->request->post('addRow') == 'true') {
+        //     $model->transaction_items[] = new TransactionItemDto();
+        // }
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 $user_id = Yii::$app->user->identity->user_id;
@@ -157,7 +163,7 @@ class TransactionController extends Controller
         Utils::validateCompanySelected();
         $company_id = Utils::getCompanySelected();
 
-        Utils::isMemberOfCompany($company_id);
+        Utils::validateBelongsToCompany($company_id);
 
         $transactions = Transaction::find()
             ->where(['=', 'document_id', $document_id])
@@ -186,7 +192,7 @@ class TransactionController extends Controller
         Utils::validateCompanySelected();
         $company_id = Utils::getCompanySelected();
 
-        Utils::isMemberOfCompany($company_id);
+        Utils::validateBelongsToCompany($company_id);
 
         $document = Document::findOne(['document_id' => $document_id]);
         if ($document === null) {
@@ -200,7 +206,7 @@ class TransactionController extends Controller
         Utils::validateCompanySelected();
         $company_id = Utils::getCompanySelected();
 
-        Utils::isMemberOfCompany($company_id);
+        Utils::validateBelongsToCompany($company_id);
 
         $document = Document::findOne(['document_id' => $document_id]);
         if ($document === null) {
@@ -214,12 +220,37 @@ class TransactionController extends Controller
         Utils::validateCompanySelected();
         $company_id = Utils::getCompanySelected();
 
-        Utils::isMemberOfCompany($company_id);
+        Utils::validateBelongsToCompany($company_id);
 
         $document = Document::findOne(['document_id' => $document_id]);
         if ($document === null) {
             return false;
         }
         return $document->has_expiration === Constants::OPTION_YES_DB;
+    }
+
+    public function actionGetProductInfo($product_id, $warehouse_id = '')
+    {
+        Utils::validateCompanySelected();
+        $company_id = Utils::getCompanySelected();
+
+        Utils::validateBelongsToCompany($company_id);
+
+        $product = Product::findOne(['product_id' => $product_id]);
+        if ($product === null) {
+            return null;
+        }
+        if ($warehouse_id === '') {
+            $warehouse_id = null;
+        }
+        if (isset($warehouse_id)) {
+            $warehouse = Warehouse::findOne(['warehouse_id' => $warehouse_id]);
+        }
+        $value = $product->sugested_value;// TODO Await for kardex implementation
+        return json_encode([
+            'value' => $value,
+            'taxRate' => $product->tax_rate,
+            'discountRate' => $product->discount_rate
+        ]);
     }
 }
