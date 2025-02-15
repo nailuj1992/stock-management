@@ -134,7 +134,7 @@ class TransactionController extends Controller
 
                 $transaction->status = Constants::STATUS_DRAFT_DB;
                 $transaction->created_by = $user_id;
-                $transaction->created_at = Utils::getDateNowDB();
+                $transaction->updated_by = $user_id;
                 if ($transaction->validate() && $transaction->save()) {
                     return $this->redirect(['draft', 'transaction_id' => $transaction->transaction_id]);
                 }
@@ -254,6 +254,25 @@ class TransactionController extends Controller
         return $document->has_expiration === Constants::OPTION_YES_DB;
     }
 
+    private function calculateTotalValueProduct($amountString, $unitValueString, $discountRateString)
+    {
+        if ($amountString && $amountString !== "" && $unitValueString && $unitValueString !== "") {
+            $unitValue = (int) $unitValueString;
+            $amount = (int) $amountString;
+            $discountRate = 0;
+            if ($discountRateString && $discountRateString !== "") {
+                $discountRate = (int) $discountRateString;
+            }
+            $totalValue = $amount * $unitValue;
+            if ($discountRate > 0) {
+                $totalValue = $totalValue - ($totalValue * $discountRate / 100);
+            }
+            return $totalValue;
+        } else {
+            return "";
+        }
+    }
+
     public function actionDraft($transaction_id)
     {
         Utils::validateCompanySelected();
@@ -292,25 +311,73 @@ class TransactionController extends Controller
             ->asArray()->all();
         $warehouses = ArrayHelper::map($warehousesQuery, 'warehouse_id', 'name');
 
-        if (!isset($transactionDto->transaction_items)) {
+        if (isset($this->request->post()['TransactionItemDto'])) {
             $transactionDto->transaction_items = [];
-            for ($i = 0; $i < 1; $i++) {
-                $transactionDto->transaction_items[] = new TransactionItemDto();
+            $transactionItems = $this->request->post()['TransactionItemDto'];
+            foreach ($transactionItems as $transactionItem) {
+                $transactionItemDto = new TransactionItemDto();
+                $transactionItemDto->product_id = $transactionItem['product_id'];
+                $transactionItemDto->warehouse_id = $transactionItem['warehouse_id'];
+                $transactionItemDto->amount = $transactionItem['amount'];
+                $transactionItemDto->unit_value = $transactionItem['unit_value'];
+                $transactionItemDto->discount_rate = $transactionItem['discount_rate'];
+                $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
+
+                $info = $this->actionGetProductInfo($transactionItemDto->product_id, $transactionItemDto->warehouse_id);
+                if (isset($info)) {
+                    $infoMap = json_decode($info);
+                    if (isset($infoMap->{'taxRate'})) {
+                        $transactionItemDto->tax_rate = $infoMap->{'taxRate'};
+                    }
+                }
+                $transactionDto->transaction_items[] = $transactionItemDto;
             }
+        } elseif (isset($transactionDto->linked_transaction_id)) {
+            $linkedTransactionItems = TransactionItem::find()
+                ->where(['=', 'company_id', $company_id])
+                ->andWhere(['transaction_id' => $transaction_id])
+                ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
+                ->asArray()->all();
+            if (isset($linkedTransactionItems) && !empty($linkedTransactionItems)) {
+                foreach ($linkedTransactionItems as $linkedTransactionItem) {
+                    $transactionItemDto = new TransactionItemDto();
+                    $transactionItemDto->product_id = $linkedTransactionItem['product_id'];
+                    $transactionItemDto->warehouse_id = $linkedTransactionItem['warehouse_id'];
+                    $transactionItemDto->amount = $linkedTransactionItem['amount'];
+                    $transactionItemDto->unit_value = $linkedTransactionItem['unit_value'];
+                    $transactionItemDto->discount_rate = $linkedTransactionItem['discount_rate'];
+                    $transactionItemDto->tax_rate = $linkedTransactionItem['tax_rate'];
+                    $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
+                    $transactionDto->transaction_items[] = $transactionItemDto;
+                }
+            }
+        } else {
+            $transactionDto->transaction_items = [];
+            $transactionDto->transaction_items[] = new TransactionItemDto();
         }
 
-        // if (Yii::$app->request->post('addRow') == 'true') {
-        //     $model->transaction_items[] = new TransactionItemDto();
-        // }
+        if (Yii::$app->request->post('addRow') == 'true') {
+            $transactionDto->transaction_items[] = new TransactionItemDto();
+        }
 
-        // if ($this->request->isPost && $model->load($this->request->post())) {
-        //     $user_id = Yii::$app->user->identity->user_id;
-        //     $model->updated_by = $user_id;
-        //     $model->updated_at = Utils::getDateNowDB();
-        //     if ($model->validate() && $model->save()) {
-        //         return $this->redirect(['view', 'document_id' => $model->document_id]);
-        //     }
-        // }
+        if (str_contains(Yii::$app->request->post('removeRow'), 'row-')) {
+            $i = (int) explode('row-', Yii::$app->request->post('removeRow'))[1];
+            array_splice($transactionDto->transaction_items, $i, 1);
+        }
+
+        if ($this->request->isPost && $transactionDto->load($this->request->post())) {
+            $user_id = Yii::$app->user->identity->user_id;
+
+            // echo '$transactionDto->transaction_items: ' . json_encode($transactionDto->transaction_items);
+            // echo json_encode($transactionDto->errors);
+            // $transaction->created_by = $user_id;
+            // $transaction->updated_by = $user_id;
+            // $model->updated_by = $user_id;
+            // $model->updated_at = Utils::getDateNowDB();
+            // if ($model->validate() && $model->save()) {
+            //     return $this->redirect(['view', 'document_id' => $model->document_id]);
+            // }
+        }
 
         return $this->render('draft', [
             'model' => $model,

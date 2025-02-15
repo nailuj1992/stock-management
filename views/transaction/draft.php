@@ -1,13 +1,5 @@
 <?php
 
-use app\models\entities\Document;
-use app\models\entities\Product;
-use app\models\entities\Supplier;
-use app\models\entities\Warehouse;
-use app\models\entities\Transaction;
-use app\models\entities\TransactionItem;
-use app\models\TransactionDto;
-use app\models\Utils;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
@@ -45,7 +37,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
 
         <?= $form->field($transactionDto, 'expiration_date')->textInput(['disabled' => true]) ?>
 
-        <table>
+        <table id="transaction-items-table">
             <tr>
                 <th><?= Yii::t('app', 'Product') ?></th>
                 <th><?= Yii::t('app', 'Warehouse') ?></th>
@@ -60,46 +52,26 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                     $transaction_item = $transactionDto->transaction_items[$i];
                     ?>
                     <tr class="form-group">
-                        <td>
+                        <td class="w20">
                             <?= $form->field($transaction_item, 'product_id')->dropDownList($products, [
                                 'prompt' => Yii::t('app', 'Select...'),
                                 'id' => 'transaction-item-' . $i . '-product_id',
+                                'name' => 'TransactionItemDto[' . $i . '][product_id]',
                                 'onchange' => '
                                 const warehouseId = $("#transaction-item-' . $i . '-warehouse_id").val()
                                 const productId = $(this).val()
-                                $.get("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '/?product_id=" + productId + "&warehouse_id=" + warehouseId, function(data) {
-                                    if (!data) {
-                                        $("#transaction-item-' . $i . '-unit_value").val("")
-                                        $("#transaction-item-' . $i . '-tax_rate").val("")
-                                        $("#transaction-item-' . $i . '-discount_rate").val("")
-                                    } else {
-                                        const info = JSON.parse(data)
-                                        if (info.value) {
-                                            $("#transaction-item-' . $i . '-unit_value").val(info.value)
-                                        } else {
-                                            $("#transaction-item-' . $i . '-unit_value").val("")
-                                        }
-                                        if (info.discountRate) {
-                                            $("#transaction-item-' . $i . '-discount_rate").val(info.discountRate)
-                                        } else {
-                                            $("#transaction-item-' . $i . '-discount_rate").val("")
-                                        }
-                                        if (info.taxRate) {
-                                            $("#transaction-item-' . $i . '-tax_rate").val(info.taxRate)
-                                        } else {
-                                            $("#transaction-item-' . $i . '-tax_rate").val("")
-                                        }
-                                    }
-                                });',
+                                fillValuesProduct("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '", productId, warehouseId, ' . $i . ')
+                                ',
                             ])->label(false)->error(false) ?>
                         </td>
-                        <td>
+                        <td class="w20">
                             <?= $form->field($transaction_item, 'warehouse_id')->dropDownList($warehouses, [
                                 'prompt' => Yii::t('app', 'Empty'),
                                 'id' => 'transaction-item-' . $i . '-warehouse_id',
+                                'name' => 'TransactionItemDto[' . $i . '][warehouse_id]',
                             ])->label(false)->error(false) ?>
                         </td>
-                        <td>
+                        <td class="w10">
                             <?= $form->field($transaction_item, 'amount')
                                 ->textInput([
                                     'maxlength' => true,
@@ -107,6 +79,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     'type' => 'number',
                                     'min' => 0,
                                     'id' => 'transaction-item-' . $i . '-amount',
+                                    'name' => 'TransactionItemDto[' . $i . '][amount]',
                                     'onchange' => '
                                     const unitValueString = $("#transaction-item-' . $i . '-unit_value").val()
                                     const amountString = $(this).val()
@@ -116,7 +89,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 ])
                                 ->label(false)->error(false) ?>
                         </td>
-                        <td>
+                        <td class="w15">
                             <?= $form->field($transaction_item, 'unit_value')
                                 ->textInput([
                                     'maxlength' => true,
@@ -124,6 +97,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     'type' => 'number',
                                     'min' => 0,
                                     'id' => 'transaction-item-' . $i . '-unit_value',
+                                    'name' => 'TransactionItemDto[' . $i . '][unit_value]',
                                     'onchange' => '
                                     const amountString = $("#transaction-item-' . $i . '-amount").val()
                                     const unitValueString = $(this).val()
@@ -133,7 +107,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 ])
                                 ->label(false)->error(false) ?>
                         </td>
-                        <td>
+                        <td class="w15">
                             <?= $form->field($transaction_item, 'discount_rate')
                                 ->textInput([
                                     'maxlength' => true,
@@ -142,6 +116,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     'min' => 0,
                                     'max' => 100,
                                     'id' => 'transaction-item-' . $i . '-discount_rate',
+                                    'name' => 'TransactionItemDto[' . $i . '][discount_rate]',
                                     'onchange' => '
                                     const unitValueString = $("#transaction-item-' . $i . '-unit_value").val()
                                     const discountRateString = $(this).val()
@@ -151,7 +126,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 ])
                                 ->label(false)->error(false) ?>
                         </td>
-                        <td>
+                        <td class="w15">
                             <?= $form->field($transaction_item, 'total_value')
                                 ->textInput([
                                     'maxlength' => true,
@@ -160,22 +135,27 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     'min' => 0,
                                     'disabled' => true,
                                     'id' => 'transaction-item-' . $i . '-total_value',
+                                    'name' => 'TransactionItemDto[' . $i . '][total_value]',
                                 ])
                                 ->label(false)->error(false) ?>
-                        </td>
-                        <td>
                             <?= $form->field($transaction_item, 'tax_rate')
                                 ->textInput([
                                     'maxlength' => true,
                                     'autocomplete' => false,
-                                    'type' => 'number',
+                                    'type' => 'hidden',
                                     'min' => 0,
                                     'max' => 100,
                                     'disabled' => true,
                                     'id' => 'transaction-item-' . $i . '-tax_rate',
+                                    'name' => 'TransactionItemDto[' . $i . '][tax_rate]',
                                 ])
                                 ->label(false)->error(false) ?>
                         </td>
+                        <?php if (count($transactionDto->transaction_items) > 1) { ?>
+                            <td class="align-content-stretch text-align-center">
+                                <?= Html::submitButton(Yii::t('app', '-'), ['name' => 'removeRow', 'value' => 'row-' . $i, 'class' => 'btn btn-danger']) ?>
+                            </td>
+                        <?php } ?>
                     </tr>
                     <?php
                 }
@@ -185,7 +165,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
 
         <div class="form-group">
             <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
-            <?= Html::submitButton(Yii::t('app', 'Add item'), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton(Yii::t('app', 'Add other item'), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>
@@ -210,5 +190,32 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
         } else {
             return ""
         }
+    }
+
+    function fillValuesProduct(url, productId, warehouseId, i) {
+        $.get(url + "/?product_id=" + productId + "&warehouse_id=" + warehouseId, function (data) {
+            if (!data) {
+                $("#transaction-item-" + i + "-unit_value").val("")
+                $("#transaction-item-" + i + "-tax_rate").val("")
+                $("#transaction-item-" + i + "-discount_rate").val("")
+            } else {
+                const info = JSON.parse(data)
+                if (info.value) {
+                    $("#transaction-item-" + i + "-unit_value").val(info.value)
+                } else {
+                    $("#transaction-item-" + i + "-unit_value").val("")
+                }
+                if (info.discountRate) {
+                    $("#transaction-item-" + i + "-discount_rate").val(info.discountRate)
+                } else {
+                    $("#transaction-item-" + i + "-discount_rate").val("")
+                }
+                if (info.taxRate) {
+                    $("#transaction-item-" + i + "-tax_rate").val(info.taxRate)
+                } else {
+                    $("#transaction-item-" + i + "-tax_rate").val("")
+                }
+            }
+        });
     }
 </script>

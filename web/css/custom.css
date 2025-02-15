@@ -1,0 +1,19 @@
+.w20 {
+    width: 20%;
+}
+
+.w15 {
+    width: 15%;
+}
+
+.w10 {
+    width: 10%;
+}
+
+.align-content-stretch {
+    align-content: stretch;
+}
+
+.text-align-center {
+    text-align: center;
+}
