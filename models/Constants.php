@@ -13,10 +13,13 @@ class Constants
     const STATUS_ACTIVE_DB = "A";
     const STATUS_INACTIVE_DB = "I";
     const STATUS_NULL_DB = "N";
+    const STATUS_DRAFT_DB = "B";
+    const STATUS_DELETED_DB = "D";
 
     const STATUS_ACTIVE = "Active";
     const STATUS_INACTIVE = "Inactive";
     const STATUS_NULLED = "Nulled";
+    const STATUS_DRAFT = "Draft";
 
     const STATUS_APPROVED_DB = "A";
     const STATUS_REJECTED_DB = "R";

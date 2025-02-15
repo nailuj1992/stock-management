@@ -6,8 +6,9 @@ use yii\grid\GridView;
 
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
+/** @var yii\data\ActiveDataProvider $dataProviderDraft */
 
-$this->title = Yii::t('app', 'Transactions');
+$this->title = Yii::t('app', 'View Transactions');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="transaction-index">
@@ -22,6 +23,46 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </p>
 
+    <h2><?= Html::encode(Yii::t('app', 'Drafts')) ?></h2>
+
+    <?= GridView::widget([
+        'dataProvider' => $dataProviderDraft,
+        'columns' => [
+            [
+                'attribute' => '#',
+                'format' => 'raw',
+                'value' => function ($model) {
+                return $model->document->code . ' - ' . $model->num_transaction;
+            },
+            ],
+            [
+                'attribute' => Yii::t('app', 'Creation Date'),
+                'format' => 'date',
+                'value' => function ($model) {
+                return $model->creation_date;
+            },
+            ],
+            [
+                'attribute' => Yii::t('app', 'Expiration Date'),
+                'format' => 'date',
+                'value' => function ($model) {
+                return $model->expiration_date;
+            },
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{continue}',
+                'buttons' => [
+                    'continue' => function ($url, $model, $key) {
+                    return Html::a(Yii::t('app', 'Continue'), ['draft', 'transaction_id' => $model->transaction_id], ['class' => 'btn btn-outline-warning btn-xs']);
+                },
+                ]
+            ],
+        ],
+    ]); ?>
+
+    <h2><?= Html::encode(Yii::t('app', 'Saved Transactions')) ?></h2>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -29,8 +70,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => '#',
                 'format' => 'raw',
                 'value' => function ($model) {
-                return $model->num_transaction;
-            },
+                    return $model->num_transaction;
+                },
             ],
             // [
             //     'attribute' => Yii::t('app', 'Code'),
@@ -72,8 +113,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{view}',
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
-                    return Html::a(Yii::t('app', 'View'), ['view', 'transaction_id' => $model->transaction_id], ['class' => 'btn btn-outline-info btn-xs']);
-                },
+                        return Html::a(Yii::t('app', 'View'), ['view', 'transaction_id' => $model->transaction_id], ['class' => 'btn btn-outline-info btn-xs']);
+                    },
                 ]
             ],
         ],

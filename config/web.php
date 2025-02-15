@@ -69,7 +69,7 @@ $config = [
             ],
         ],
         'formatter' => [
-            'dateFormat' => 'dd/MM/yyyy',
+            'dateFormat' => 'php:d/m/Y',
             'decimalSeparator' => ',',
             'thousandSeparator' => ' ',
             'currencyCode' => 'COP',

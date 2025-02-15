@@ -1,13 +1,5 @@
 <?php
 
-use app\models\entities\Document;
-use app\models\entities\Product;
-use app\models\entities\Supplier;
-use app\models\entities\Warehouse;
-use app\models\entities\Transaction;
-use app\models\entities\TransactionItem;
-use app\models\TransactionDto;
-use app\models\Utils;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
@@ -15,7 +7,6 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\TransactionDto $model */
 /** @var app\models\entities\Document[] $documents */
 /** @var app\models\entities\Supplier[] $suppliers */
-/** @var app\models\entities\Transaction[] $other_transactions */
 /** @var app\models\entities\Product[] $products */
 /** @var app\models\entities\Warehouse[] $warehouses */
 
@@ -36,6 +27,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/transaction/get-next-num-transaction']) . '/?document_id=" + $(this).val(), function(data) {
                     $("#transactiondto-num_transaction").val(data);
+                    if (Number(data) !== 1) {
+                        $("#transactiondto-num_transaction").prop("disabled", true);
+                    } else {
+                        $("#transactiondto-num_transaction").prop("disabled", false);
+                    }
                 });
                 $.get("' . yii\helpers\Url::to(['/transaction/is-document-for-suppliers']) . '/?document_id=" + $(this).val(), function(data) {
                     $("#transactiondto-supplier_id").prop("disabled", !data);
@@ -49,6 +45,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     $("#transactiondto-expiration_date").prop("disabled", !data);
                     $("#transactiondto-expiration_date").val("");
                 });
+                $.get("' . yii\helpers\Url::to(['/transaction/get-linked-transactions']) . '/?document_id=" + $(this).val(), function(data) {
+                    $("#transactiondto-linked_transaction_id").html(data);
+                });
                 ',
         ]) ?>
 
@@ -56,153 +55,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'supplier_id')->dropDownList($suppliers, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => true]) ?>
 
+        <?php $other_transactions = []; ?>
         <?= $form->field($model, 'linked_transaction_id')->dropDownList($other_transactions, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => true]) ?>
 
         <?= $form->field($model, 'creation_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
 
         <?= $form->field($model, 'expiration_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date', 'disabled' => true]) ?>
-
-        <table>
-            <tr>
-                <th><?= Yii::t('app', 'Product') ?></th>
-                <th><?= Yii::t('app', 'Warehouse') ?></th>
-                <th><?= Yii::t('app', 'Amount') ?></th>
-                <th><?= Yii::t('app', 'Unit Value ($)') ?></th>
-                <th><?= Yii::t('app', 'Discount Rate (%)') ?></th>
-                <th><?= Yii::t('app', 'Total Value ($)') ?></th>
-            </tr>
-            <?php
-            if (!empty($model->transaction_items)) {
-                for ($i = 0; $i < count($model->transaction_items); $i++) {
-                    $transaction_item = $model->transaction_items[$i];
-                    ?>
-                    <tr class="form-group">
-                        <td>
-                            <?= $form->field($transaction_item, 'product_id')->dropDownList($products, [
-                                'prompt' => Yii::t('app', 'Select...'),
-                                'id' => 'transaction-item-' . $i . '-product_id',
-                                'onchange' => '
-                                const warehouseId = $("#transaction-item-' . $i . '-warehouse_id").val()
-                                const productId = $(this).val()
-                                $.get("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '/?product_id=" + productId + "&warehouse_id=" + warehouseId, function(data) {
-                                    if (!data) {
-                                        $("#transaction-item-' . $i . '-unit_value").val("")
-                                        $("#transaction-item-' . $i . '-tax_rate").val("")
-                                        $("#transaction-item-' . $i . '-discount_rate").val("")
-                                    } else {
-                                        const info = JSON.parse(data)
-                                        if (info.value) {
-                                            $("#transaction-item-' . $i . '-unit_value").val(info.value)
-                                        } else {
-                                            $("#transaction-item-' . $i . '-unit_value").val("")
-                                        }
-                                        if (info.discountRate) {
-                                            $("#transaction-item-' . $i . '-discount_rate").val(info.discountRate)
-                                        } else {
-                                            $("#transaction-item-' . $i . '-discount_rate").val("")
-                                        }
-                                        if (info.taxRate) {
-                                            $("#transaction-item-' . $i . '-tax_rate").val(info.taxRate)
-                                        } else {
-                                            $("#transaction-item-' . $i . '-tax_rate").val("")
-                                        }
-                                    }
-                                });',
-                            ])->label(false)->error(false) ?>
-                        </td>
-                        <td>
-                            <?= $form->field($transaction_item, 'warehouse_id')->dropDownList($warehouses, [
-                                'prompt' => Yii::t('app', 'Empty'),
-                                'id' => 'transaction-item-' . $i . '-warehouse_id',
-                            ])->label(false)->error(false) ?>
-                        </td>
-                        <td>
-                            <?= $form->field($transaction_item, 'amount')
-                                ->textInput([
-                                    'maxlength' => true,
-                                    'autocomplete' => false,
-                                    'type' => 'number',
-                                    'min' => 0,
-                                    'id' => 'transaction-item-' . $i . '-amount',
-                                    'onchange' => '
-                                    const unitValueString = $("#transaction-item-' . $i . '-unit_value").val()
-                                    const amountString = $(this).val()
-                                    const discountRateString = $("#transaction-item-' . $i . '-discount_rate").val()
-                                    $("#transaction-item-' . $i . '-total_value").val(calculateTotalValueProduct(amountString, unitValueString, discountRateString))
-                                    ',
-                                ])
-                                ->label(false)->error(false) ?>
-                        </td>
-                        <td>
-                            <?= $form->field($transaction_item, 'unit_value')
-                                ->textInput([
-                                    'maxlength' => true,
-                                    'autocomplete' => false,
-                                    'type' => 'number',
-                                    'min' => 0,
-                                    'id' => 'transaction-item-' . $i . '-unit_value',
-                                    'onchange' => '
-                                    const amountString = $("#transaction-item-' . $i . '-amount").val()
-                                    const unitValueString = $(this).val()
-                                    const discountRateString = $("#transaction-item-' . $i . '-discount_rate").val()
-                                    $("#transaction-item-' . $i . '-total_value").val(calculateTotalValueProduct(amountString, unitValueString, discountRateString))
-                                    ',
-                                ])
-                                ->label(false)->error(false) ?>
-                        </td>
-                        <td>
-                            <?= $form->field($transaction_item, 'discount_rate')
-                                ->textInput([
-                                    'maxlength' => true,
-                                    'autocomplete' => false,
-                                    'type' => 'number',
-                                    'min' => 0,
-                                    'max' => 100,
-                                    'id' => 'transaction-item-' . $i . '-discount_rate',
-                                    'onchange' => '
-                                    const unitValueString = $("#transaction-item-' . $i . '-unit_value").val()
-                                    const discountRateString = $(this).val()
-                                    const amountString = $("#transaction-item-' . $i . '-amount").val()
-                                    $("#transaction-item-' . $i . '-total_value").val(calculateTotalValueProduct(amountString, unitValueString, discountRateString))
-                                    ',
-                                ])
-                                ->label(false)->error(false) ?>
-                        </td>
-                        <td>
-                            <?= $form->field($transaction_item, 'total_value')
-                                ->textInput([
-                                    'maxlength' => true,
-                                    'autocomplete' => false,
-                                    'type' => 'number',
-                                    'min' => 0,
-                                    'disabled' => true,
-                                    'id' => 'transaction-item-' . $i . '-total_value',
-                                ])
-                                ->label(false)->error(false) ?>
-                        </td>
-                        <td>
-                            <?= $form->field($transaction_item, 'tax_rate')
-                                ->textInput([
-                                    'maxlength' => true,
-                                    'autocomplete' => false,
-                                    'type' => 'number',
-                                    'min' => 0,
-                                    'max' => 100,
-                                    'disabled' => true,
-                                    'id' => 'transaction-item-' . $i . '-tax_rate',
-                                ])
-                                ->label(false)->error(false) ?>
-                        </td>
-                    </tr>
-                    <?php
-                }
-            }
-            ?>
-        </table>
-
-        <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Add item'), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
-        </div>
 
         <div class="form-group">
             <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
@@ -213,23 +71,3 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
 </div>
-
-<script>
-    function calculateTotalValueProduct(amountString, unitValueString, discountRateString) {
-        if (amountString && amountString !== "" && unitValueString && unitValueString !== "") {
-            const unitValue = Number(unitValueString)
-            const amount = Number(amountString)
-            let discountRate = 0
-            if (discountRateString && discountRateString !== "") {
-                discountRate = Number(discountRateString)
-            }
-            let totalValue = amount * unitValue
-            if (discountRate > 0) {
-                totalValue = totalValue - (totalValue * discountRate / 100)
-            }
-            return totalValue
-        } else {
-            return ""
-        }
-    }
-</script>
