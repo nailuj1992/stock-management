@@ -66,7 +66,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                     $transaction_item = $transactionDto->transaction_items[$i];
                     ?>
                     <tr class="form-group">
-                        <td class="w20">
+                        <td class="col-2">
                             <?= $form->field($transaction_item, 'product_id')->dropDownList($products, [
                                 'prompt' => Yii::t('app', 'Select...'),
                                 'id' => 'transaction-item-' . $i . '-product_id',
@@ -78,14 +78,14 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 ',
                             ])->label(false)->error(false) ?>
                         </td>
-                        <td class="w20">
+                        <td class="col-2">
                             <?= $form->field($transaction_item, 'warehouse_id')->dropDownList($warehouses, [
                                 'prompt' => Yii::t('app', 'Empty'),
                                 'id' => 'transaction-item-' . $i . '-warehouse_id',
                                 'name' => 'TransactionItemDto[' . $i . '][warehouse_id]',
                             ])->label(false)->error(false) ?>
                         </td>
-                        <td class="w10">
+                        <td class="col-1">
                             <?= $form->field($transaction_item, 'amount')
                                 ->textInput([
                                     'maxlength' => true,
@@ -104,7 +104,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 ])
                                 ->label(false)->error(false) ?>
                         </td>
-                        <td class="w15">
+                        <td class="col-1">
                             <?= $form->field($transaction_item, 'unit_value')
                                 ->textInput([
                                     'maxlength' => true,
@@ -123,7 +123,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 ])
                                 ->label(false)->error(false) ?>
                         </td>
-                        <td class="w15">
+                        <td class="col-1">
                             <?= $form->field($transaction_item, 'discount_rate')
                                 ->textInput([
                                     'maxlength' => true,
@@ -143,7 +143,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 ])
                                 ->label(false)->error(false) ?>
                         </td>
-                        <td class="w15">
+                        <td class="col-1">
                             <?= $form->field($transaction_item, 'total_value')
                                 ->textInput([
                                     'maxlength' => true,

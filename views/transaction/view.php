@@ -4,6 +4,7 @@ use app\models\Constants;
 use app\models\Utils;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
 /** @var app\models\TransactionDto $transactionDto */
@@ -52,41 +53,43 @@ $this->params['breadcrumbs'][] = $this->title;
             <th><?= Yii::t('app', 'Unit Value ($)') ?></th>
             <th><?= Yii::t('app', 'Discount Rate (%)') ?></th>
             <th><?= Yii::t('app', 'Total Value ($)') ?></th>
-            <?= $document->has_taxes === Constants::OPTION_YES_DB ? '<th>' . Yii::t('app', 'Tax Rate (%)') . '</th>' : '' ?>
+            <?= $document->hasTaxes() ? '<th>' . Yii::t('app', 'Tax Rate (%)') . '</th>' : '' ?>
         </tr>
         <?php
+        $form = ActiveForm::begin();
         if (!empty($transactionDto->transaction_items)) {
             for ($i = 0; $i < count($transactionDto->transaction_items); $i++) {
                 $transaction_item = $transactionDto->transaction_items[$i];
                 ?>
                 <tr class="form-group">
-                    <td class="w20">
-                        <?= $transaction_item->product ?>
+                    <td class="col-2">
+                        <?= $form->field($transaction_item, 'product')->textInput(['disabled' => true])->label(false) ?>
                     </td>
-                    <td class="w20">
-                        <?= $transaction_item->warehouse ?>
+                    <td class="col-2">
+                        <?= $form->field($transaction_item, 'warehouse')->textInput(['disabled' => true])->label(false) ?>
                     </td>
-                    <td class="w10">
-                        <?= $transaction_item->amount ?>
+                    <td class="col-1">
+                        <?= $form->field($transaction_item, 'amount')->textInput(['disabled' => true, 'type' => 'number'])->label(false) ?>
                     </td>
-                    <td class="w15">
-                        <?= $transaction_item->unit_value ?>
+                    <td class="col-1">
+                        <?= $form->field($transaction_item, 'unit_value')->textInput(['disabled' => true, 'type' => 'number'])->label(false) ?>
                     </td>
-                    <td class="w15">
-                        <?= $transaction_item->discount_rate ?>
+                    <td class="col-1">
+                        <?= $form->field($transaction_item, 'discount_rate')->textInput(['disabled' => true, 'type' => 'number'])->label(false) ?>
                     </td>
-                    <td class="w15">
-                        <?= $transaction_item->total_value ?>
+                    <td class="col-1">
+                        <?= $form->field($transaction_item, 'total_value')->textInput(['disabled' => true, 'type' => 'number'])->label(false) ?>
                     </td>
-                    <?php if ($document->has_taxes === Constants::OPTION_YES_DB) { ?>
-                        <td class="w15">
-                            <?= $transaction_item->tax_rate ?>
+                    <?php if ($document->hasTaxes()) { ?>
+                        <td class="col-1">
+                            <?= $form->field($transaction_item, 'tax_rate')->textInput(['disabled' => true, 'type' => 'number'])->label(false) ?>
                         </td>
                     <?php } ?>
                 </tr>
                 <?php
             }
         }
+        ActiveForm::end();
         ?>
     </table>
 
