@@ -39,7 +39,19 @@ class TransactionController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['view', 'index', 'create', 'draft', 'get-next-num-transaction', 'is-document-for-suppliers', 'is-document-linked-with-other-transaction', 'get-linked-transactions', 'document-has-expiration', 'get-product-info'],
+                            'actions' => [
+                                'view',
+                                'index',
+                                'create',
+                                'draft',
+                                'get-next-num-transaction',
+                                'is-document-for-suppliers',
+                                'is-document-linked-with-other-transaction',
+                                'get-linked-transactions',
+                                'document-has-expiration',
+                                'document-has-taxes',
+                                'get-product-info'
+                            ],
                             'roles' => [Constants::ROLE_USER],
                         ],
                     ],
@@ -254,6 +266,20 @@ class TransactionController extends Controller
         return $document->has_expiration === Constants::OPTION_YES_DB;
     }
 
+    public function actionDocumentHasTaxes($document_id)
+    {
+        Utils::validateCompanySelected();
+        $company_id = Utils::getCompanySelected();
+
+        Utils::validateBelongsToCompany($company_id);
+
+        $document = Document::findOne(['document_id' => $document_id]);
+        if ($document === null) {
+            return false;
+        }
+        return $document->has_taxes === Constants::OPTION_YES_DB;
+    }
+
     private function calculateTotalValueProduct($amountString, $unitValueString, $discountRateString)
     {
         if ($amountString && $amountString !== "" && $unitValueString && $unitValueString !== "") {
@@ -314,6 +340,9 @@ class TransactionController extends Controller
         if (isset($this->request->post()['TransactionItemDto'])) {
             $transactionDto->transaction_items = [];
             $transactionItems = $this->request->post()['TransactionItemDto'];
+
+            $subtotal = 0;
+            $taxes = 0;
             foreach ($transactionItems as $transactionItem) {
                 $transactionItemDto = new TransactionItemDto();
                 $transactionItemDto->product_id = $transactionItem['product_id'];
@@ -331,6 +360,17 @@ class TransactionController extends Controller
                     }
                 }
                 $transactionDto->transaction_items[] = $transactionItemDto;
+
+                $subtotal += $transactionItemDto->total_value;
+                if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+                    $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
+                    $taxes += $valueTaxes;
+                }
+                $total = $subtotal + $taxes;
+
+                $transactionDto->total_before_taxes = $subtotal;
+                $transactionDto->total_taxes = $taxes;
+                $transactionDto->total_value = $total;
             }
         } elseif (isset($transactionDto->linked_transaction_id)) {
             $linkedTransactionItems = TransactionItem::find()
@@ -339,6 +379,8 @@ class TransactionController extends Controller
                 ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
                 ->asArray()->all();
             if (isset($linkedTransactionItems) && !empty($linkedTransactionItems)) {
+                $subtotal = 0;
+                $taxes = 0;
                 foreach ($linkedTransactionItems as $linkedTransactionItem) {
                     $transactionItemDto = new TransactionItemDto();
                     $transactionItemDto->product_id = $linkedTransactionItem['product_id'];
@@ -349,7 +391,18 @@ class TransactionController extends Controller
                     $transactionItemDto->tax_rate = $linkedTransactionItem['tax_rate'];
                     $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
                     $transactionDto->transaction_items[] = $transactionItemDto;
+
+                    $subtotal += $transactionItemDto->total_value;
+                    if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+                        $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
+                        $taxes += $valueTaxes;
+                    }
+                    $total = $subtotal + $taxes;
                 }
+
+                $transactionDto->total_before_taxes = $subtotal;
+                $transactionDto->total_taxes = $taxes;
+                $transactionDto->total_value = $total;
             }
         } else {
             $transactionDto->transaction_items = [];
@@ -360,9 +413,28 @@ class TransactionController extends Controller
             $transactionDto->transaction_items[] = new TransactionItemDto();
         }
 
-        if (str_contains(Yii::$app->request->post('removeRow'), 'row-')) {
+        if (
+            str_contains(Yii::$app->request->post('removeRow'), 'row-')
+            && isset($transactionDto->transaction_items) && !empty($transactionDto->transaction_items)
+        ) {
             $i = (int) explode('row-', Yii::$app->request->post('removeRow'))[1];
             array_splice($transactionDto->transaction_items, $i, 1);
+
+            $subtotal = 0;
+            $taxes = 0;
+
+            foreach ($transactionDto->transaction_items as $transactionItem) {
+                $subtotal += $transactionItemDto->total_value;
+                if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+                    $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
+                    $taxes += $valueTaxes;
+                }
+                $total = $subtotal + $taxes;
+            }
+
+            $transactionDto->total_before_taxes = $subtotal;
+            $transactionDto->total_taxes = $taxes;
+            $transactionDto->total_value = $total;
         }
 
         if ($this->request->isPost && $transactionDto->load($this->request->post())) {

@@ -77,7 +77,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     'maxlength' => true,
                                     'autocomplete' => false,
                                     'type' => 'number',
-                                    'min' => 0,
+                                    'min' => 1,
                                     'id' => 'transaction-item-' . $i . '-amount',
                                     'name' => 'TransactionItemDto[' . $i . '][amount]',
                                     'onchange' => '
@@ -85,6 +85,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     const amountString = $(this).val()
                                     const discountRateString = $("#transaction-item-' . $i . '-discount_rate").val()
                                     $("#transaction-item-' . $i . '-total_value").val(calculateTotalValueProduct(amountString, unitValueString, discountRateString))
+                                    $("#transaction-item-' . $i . '-total_value").change()
                                     ',
                                 ])
                                 ->label(false)->error(false) ?>
@@ -103,6 +104,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     const unitValueString = $(this).val()
                                     const discountRateString = $("#transaction-item-' . $i . '-discount_rate").val()
                                     $("#transaction-item-' . $i . '-total_value").val(calculateTotalValueProduct(amountString, unitValueString, discountRateString))
+                                    $("#transaction-item-' . $i . '-total_value").change()
                                     ',
                                 ])
                                 ->label(false)->error(false) ?>
@@ -122,6 +124,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     const discountRateString = $(this).val()
                                     const amountString = $("#transaction-item-' . $i . '-amount").val()
                                     $("#transaction-item-' . $i . '-total_value").val(calculateTotalValueProduct(amountString, unitValueString, discountRateString))
+                                    $("#transaction-item-' . $i . '-total_value").change()
                                     ',
                                 ])
                                 ->label(false)->error(false) ?>
@@ -136,6 +139,9 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     'disabled' => true,
                                     'id' => 'transaction-item-' . $i . '-total_value',
                                     'name' => 'TransactionItemDto[' . $i . '][total_value]',
+                                    'onchange' => '
+                                    calculateTotalTransaction("' . yii\helpers\Url::to(['/transaction/document-has-taxes']) . '", ' . $transactionDto->document_id . ', ' . $i . ', $(this).val(), ' . count($transactionDto->transaction_items) . ')
+                                    ',
                                 ])
                                 ->label(false)->error(false) ?>
                             <?= $form->field($transaction_item, 'tax_rate')
@@ -162,6 +168,15 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
             }
             ?>
         </table>
+
+        <?= $form->field($transactionDto, 'total_before_taxes')
+            ->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'disabled' => true]) ?>
+
+        <?= $form->field($transactionDto, 'total_taxes')
+            ->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'disabled' => true]) ?>
+
+        <?= $form->field($transactionDto, 'total_value')
+            ->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'disabled' => true]) ?>
 
         <div class="form-group">
             <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
@@ -216,6 +231,33 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                     $("#transaction-item-" + i + "-tax_rate").val("")
                 }
             }
+        });
+    }
+
+    function calculateTotalTransaction(url, documentId, row, rowValue, size) {
+        $.get(url + "/?document_id=" + documentId, function (hasTaxes) {
+            let subtotal = 0
+            let taxes = 0
+            for (let i = 0; i < size; i++) {
+                const taxRate = $("#transaction-item-" + i + "-tax_rate").val()
+                let totalValue
+                if (i === row) {
+                    totalValue = rowValue
+                } else {
+                    totalValue = $("#transaction-item-" + i + "-total_value").val()
+                }
+
+                subtotal += Number(totalValue)
+                if (hasTaxes && taxRate && taxRate !== '') {
+                    const valueTaxes = subtotal * (Number(taxRate) / 100)
+                    taxes += valueTaxes
+                }
+            }
+            const total = subtotal + taxes
+
+            $("#transactiondto-total_before_taxes").val(subtotal)
+            $("#transactiondto-total_taxes").val(taxes)
+            $("#transactiondto-total_value").val(total)
         });
     }
 </script>
