@@ -12,6 +12,7 @@ use app\models\entities\Warehouse;
 use app\models\TransactionDto;
 use app\models\TransactionItemDto;
 use app\models\Utils;
+use Exception;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
@@ -308,18 +309,11 @@ class TransactionController extends Controller
 
         $model = $this->findModel($transaction_id);
 
-        $transactionDto = new TransactionDto();
-        $transactionDto->transaction_id = $model->transaction_id;
-        $transactionDto->num_transaction = $model->num_transaction;
-        $transactionDto->document_id = $model->document_id;
-        $transactionDto->document = $model->document->code . ' - ' . $model->document->name;
-        $transactionDto->creation_date = Utils::formatDate($model->creation_date);
-        $transactionDto->expiration_date = isset($model->expiration_date) ? Utils::formatDate($model->expiration_date) : '';
-        $transactionDto->linked_transaction_id = $model->linked_transaction_id;
-        $transactionDto->linked_transaction = isset($model->linkedTransaction) ? $model->linkedTransaction->document->code . ' - ' . $model->linkedTransaction->num_transaction : '';
-        $transactionDto->supplier_id = $model->supplier_id;
-        $transactionDto->supplier = isset($model->supplier) ? $model->supplier->code . ' - ' . $model->supplier->name : '';
-        $transactionDto->status = $model->status;
+        if ($model->status !== Constants::STATUS_DRAFT_DB) {
+            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        }
+
+        $transactionDto = $this->newTransactionDtoDraft($model);
 
         $document = $model->document;
         $supplier = $model->supplier;
@@ -338,117 +332,77 @@ class TransactionController extends Controller
         $warehouses = ArrayHelper::map($warehousesQuery, 'warehouse_id', 'name');
 
         if (isset($this->request->post()['TransactionItemDto'])) {
-            $transactionDto->transaction_items = [];
-            $transactionItems = $this->request->post()['TransactionItemDto'];
-
-            $subtotal = 0;
-            $taxes = 0;
-            foreach ($transactionItems as $transactionItem) {
-                $transactionItemDto = new TransactionItemDto();
-                $transactionItemDto->product_id = $transactionItem['product_id'];
-                $transactionItemDto->warehouse_id = $transactionItem['warehouse_id'];
-                $transactionItemDto->amount = $transactionItem['amount'];
-                $transactionItemDto->unit_value = $transactionItem['unit_value'];
-                $transactionItemDto->discount_rate = $transactionItem['discount_rate'];
-                $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
-
-                $info = $this->actionGetProductInfo($transactionItemDto->product_id, $transactionItemDto->warehouse_id);
-                if (isset($info)) {
-                    $infoMap = json_decode($info);
-                    if (isset($infoMap->{'taxRate'})) {
-                        $transactionItemDto->tax_rate = $infoMap->{'taxRate'};
-                    }
-                }
-                $transactionDto->transaction_items[] = $transactionItemDto;
-
-                $subtotal += $transactionItemDto->total_value;
-                if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
-                    $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
-                    $taxes += $valueTaxes;
-                }
-                $total = $subtotal + $taxes;
-
-                $transactionDto->total_before_taxes = $subtotal;
-                $transactionDto->total_taxes = $taxes;
-                $transactionDto->total_value = $total;
-            }
+            $this->regatherTransactionItemsDraft($document, $transactionDto, $this->request->post()['TransactionItemDto']);
         } elseif (isset($transactionDto->linked_transaction_id)) {
-            $linkedTransactionItems = TransactionItem::find()
-                ->where(['=', 'company_id', $company_id])
-                ->andWhere(['transaction_id' => $transaction_id])
-                ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
-                ->asArray()->all();
-            if (isset($linkedTransactionItems) && !empty($linkedTransactionItems)) {
-                $subtotal = 0;
-                $taxes = 0;
-                foreach ($linkedTransactionItems as $linkedTransactionItem) {
-                    $transactionItemDto = new TransactionItemDto();
-                    $transactionItemDto->product_id = $linkedTransactionItem['product_id'];
-                    $transactionItemDto->warehouse_id = $linkedTransactionItem['warehouse_id'];
-                    $transactionItemDto->amount = $linkedTransactionItem['amount'];
-                    $transactionItemDto->unit_value = $linkedTransactionItem['unit_value'];
-                    $transactionItemDto->discount_rate = $linkedTransactionItem['discount_rate'];
-                    $transactionItemDto->tax_rate = $linkedTransactionItem['tax_rate'];
-                    $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
-                    $transactionDto->transaction_items[] = $transactionItemDto;
-
-                    $subtotal += $transactionItemDto->total_value;
-                    if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
-                        $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
-                        $taxes += $valueTaxes;
-                    }
-                    $total = $subtotal + $taxes;
-                }
-
-                $transactionDto->total_before_taxes = $subtotal;
-                $transactionDto->total_taxes = $taxes;
-                $transactionDto->total_value = $total;
-            }
+            $this->getLinkedTransactionItemsDraft($transaction_id, $company_id, $document, $transactionDto);
         } else {
-            $transactionDto->transaction_items = [];
-            $transactionDto->transaction_items[] = new TransactionItemDto();
+            $this->createNewTransactionItemsDraft($transactionDto);
         }
 
         if (Yii::$app->request->post('addRow') == 'true') {
-            $transactionDto->transaction_items[] = new TransactionItemDto();
+            $this->actionAddRowDraft($transactionDto);
         }
 
         if (
             str_contains(Yii::$app->request->post('removeRow'), 'row-')
             && isset($transactionDto->transaction_items) && !empty($transactionDto->transaction_items)
         ) {
-            $i = (int) explode('row-', Yii::$app->request->post('removeRow'))[1];
-            array_splice($transactionDto->transaction_items, $i, 1);
-
-            $subtotal = 0;
-            $taxes = 0;
-
-            foreach ($transactionDto->transaction_items as $transactionItem) {
-                $subtotal += $transactionItemDto->total_value;
-                if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
-                    $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
-                    $taxes += $valueTaxes;
-                }
-                $total = $subtotal + $taxes;
-            }
-
-            $transactionDto->total_before_taxes = $subtotal;
-            $transactionDto->total_taxes = $taxes;
-            $transactionDto->total_value = $total;
+            $this->actionRemoveRowDraft(Yii::$app->request->post('removeRow'), $document, $transactionDto);
         }
 
-        if ($this->request->isPost && $transactionDto->load($this->request->post())) {
+        if ($this->request->isPost && Yii::$app->request->post('save') == 'true' && isset($this->request->post()['TransactionItemDto'])) {// To manage the action of the Save submit button
+            $transactionDto->transaction_items = $this->request->post()['TransactionItemDto'];
             $user_id = Yii::$app->user->identity->user_id;
 
-            // echo '$transactionDto->transaction_items: ' . json_encode($transactionDto->transaction_items);
-            // echo json_encode($transactionDto->errors);
-            // $transaction->created_by = $user_id;
-            // $transaction->updated_by = $user_id;
-            // $model->updated_by = $user_id;
-            // $model->updated_at = Utils::getDateNowDB();
-            // if ($model->validate() && $model->save()) {
-            //     return $this->redirect(['view', 'document_id' => $model->document_id]);
-            // }
+            $errors = 0;
+            if (!empty($transactionDto->transaction_items)) {
+                foreach ($transactionDto->transaction_items as $transactionItemDto) {
+                    // if ($transactionItemDto->amount === '' || $transactionItemDto->amount === '0') {
+                    //     $transactionItemDto->addError('amount', Yii::t('app', 'Amount should be greater than 0.'));
+                    //     $errors++;
+                    // }
+                }
+            }
+
+            if ($errors === 0 && !empty($transactionDto->transaction_items)) {
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    $success = true;
+                    foreach ($transactionDto->transaction_items as $transactionItemDto) {
+                        $transactionItem = new TransactionItem();
+
+                        $transactionItem->isNewRecord = true;
+                        $transactionItem->transaction_id = $model->transaction_id;
+                        $transactionItem->product_id = $transactionItemDto['product_id'];
+                        $transactionItem->warehouse_id = isset($transactionItemDto['warehouse_id']) && $transactionItemDto['warehouse_id'] !== '' ? $transactionItemDto['warehouse_id'] : null;
+                        $transactionItem->amount = $transactionItemDto['amount'];
+                        $transactionItem->unit_value = $transactionItemDto['unit_value'];
+                        $transactionItem->tax_rate = isset($transactionItemDto['tax_rate']) && $transactionItemDto['tax_rate'] !== '' ? $transactionItemDto['tax_rate'] : null;
+                        $transactionItem->discount_rate = isset($transactionItemDto['discount_rate']) && $transactionItemDto['discount_rate'] !== '' ? $transactionItemDto['discount_rate'] : null;
+                        $transactionItem->company_id = $company_id;
+                        $transactionItem->status = Constants::STATUS_ACTIVE_DB;
+                        $transactionItem->created_by = $user_id;
+                        $transactionItem->updated_by = $user_id;
+
+                        $success = $success && $transactionItem->validate() && $transactionItem->save();
+                    }
+
+                    $model->status = Constants::STATUS_ACTIVE_DB;
+                    $model->updated_by = $user_id;
+                    $model->updated_at = Utils::getDateNowDB();
+
+                    $success = $success && $model->validate() && $model->save();
+
+                    if ($success) {
+                        $transaction->commit();
+                        return $this->redirect(['view', 'transaction_id' => $model->transaction_id]);
+                    } else {
+                        $transaction->rollBack();
+                    }
+                } catch (Exception $ex) {
+                    $transaction->rollBack();
+                }
+            }
         }
 
         return $this->render('draft', [
@@ -462,13 +416,176 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function actionGetProductInfo($product_id, $warehouse_id = '')
+    /**
+     * To create a new instance of TransactionDto for the draft method.
+     * @param \app\models\entities\Transaction $model
+     * @return TransactionDto
+     */
+    private function newTransactionDtoDraft(Transaction $model): TransactionDto
+    {
+        $transactionDto = new TransactionDto();
+        $transactionDto->transaction_id = $model->transaction_id;
+        $transactionDto->num_transaction = $model->num_transaction;
+        $transactionDto->document_id = $model->document_id;
+        $transactionDto->document = $model->document->code . ' - ' . $model->document->name;
+        $transactionDto->creation_date = Utils::formatDate($model->creation_date);
+        $transactionDto->expiration_date = isset($model->expiration_date) ? Utils::formatDate($model->expiration_date) : '';
+        $transactionDto->linked_transaction_id = $model->linked_transaction_id;
+        $transactionDto->linked_transaction = isset($model->linkedTransaction) ? $model->linkedTransaction->document->code . ' - ' . $model->linkedTransaction->num_transaction : '';
+        $transactionDto->supplier_id = $model->supplier_id;
+        $transactionDto->supplier = isset($model->supplier) ? $model->supplier->code . ' - ' . $model->supplier->name : '';
+        $transactionDto->status = $model->status;
+        return $transactionDto;
+    }
+
+    /**
+     * To regather the transaction items after clicking any submit button.
+     * @param \app\models\entities\Document $document
+     * @param \app\models\TransactionDto $transactionDto
+     * @param mixed $transactionItems
+     * @return void
+     */
+    private function regatherTransactionItemsDraft(Document $document, TransactionDto $transactionDto, $transactionItems): void
+    {
+        $transactionDto->transaction_items = [];
+
+        $subtotal = 0;
+        $taxes = 0;
+        foreach ($transactionItems as $transactionItem) {
+            $transactionItemDto = new TransactionItemDto();
+            $transactionItemDto->product_id = $transactionItem['product_id'];
+            $transactionItemDto->warehouse_id = $transactionItem['warehouse_id'];
+            $transactionItemDto->amount = $transactionItem['amount'];
+            $transactionItemDto->unit_value = $transactionItem['unit_value'];
+            $transactionItemDto->discount_rate = $transactionItem['discount_rate'];
+            $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
+
+            $info = $this->actionGetProductInfo($transactionItemDto->product_id, $transactionItemDto->warehouse_id);
+            if (isset($info)) {
+                $infoMap = json_decode($info);
+                if (isset($infoMap->{'taxRate'})) {
+                    $transactionItemDto->tax_rate = $infoMap->{'taxRate'};
+                }
+            }
+            $transactionDto->transaction_items[] = $transactionItemDto;
+
+            $subtotal += $transactionItemDto->total_value;
+            if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+                $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
+                $taxes += $valueTaxes;
+            }
+            $total = $subtotal + $taxes;
+
+            $transactionDto->total_before_taxes = $subtotal;
+            $transactionDto->total_taxes = $taxes;
+            $transactionDto->total_value = $total;
+        }
+    }
+
+    /**
+     * To initialize a new array of transaction items if none of the above conditions were accomplished.
+     * @param \app\models\TransactionDto $transactionDto
+     * @return void
+     */
+    private function createNewTransactionItemsDraft(TransactionDto $transactionDto): void
+    {
+        $transactionDto->transaction_items = [];
+        $transactionDto->transaction_items[] = new TransactionItemDto();
+    }
+
+    /**
+     * To get all the transaction items belonging to a linked transaction.
+     * @param mixed $transaction_id
+     * @param mixed $company_id
+     * @param \app\models\entities\Document $document
+     * @param \app\models\TransactionDto $transactionDto
+     * @return void
+     */
+    private function getLinkedTransactionItemsDraft($transaction_id, $company_id, Document $document, TransactionDto $transactionDto): void
+    {
+        $linkedTransactionItems = TransactionItem::find()
+            ->where(['=', 'company_id', $company_id])
+            ->andWhere(['transaction_id' => $transaction_id])
+            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
+            ->asArray()->all();
+        if (isset($linkedTransactionItems) && !empty($linkedTransactionItems)) {
+            $subtotal = 0;
+            $taxes = 0;
+            foreach ($linkedTransactionItems as $linkedTransactionItem) {
+                $transactionItemDto = new TransactionItemDto();
+                $transactionItemDto->product_id = $linkedTransactionItem['product_id'];
+                $transactionItemDto->warehouse_id = $linkedTransactionItem['warehouse_id'];
+                $transactionItemDto->amount = $linkedTransactionItem['amount'];
+                $transactionItemDto->unit_value = $linkedTransactionItem['unit_value'];
+                $transactionItemDto->discount_rate = $linkedTransactionItem['discount_rate'];
+                $transactionItemDto->tax_rate = $linkedTransactionItem['tax_rate'];
+                $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
+                $transactionDto->transaction_items[] = $transactionItemDto;
+
+                $subtotal += $transactionItemDto->total_value;
+                if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+                    $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
+                    $taxes += $valueTaxes;
+                }
+                $total = $subtotal + $taxes;
+            }
+
+            $transactionDto->total_before_taxes = $subtotal;
+            $transactionDto->total_taxes = $taxes;
+            $transactionDto->total_value = $total;
+        }
+    }
+
+    /**
+     * To manage the action of the Add item submit button.
+     * @param \app\models\TransactionDto $transactionDto
+     * @return void
+     */
+    private function actionAddRowDraft(TransactionDto $transactionDto): void
+    {
+        $transactionDto->transaction_items[] = new TransactionItemDto();
+    }
+
+    /**
+     * To manage the action of the Remove item submit buttons.
+     * @param mixed $field
+     * @param \app\models\entities\Document $document
+     * @param \app\models\TransactionDto $transactionDto
+     * @return void
+     */
+    private function actionRemoveRowDraft($field, Document $document, TransactionDto $transactionDto): void
+    {
+        $i = (int) explode('row-', $field)[1];
+        array_splice($transactionDto->transaction_items, $i, 1);
+
+        $subtotal = 0;
+        $taxes = 0;
+
+        foreach ($transactionDto->transaction_items as $transactionItemDto) {
+            $subtotal += $transactionItemDto->total_value;
+            if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+                $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
+                $taxes += $valueTaxes;
+            }
+            $total = $subtotal + $taxes;
+        }
+
+        $transactionDto->total_before_taxes = $subtotal;
+        $transactionDto->total_taxes = $taxes;
+        $transactionDto->total_value = $total;
+    }
+
+    public function actionGetProductInfo($document_id, $product_id, $warehouse_id = '')
     {
         Utils::validateCompanySelected();
         $company_id = Utils::getCompanySelected();
 
         Utils::validateBelongsToCompany($company_id);
 
+        $document = Document::findOne(['document_id' => $document_id]);
+        if ($document === null) {
+            return null;
+        }
         $product = Product::findOne(['product_id' => $product_id]);
         if ($product === null) {
             return null;
@@ -476,14 +593,22 @@ class TransactionController extends Controller
         if ($warehouse_id === '') {
             $warehouse_id = null;
         }
-        if (isset($warehouse_id)) {
-            $warehouse = Warehouse::findOne(['warehouse_id' => $warehouse_id]);
+        if ($document->intended_for === Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB) {
+            if (isset($warehouse_id)) {
+                $warehouse = Warehouse::findOne(['warehouse_id' => $warehouse_id]);
+            }
+            $value = $product->sugested_value;// TODO Await for kardex implementation
+            $taxRate = $product->tax_rate;
+            $discountRate = $product->discount_rate;
+        } else {
+            $value = '';
+            $taxRate = '';
+            $discountRate = '';
         }
-        $value = $product->sugested_value;// TODO Await for kardex implementation
         return json_encode([
             'value' => $value,
-            'taxRate' => $product->tax_rate,
-            'discountRate' => $product->discount_rate
+            'taxRate' => $taxRate,
+            'discountRate' => $discountRate,
         ]);
     }
 

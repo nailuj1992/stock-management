@@ -60,7 +60,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 'onchange' => '
                                 const warehouseId = $("#transaction-item-' . $i . '-warehouse_id").val()
                                 const productId = $(this).val()
-                                fillValuesProduct("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '", productId, warehouseId, ' . $i . ')
+                                fillValuesProduct("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '", ' . $transactionDto->document_id . ', productId, warehouseId, ' . $i . ')
                                 ',
                             ])->label(false)->error(false) ?>
                         </td>
@@ -169,6 +169,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
             ?>
         </table>
 
+        <?= $form->errorSummary($transactionDto) ?>
+
         <?= $form->field($transactionDto, 'total_before_taxes')
             ->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'disabled' => true]) ?>
 
@@ -179,7 +181,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
             ->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'disabled' => true]) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t('app', 'Save'), ['name' => 'save', 'value' => 'true', 'class' => 'btn btn-success']) ?>
             <?= Html::submitButton(Yii::t('app', 'Add other item'), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
         </div>
 
@@ -207,8 +209,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
         }
     }
 
-    function fillValuesProduct(url, productId, warehouseId, i) {
-        $.get(url + "/?product_id=" + productId + "&warehouse_id=" + warehouseId, function (data) {
+    function fillValuesProduct(url, documentId, productId, warehouseId, i) {
+        $.get(url + "/?document_id=" + documentId + "&product_id=" + productId + "&warehouse_id=" + warehouseId, function (data) {
             if (!data) {
                 $("#transaction-item-" + i + "-unit_value").val("")
                 $("#transaction-item-" + i + "-tax_rate").val("")
