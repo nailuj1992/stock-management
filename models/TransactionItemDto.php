@@ -16,7 +16,9 @@ use Yii;
  * @property float|null $tax_rate
  * @property float|null $discount_rate
  * @property int $product_id
+ * @property string $product
  * @property int|null $warehouse_id
+ * @property string|null $warehouse
  * @property string $status
  * @property float $total_value
  */
@@ -29,7 +31,9 @@ class TransactionItemDto extends \yii\db\ActiveRecord
     public $tax_rate;
     public $discount_rate;
     public $product_id;
+    public $product;
     public $warehouse_id;
+    public $warehouse;
     public $status;
 
     /**
@@ -68,7 +72,9 @@ class TransactionItemDto extends \yii\db\ActiveRecord
             'tax_rate' => Yii::t('app', 'Tax Rate'),
             'discount_rate' => Yii::t('app', 'Discount Rate'),
             'product_id' => Yii::t('app', 'Product'),
-            'warehouse_id' => Yii::t('app', 'Warehouse ID'),
+            'product' => Yii::t('app', 'Product'),
+            'warehouse_id' => Yii::t('app', 'Warehouse'),
+            'warehouse' => Yii::t('app', 'Warehouse'),
             'company_id' => Yii::t('app', 'Company ID'),
             'status' => Yii::t('app', 'Status'),
             'created_by' => Yii::t('app', 'Created By'),

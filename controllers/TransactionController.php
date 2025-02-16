@@ -114,6 +114,34 @@ class TransactionController extends Controller
     }
 
     /**
+     * Displays a single Transaction model.
+     * @param int $transaction_id Transaction ID
+     * @return string
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionView($transaction_id)
+    {
+        $model = $this->findModel($transaction_id);
+        $company_id = $model->company_id;
+
+        if (in_array($model->status, [Constants::STATUS_DRAFT_DB, Constants::STATUS_DELETED_DB])) {
+            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        }
+
+        $transactionDto = $this->newTransactionDtoDraft($model);
+        $document = $model->document;
+
+        $transactionDto->transaction_items = [];
+        $this->getTransactionItems($transaction_id, $company_id, $document, $transactionDto);
+
+        return $this->render('view', [
+            'model' => $model,
+            'transactionDto' => $transactionDto,
+            'document' => $document,
+        ]);
+    }
+
+    /**
      * Creates a new Transaction model.
      * If creation is successful, the browser will be redirected to the 'draft' page.
      * @return string|\yii\web\Response
@@ -235,7 +263,7 @@ class TransactionController extends Controller
         if ($document === null) {
             return false;
         }
-        return $document->apply_for === Constants::DOCUMENT_APPLY_SUPPLIER_DB;
+        return $document->appliesForSupplier();
     }
 
     public function actionIsDocumentLinkedWithOtherTransaction($document_id)
@@ -249,7 +277,7 @@ class TransactionController extends Controller
         if ($document === null) {
             return false;
         }
-        return $document->has_other_transaction === Constants::OPTION_YES_DB;
+        return $document->hasOtherTransaction();
     }
 
     public function actionDocumentHasExpiration($document_id)
@@ -263,7 +291,7 @@ class TransactionController extends Controller
         if ($document === null) {
             return false;
         }
-        return $document->has_expiration === Constants::OPTION_YES_DB;
+        return $document->hasExpiration();
     }
 
     /**
@@ -287,18 +315,14 @@ class TransactionController extends Controller
         }
 
         $transactionDto = $this->newTransactionDtoDraft($model);
-
         $document = $model->document;
-        $supplier = $model->supplier;
-        $linked_transaction = $model->linkedTransaction;
-
         $products = Product::getActiveProductsForCompany($company_id);
         $warehouses = Warehouse::getActiveWarehousesForCompany($company_id);
 
         if (isset($this->request->post()['TransactionItemDto'])) {
             $this->regatherTransactionItemsDraft($document, $transactionDto, $this->request->post()['TransactionItemDto']);
         } elseif (isset($transactionDto->linked_transaction_id)) {
-            $this->getLinkedTransactionItemsDraft($transaction_id, $company_id, $document, $transactionDto);
+            $this->getTransactionItems($transactionDto->linked_transaction_id, $company_id, $document, $transactionDto, Constants::STATUS_ACTIVE_DB);
         } else {
             $this->createNewTransactionItemsDraft($transactionDto);
         }
@@ -344,8 +368,6 @@ class TransactionController extends Controller
             'model' => $model,
             'transactionDto' => $transactionDto,
             'document' => $document,
-            'supplier' => $supplier,
-            'linked_transaction' => $linked_transaction,
             'products' => $products,
             'warehouses' => $warehouses,
         ]);
@@ -362,7 +384,7 @@ class TransactionController extends Controller
         if ($document === null) {
             return false;
         }
-        return $document->has_taxes === Constants::OPTION_YES_DB;
+        return $document->hasTaxes();
     }
 
     private function calculateTotalValueProduct($amountString, $unitValueString, $discountRateString)
@@ -438,7 +460,7 @@ class TransactionController extends Controller
             $transactionDto->transaction_items[] = $transactionItemDto;
 
             $subtotal += $transactionItemDto->total_value;
-            if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+            if ($document->hasTaxes() && isset($transactionItemDto->tax_rate)) {
                 $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
                 $taxes += $valueTaxes;
             }
@@ -462,36 +484,43 @@ class TransactionController extends Controller
     }
 
     /**
-     * To get all the transaction items belonging to a linked transaction.
+     * To get all the transaction items belonging to a transaction.
      * @param mixed $transaction_id
      * @param mixed $company_id
      * @param \app\models\entities\Document $document
      * @param \app\models\TransactionDto $transactionDto
      * @return void
      */
-    private function getLinkedTransactionItemsDraft($transaction_id, $company_id, Document $document, TransactionDto $transactionDto): void
+    private function getTransactionItems($transaction_id, $company_id, Document $document, TransactionDto $transactionDto, $status = null): void
     {
-        $linkedTransactionItems = TransactionItem::find()
+        $transactionItems = TransactionItem::find()
             ->where(['=', 'company_id', $company_id])
             ->andWhere(['transaction_id' => $transaction_id])
-            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
-            ->asArray()->all();
-        if (isset($linkedTransactionItems) && !empty($linkedTransactionItems)) {
+            ->andWhere(['=', 'status', isset($status) ? $status : $transactionDto->status])
+            ->all();
+        if (isset($transactionItems) && !empty($transactionItems)) {
             $subtotal = 0;
             $taxes = 0;
-            foreach ($linkedTransactionItems as $linkedTransactionItem) {
+            foreach ($transactionItems as $item) {
                 $transactionItemDto = new TransactionItemDto();
-                $transactionItemDto->product_id = $linkedTransactionItem['product_id'];
-                $transactionItemDto->warehouse_id = $linkedTransactionItem['warehouse_id'];
-                $transactionItemDto->amount = $linkedTransactionItem['amount'];
-                $transactionItemDto->unit_value = $linkedTransactionItem['unit_value'];
-                $transactionItemDto->discount_rate = $linkedTransactionItem['discount_rate'];
-                $transactionItemDto->tax_rate = $linkedTransactionItem['tax_rate'];
+
+                $transactionItemDto->product_id = $item['product_id'];
+                $product = $item['product'];
+                $transactionItemDto->product = $product->code . ' - ' . $product->name;
+
+                $transactionItemDto->warehouse_id = $item['warehouse_id'];
+                $warehouse = $item['warehouse'];
+                $transactionItemDto->warehouse = isset($warehouse) ? $warehouse->code . ' - ' . $warehouse->name : '';
+
+                $transactionItemDto->amount = $item['amount'];
+                $transactionItemDto->unit_value = $item['unit_value'];
+                $transactionItemDto->discount_rate = $item['discount_rate'];
+                $transactionItemDto->tax_rate = $item['tax_rate'];
                 $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
                 $transactionDto->transaction_items[] = $transactionItemDto;
 
                 $subtotal += $transactionItemDto->total_value;
-                if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+                if ($document->hasTaxes() && isset($transactionItemDto->tax_rate)) {
                     $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
                     $taxes += $valueTaxes;
                 }
@@ -531,7 +560,7 @@ class TransactionController extends Controller
 
         foreach ($transactionDto->transaction_items as $transactionItemDto) {
             $subtotal += $transactionItemDto->total_value;
-            if ($document->has_taxes === Constants::OPTION_YES_DB && isset($transactionItemDto->tax_rate)) {
+            if ($document->hasTaxes() && isset($transactionItemDto->tax_rate)) {
                 $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
                 $taxes += $valueTaxes;
             }

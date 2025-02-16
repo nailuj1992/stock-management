@@ -138,6 +138,26 @@ class Document extends \yii\db\ActiveRecord
         return Utils::getFullYesNo($this->has_other_transaction);
     }
 
+    public function appliesForSupplier()
+    {
+        return $this->apply_for === Constants::DOCUMENT_APPLY_SUPPLIER_DB;
+    }
+
+    public function hasOtherTransaction()
+    {
+        return $this->has_other_transaction === Constants::OPTION_YES_DB;
+    }
+
+    public function hasExpiration()
+    {
+        return $this->has_expiration === Constants::OPTION_YES_DB;
+    }
+
+    public function hasTaxes()
+    {
+        return $this->has_taxes === Constants::OPTION_YES_DB;
+    }
+
     public static function getActionsIntendedFor()
     {
         $resp = [

@@ -8,8 +8,6 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\TransactionDto $transactionDto */
 /** @var app\models\entities\Transaction $model */
 /** @var app\models\entities\Document $document */
-/** @var app\models\entities\Supplier|null $supplier */
-/** @var app\models\entities\Transaction|null $linked_transaction */
 /** @var app\models\entities\Product[] $products */
 /** @var app\models\entities\Warehouse[] $warehouses */
 
@@ -167,7 +165,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                     'type' => 'hidden',
                                     'min' => 0,
                                     'max' => 100,
-                                    'disabled' => true,
+                                    'readonly' => true,
                                     'id' => 'transaction-item-' . $i . '-tax_rate',
                                     'name' => 'TransactionItemDto[' . $i . '][tax_rate]',
                                 ])
