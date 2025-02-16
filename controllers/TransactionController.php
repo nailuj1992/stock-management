@@ -90,7 +90,8 @@ class TransactionController extends Controller
             ],
             'sort' => [
                 'defaultOrder' => [
-                    'created_at' => SORT_DESC,
+                    'creation_date' => SORT_DESC,
+                    'updated_at' => SORT_DESC,
                 ]
             ],
         ]);
@@ -101,7 +102,8 @@ class TransactionController extends Controller
                 ->andWhere(['IN', 'status', [Constants::STATUS_DRAFT_DB]]),
             'sort' => [
                 'defaultOrder' => [
-                    'created_at' => SORT_DESC,
+                    'creation_date' => SORT_DESC,
+                    'updated_at' => SORT_DESC,
                 ]
             ],
         ]);
@@ -128,11 +130,11 @@ class TransactionController extends Controller
             throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
         }
 
-        $transactionDto = $this->newTransactionDtoDraft($model);
+        $transactionDto = TransactionDto::newTransactionDto($model);
         $document = $model->document;
 
         $transactionDto->transaction_items = [];
-        $this->getTransactionItems($transaction_id, $company_id, $document, $transactionDto);
+        TransactionDto::getTransactionItems($transaction_id, $company_id, $document, $transactionDto);
 
         return $this->render('view', [
             'model' => $model,
@@ -314,7 +316,7 @@ class TransactionController extends Controller
             throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
         }
 
-        $transactionDto = $this->newTransactionDtoDraft($model);
+        $transactionDto = TransactionDto::newTransactionDto($model);
         $document = $model->document;
         $products = Product::getActiveProductsForCompany($company_id);
         $warehouses = Warehouse::getActiveWarehousesForCompany($company_id);
@@ -322,7 +324,7 @@ class TransactionController extends Controller
         if (isset($this->request->post()['TransactionItemDto'])) {
             $this->regatherTransactionItemsDraft($document, $transactionDto, $this->request->post()['TransactionItemDto']);
         } elseif (isset($transactionDto->linked_transaction_id)) {
-            $this->getTransactionItems($transactionDto->linked_transaction_id, $company_id, $document, $transactionDto, Constants::STATUS_ACTIVE_DB);
+            TransactionDto::getTransactionItems($transactionDto->linked_transaction_id, $company_id, $document, $transactionDto, Constants::STATUS_ACTIVE_DB);
         } else {
             $this->createNewTransactionItemsDraft($transactionDto);
         }
@@ -387,47 +389,6 @@ class TransactionController extends Controller
         return $document->hasTaxes();
     }
 
-    private function calculateTotalValueProduct($amountString, $unitValueString, $discountRateString)
-    {
-        if ($amountString && $amountString !== "" && $unitValueString && $unitValueString !== "") {
-            $unitValue = (int) $unitValueString;
-            $amount = (int) $amountString;
-            $discountRate = 0;
-            if ($discountRateString && $discountRateString !== "") {
-                $discountRate = (int) $discountRateString;
-            }
-            $totalValue = $amount * $unitValue;
-            if ($discountRate > 0) {
-                $totalValue = $totalValue - ($totalValue * $discountRate / 100);
-            }
-            return $totalValue;
-        } else {
-            return "";
-        }
-    }
-
-    /**
-     * To create a new instance of TransactionDto for the draft method.
-     * @param \app\models\entities\Transaction $model
-     * @return TransactionDto
-     */
-    private function newTransactionDtoDraft(Transaction $model): TransactionDto
-    {
-        $transactionDto = new TransactionDto();
-        $transactionDto->transaction_id = $model->transaction_id;
-        $transactionDto->num_transaction = $model->num_transaction;
-        $transactionDto->document_id = $model->document_id;
-        $transactionDto->document = $model->document->code . ' - ' . $model->document->name;
-        $transactionDto->creation_date = Utils::formatDate($model->creation_date);
-        $transactionDto->expiration_date = isset($model->expiration_date) ? Utils::formatDate($model->expiration_date) : '';
-        $transactionDto->linked_transaction_id = $model->linked_transaction_id;
-        $transactionDto->linked_transaction = isset($model->linkedTransaction) ? $model->linkedTransaction->document->code . ' - ' . $model->linkedTransaction->num_transaction : '';
-        $transactionDto->supplier_id = $model->supplier_id;
-        $transactionDto->supplier = isset($model->supplier) ? $model->supplier->code . ' - ' . $model->supplier->name : '';
-        $transactionDto->status = $model->status;
-        return $transactionDto;
-    }
-
     /**
      * To regather the transaction items after clicking any submit button.
      * @param \app\models\entities\Document $document
@@ -448,7 +409,7 @@ class TransactionController extends Controller
             $transactionItemDto->amount = $transactionItem['amount'];
             $transactionItemDto->unit_value = $transactionItem['unit_value'];
             $transactionItemDto->discount_rate = $transactionItem['discount_rate'];
-            $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
+            $transactionItemDto->total_value = TransactionDto::calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
 
             $info = $this->actionGetProductInfo($transactionItemDto->product_id, $transactionItemDto->warehouse_id);
             if (isset($info)) {
@@ -481,56 +442,6 @@ class TransactionController extends Controller
     {
         $transactionDto->transaction_items = [];
         $transactionDto->transaction_items[] = new TransactionItemDto();
-    }
-
-    /**
-     * To get all the transaction items belonging to a transaction.
-     * @param mixed $transaction_id
-     * @param mixed $company_id
-     * @param \app\models\entities\Document $document
-     * @param \app\models\TransactionDto $transactionDto
-     * @return void
-     */
-    private function getTransactionItems($transaction_id, $company_id, Document $document, TransactionDto $transactionDto, $status = null): void
-    {
-        $transactionItems = TransactionItem::find()
-            ->where(['=', 'company_id', $company_id])
-            ->andWhere(['transaction_id' => $transaction_id])
-            ->andWhere(['=', 'status', isset($status) ? $status : $transactionDto->status])
-            ->all();
-        if (isset($transactionItems) && !empty($transactionItems)) {
-            $subtotal = 0;
-            $taxes = 0;
-            foreach ($transactionItems as $item) {
-                $transactionItemDto = new TransactionItemDto();
-
-                $transactionItemDto->product_id = $item['product_id'];
-                $product = $item['product'];
-                $transactionItemDto->product = $product->code . ' - ' . $product->name;
-
-                $transactionItemDto->warehouse_id = $item['warehouse_id'];
-                $warehouse = $item['warehouse'];
-                $transactionItemDto->warehouse = isset($warehouse) ? $warehouse->code . ' - ' . $warehouse->name : '';
-
-                $transactionItemDto->amount = $item['amount'];
-                $transactionItemDto->unit_value = $item['unit_value'];
-                $transactionItemDto->discount_rate = $item['discount_rate'];
-                $transactionItemDto->tax_rate = $item['tax_rate'];
-                $transactionItemDto->total_value = $this->calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
-                $transactionDto->transaction_items[] = $transactionItemDto;
-
-                $subtotal += $transactionItemDto->total_value;
-                if ($document->hasTaxes() && isset($transactionItemDto->tax_rate)) {
-                    $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
-                    $taxes += $valueTaxes;
-                }
-                $total = $subtotal + $taxes;
-            }
-
-            $transactionDto->total_before_taxes = $subtotal;
-            $transactionDto->total_taxes = $taxes;
-            $transactionDto->total_value = $total;
-        }
     }
 
     /**

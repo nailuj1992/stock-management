@@ -4,6 +4,8 @@ namespace app\models;
 
 use app\models\entities\Document;
 use app\models\entities\Supplier;
+use app\models\entities\Transaction;
+use app\models\entities\TransactionItem;
 use app\models\Utils;
 use Yii;
 
@@ -94,5 +96,103 @@ class TransactionDto extends \yii\db\ActiveRecord
     public function getFullStatus()
     {
         return Utils::getFullStatus($this->status);
+    }
+
+    /**
+     * Method to create a new instance of TransactionDto from a Transaction model.
+     * @param \app\models\entities\Transaction $model
+     * @return TransactionDto
+     */
+    public static function newTransactionDto(Transaction $model): TransactionDto
+    {
+        $transactionDto = new TransactionDto();
+        $transactionDto->transaction_id = $model->transaction_id;
+        $transactionDto->num_transaction = $model->num_transaction;
+        $transactionDto->document_id = $model->document_id;
+        $transactionDto->document = $model->document->code . ' - ' . $model->document->name;
+        $transactionDto->creation_date = Utils::formatDate($model->creation_date);
+        $transactionDto->expiration_date = isset($model->expiration_date) ? Utils::formatDate($model->expiration_date) : '';
+        $transactionDto->linked_transaction_id = $model->linked_transaction_id;
+        $transactionDto->linked_transaction = isset($model->linkedTransaction) ? $model->linkedTransaction->document->code . ' - ' . $model->linkedTransaction->num_transaction : '';
+        $transactionDto->supplier_id = $model->supplier_id;
+        $transactionDto->supplier = isset($model->supplier) ? $model->supplier->code . ' - ' . $model->supplier->name : '';
+        $transactionDto->status = $model->status;
+        return $transactionDto;
+    }
+
+    /**
+     * To get all the transaction items belonging to a transaction.
+     * @param mixed $transaction_id
+     * @param mixed $company_id
+     * @param \app\models\entities\Document $document
+     * @param \app\models\TransactionDto $transactionDto
+     * @return void
+     */
+    public static function getTransactionItems($transaction_id, $company_id, Document $document, TransactionDto $transactionDto, $status = null): void
+    {
+        $transactionItems = TransactionItem::find()
+            ->where(['=', 'company_id', $company_id])
+            ->andWhere(['transaction_id' => $transaction_id])
+            ->andWhere(['=', 'status', isset($status) ? $status : $transactionDto->status])
+            ->all();
+        if (isset($transactionItems) && !empty($transactionItems)) {
+            $subtotal = 0;
+            $taxes = 0;
+            foreach ($transactionItems as $item) {
+                $transactionItemDto = new TransactionItemDto();
+
+                $transactionItemDto->product_id = $item['product_id'];
+                $product = $item['product'];
+                $transactionItemDto->product = $product->code . ' - ' . $product->name;
+
+                $transactionItemDto->warehouse_id = $item['warehouse_id'];
+                $warehouse = $item['warehouse'];
+                $transactionItemDto->warehouse = isset($warehouse) ? $warehouse->code . ' - ' . $warehouse->name : '';
+
+                $transactionItemDto->amount = $item['amount'];
+                $transactionItemDto->unit_value = $item['unit_value'];
+                $transactionItemDto->discount_rate = $item['discount_rate'];
+                $transactionItemDto->tax_rate = $item['tax_rate'];
+                $transactionItemDto->total_value = self::calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
+                $transactionDto->transaction_items[] = $transactionItemDto;
+
+                $subtotal += $transactionItemDto->total_value;
+                if ($document->hasTaxes() && isset($transactionItemDto->tax_rate)) {
+                    $valueTaxes = $subtotal * ($transactionItemDto->tax_rate / 100);
+                    $taxes += $valueTaxes;
+                }
+                $total = $subtotal + $taxes;
+            }
+
+            $transactionDto->total_before_taxes = $subtotal;
+            $transactionDto->total_taxes = $taxes;
+            $transactionDto->total_value = $total;
+        }
+    }
+
+    /**
+     * Calculates the total value for a transaction item, given it's amount, unit value, and discount rate.
+     * @param mixed $amountString
+     * @param mixed $unitValueString
+     * @param mixed $discountRateString
+     * @return int|string
+     */
+    public static function calculateTotalValueProduct($amountString, $unitValueString, $discountRateString)
+    {
+        if ($amountString && $amountString !== "" && $unitValueString && $unitValueString !== "") {
+            $unitValue = (int) $unitValueString;
+            $amount = (int) $amountString;
+            $discountRate = 0;
+            if ($discountRateString && $discountRateString !== "") {
+                $discountRate = (int) $discountRateString;
+            }
+            $totalValue = $amount * $unitValue;
+            if ($discountRate > 0) {
+                $totalValue = $totalValue - ($totalValue * $discountRate / 100);
+            }
+            return $totalValue;
+        } else {
+            return "";
+        }
     }
 }
