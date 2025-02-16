@@ -28,9 +28,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 $.get("' . yii\helpers\Url::to(['/transaction/get-next-num-transaction']) . '/?document_id=" + $(this).val(), function(data) {
                     $("#transactiondto-num_transaction").val(data);
                     if (Number(data) !== 1) {
-                        $("#transactiondto-num_transaction").prop("disabled", true);
+                        $("#transactiondto-num_transaction").prop("readonly", true);
                     } else {
-                        $("#transactiondto-num_transaction").prop("disabled", false);
+                        $("#transactiondto-num_transaction").prop("readonly", false);
                     }
                 });
                 $.get("' . yii\helpers\Url::to(['/transaction/is-document-for-suppliers']) . '/?document_id=" + $(this).val(), function(data) {

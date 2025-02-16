@@ -167,4 +167,13 @@ class Document extends \yii\db\ActiveRecord
         ];
         return ArrayHelper::map($resp, 'code', 'name');
     }
+
+    public static function getActiveDocumentsForCompany($company_id)
+    {
+        $documents = self::find()->select(['document_id', 'concat(code, \' - \', name) as name'])
+            ->where(['=', 'company_id', $company_id])
+            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
+            ->asArray()->all();
+        return ArrayHelper::map($documents, 'document_id', 'name');
+    }
 }

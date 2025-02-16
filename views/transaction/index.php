@@ -51,10 +51,22 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{continue}',
+                'template' => '{continue} {delete}',
                 'buttons' => [
                     'continue' => function ($url, $model, $key) {
                     return Html::a(Yii::t('app', 'Continue'), ['draft', 'transaction_id' => $model->transaction_id], ['class' => 'btn btn-outline-warning btn-xs']);
+                },
+                    'delete' => function ($url, $model, $key) {
+                    if (Utils::belongsToCompany($model->company_id)) {
+                        $question = Yii::t('app', "Are you sure you want to delete the transaction {code}-{name}?", ['code' => $model->document->code, 'name' => $model->num_transaction]);
+                        return Html::a(Yii::t('app', 'Delete'), ['delete-draft', 'transaction_id' => $model->transaction_id], [
+                            'class' => "btn btn-outline-danger btn-xs",
+                            'data' => [
+                                'confirm' => $question,
+                                'method' => 'post',
+                            ],
+                        ]);
+                    }
                 },
                 ]
             ],
@@ -70,44 +82,30 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => '#',
                 'format' => 'raw',
                 'value' => function ($model) {
-                    return $model->num_transaction;
+                    return $model->document->code . ' - ' . $model->num_transaction;
                 },
             ],
-            // [
-            //     'attribute' => Yii::t('app', 'Code'),
-            //     'format' => 'raw',
-            //     'value' => function ($model) {
-            //     return $model->code;
-            // },
-            // ],
-            // [
-            //     'attribute' => Yii::t('app', 'Name'),
-            //     'format' => 'raw',
-            //     'value' => function ($model) {
-            //     return $model->name;
-            // },
-            // ],
-            // [
-            //     'attribute' => Yii::t('app', 'Intended For'),
-            //     'format' => 'raw',
-            //     'value' => function ($model) {
-            //     return $model->getFullAction();
-            // },
-            // ],
-            // [
-            //     'attribute' => Yii::t('app', 'Apply For'),
-            //     'format' => 'raw',
-            //     'value' => function ($model) {
-            //     return $model->getFullApply();
-            // },
-            // ],
-            // [
-            //     'attribute' => Yii::t('app', 'Status'),
-            //     'format' => 'raw',
-            //     'value' => function ($model) {
-            //     return $model->getFullStatus();
-            // },
-            // ],
+            [
+                'attribute' => Yii::t('app', 'Creation Date'),
+                'format' => 'date',
+                'value' => function ($model) {
+                    return $model->creation_date;
+                },
+            ],
+            [
+                'attribute' => Yii::t('app', 'Expiration Date'),
+                'format' => 'date',
+                'value' => function ($model) {
+                    return $model->expiration_date;
+                },
+            ],
+            [
+                'attribute' => Yii::t('app', 'Status'),
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return $model->getFullStatus();
+                },
+            ],
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{view}',

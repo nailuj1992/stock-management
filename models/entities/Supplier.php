@@ -2,8 +2,10 @@
 
 namespace app\models\entities;
 
+use app\models\Constants;
 use app\models\Utils;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "supplier".
@@ -109,5 +111,14 @@ class Supplier extends \yii\db\ActiveRecord
     public function getFullStatus()
     {
         return Utils::getFullStatus($this->status);
+    }
+
+    public static function getActiveSuppliersForCompany($company_id)
+    {
+        $suppliers = self::find()->select(['supplier_id', 'concat(code, \' - \', name) as name'])
+            ->where(['=', 'company_id', $company_id])
+            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
+            ->asArray()->all();
+        return ArrayHelper::map($suppliers, 'supplier_id', 'name');
     }
 }

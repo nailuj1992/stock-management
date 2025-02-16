@@ -18,6 +18,7 @@ use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\bootstrap5\Html;
@@ -51,10 +52,17 @@ class TransactionController extends Controller
                                 'get-linked-transactions',
                                 'document-has-expiration',
                                 'document-has-taxes',
-                                'get-product-info'
+                                'get-product-info',
+                                'delete-draft',
                             ],
                             'roles' => [Constants::ROLE_USER],
                         ],
+                    ],
+                ],
+                'verbs' => [
+                    'class' => VerbFilter::className(),
+                    'actions' => [
+                        'delete-draft' => ['POST'],
                     ],
                 ],
             ]
@@ -78,7 +86,7 @@ class TransactionController extends Controller
                 ->where(['=', 'company_id', $company_id])
                 ->andWhere(['IN', 'status', [Constants::STATUS_ACTIVE_DB, Constants::STATUS_INACTIVE_DB, Constants::STATUS_NULL_DB]]),
             'pagination' => [
-                'pageSize' => 50
+                'pageSize' => 10
             ],
             'sort' => [
                 'defaultOrder' => [
@@ -106,8 +114,8 @@ class TransactionController extends Controller
     }
 
     /**
-     * Creates a new Document model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
+     * Creates a new Transaction model.
+     * If creation is successful, the browser will be redirected to the 'draft' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
@@ -118,17 +126,8 @@ class TransactionController extends Controller
         Utils::belongsToCompany($company_id);
         $model = new TransactionDto();
 
-        $documentsQuery = Document::find()->select(['document_id', 'concat(code, \' - \', name) as name'])
-            ->where(['=', 'company_id', $company_id])
-            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
-            ->asArray()->all();
-        $documents = ArrayHelper::map($documentsQuery, 'document_id', 'name');
-
-        $suppliersQuery = Supplier::find()->select(['supplier_id', 'concat(code, \' - \', name) as name'])
-            ->where(['=', 'company_id', $company_id])
-            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
-            ->asArray()->all();
-        $suppliers = ArrayHelper::map($suppliersQuery, 'supplier_id', 'name');
+        $documents = Document::getActiveDocumentsForCompany($company_id);
+        $suppliers = Supplier::getActiveSuppliersForCompany($company_id);
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
@@ -267,6 +266,91 @@ class TransactionController extends Controller
         return $document->has_expiration === Constants::OPTION_YES_DB;
     }
 
+    /**
+     * Creates new TransactionItem[] models.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param mixed $transaction_id
+     * @throws \yii\web\NotFoundHttpException
+     * @return string|Yii\web\Response
+     */
+    public function actionDraft($transaction_id)
+    {
+        Utils::validateCompanySelected();
+        $company_id = Utils::getCompanySelected();
+
+        Utils::belongsToCompany($company_id);
+
+        $model = $this->findModel($transaction_id);
+
+        if ($model->status !== Constants::STATUS_DRAFT_DB) {
+            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        }
+
+        $transactionDto = $this->newTransactionDtoDraft($model);
+
+        $document = $model->document;
+        $supplier = $model->supplier;
+        $linked_transaction = $model->linkedTransaction;
+
+        $products = Product::getActiveProductsForCompany($company_id);
+        $warehouses = Warehouse::getActiveWarehousesForCompany($company_id);
+
+        if (isset($this->request->post()['TransactionItemDto'])) {
+            $this->regatherTransactionItemsDraft($document, $transactionDto, $this->request->post()['TransactionItemDto']);
+        } elseif (isset($transactionDto->linked_transaction_id)) {
+            $this->getLinkedTransactionItemsDraft($transaction_id, $company_id, $document, $transactionDto);
+        } else {
+            $this->createNewTransactionItemsDraft($transactionDto);
+        }
+
+        if (Yii::$app->request->post('addRow') == 'true') {
+            $this->actionAddRowDraft($transactionDto);
+        }
+
+        if (
+            str_contains(Yii::$app->request->post('removeRow'), 'row-')
+            && isset($transactionDto->transaction_items) && !empty($transactionDto->transaction_items)
+        ) {
+            $this->actionRemoveRowDraft(Yii::$app->request->post('removeRow'), $document, $transactionDto);
+        }
+
+        if (
+            $this->request->isPost && Yii::$app->request->post('save') == 'true'
+            && isset($this->request->post()['TransactionItemDto'])
+        ) {
+            $transactionDto->transaction_items = $this->request->post()['TransactionItemDto'];
+
+            $errors = 0;
+            if (!empty($transactionDto->transaction_items)) {
+                foreach ($transactionDto->transaction_items as $transactionItemDto) {
+                    // TODO Add existences validation only for Output transactions.
+
+                    // if ($transactionItemDto->amount === '' || $transactionItemDto->amount === '0') {
+                    //     $transactionItemDto->addError('amount', Yii::t('app', 'Amount should be greater than 0.'));
+                    //     $errors++;
+                    // }
+                }
+            }
+
+            if ($errors === 0 && !empty($transactionDto->transaction_items)) {
+                $saved = $this->actionSaveDraft($model, $transactionDto, $company_id);
+                if ($saved) {
+                    return $this->redirect(['view', 'transaction_id' => $model->transaction_id]);
+                }
+            }
+        }
+
+        return $this->render('draft', [
+            'model' => $model,
+            'transactionDto' => $transactionDto,
+            'document' => $document,
+            'supplier' => $supplier,
+            'linked_transaction' => $linked_transaction,
+            'products' => $products,
+            'warehouses' => $warehouses,
+        ]);
+    }
+
     public function actionDocumentHasTaxes($document_id)
     {
         Utils::validateCompanySelected();
@@ -298,122 +382,6 @@ class TransactionController extends Controller
         } else {
             return "";
         }
-    }
-
-    public function actionDraft($transaction_id)
-    {
-        Utils::validateCompanySelected();
-        $company_id = Utils::getCompanySelected();
-
-        Utils::belongsToCompany($company_id);
-
-        $model = $this->findModel($transaction_id);
-
-        if ($model->status !== Constants::STATUS_DRAFT_DB) {
-            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
-        }
-
-        $transactionDto = $this->newTransactionDtoDraft($model);
-
-        $document = $model->document;
-        $supplier = $model->supplier;
-        $linked_transaction = $model->linkedTransaction;
-
-        $productsQuery = Product::find()->select(['product_id', 'concat(code, \' - \', name) as name'])
-            ->where(['=', 'company_id', $company_id])
-            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
-            ->asArray()->all();
-        $products = ArrayHelper::map($productsQuery, 'product_id', 'name');
-
-        $warehousesQuery = Warehouse::find()->select(['warehouse_id', 'concat(code, \' - \', name) as name'])
-            ->where(['=', 'company_id', $company_id])
-            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
-            ->asArray()->all();
-        $warehouses = ArrayHelper::map($warehousesQuery, 'warehouse_id', 'name');
-
-        if (isset($this->request->post()['TransactionItemDto'])) {
-            $this->regatherTransactionItemsDraft($document, $transactionDto, $this->request->post()['TransactionItemDto']);
-        } elseif (isset($transactionDto->linked_transaction_id)) {
-            $this->getLinkedTransactionItemsDraft($transaction_id, $company_id, $document, $transactionDto);
-        } else {
-            $this->createNewTransactionItemsDraft($transactionDto);
-        }
-
-        if (Yii::$app->request->post('addRow') == 'true') {
-            $this->actionAddRowDraft($transactionDto);
-        }
-
-        if (
-            str_contains(Yii::$app->request->post('removeRow'), 'row-')
-            && isset($transactionDto->transaction_items) && !empty($transactionDto->transaction_items)
-        ) {
-            $this->actionRemoveRowDraft(Yii::$app->request->post('removeRow'), $document, $transactionDto);
-        }
-
-        if ($this->request->isPost && Yii::$app->request->post('save') == 'true' && isset($this->request->post()['TransactionItemDto'])) {// To manage the action of the Save submit button
-            $transactionDto->transaction_items = $this->request->post()['TransactionItemDto'];
-            $user_id = Yii::$app->user->identity->user_id;
-
-            $errors = 0;
-            if (!empty($transactionDto->transaction_items)) {
-                foreach ($transactionDto->transaction_items as $transactionItemDto) {
-                    // if ($transactionItemDto->amount === '' || $transactionItemDto->amount === '0') {
-                    //     $transactionItemDto->addError('amount', Yii::t('app', 'Amount should be greater than 0.'));
-                    //     $errors++;
-                    // }
-                }
-            }
-
-            if ($errors === 0 && !empty($transactionDto->transaction_items)) {
-                $transaction = Yii::$app->db->beginTransaction();
-                try {
-                    $success = true;
-                    foreach ($transactionDto->transaction_items as $transactionItemDto) {
-                        $transactionItem = new TransactionItem();
-
-                        $transactionItem->isNewRecord = true;
-                        $transactionItem->transaction_id = $model->transaction_id;
-                        $transactionItem->product_id = $transactionItemDto['product_id'];
-                        $transactionItem->warehouse_id = isset($transactionItemDto['warehouse_id']) && $transactionItemDto['warehouse_id'] !== '' ? $transactionItemDto['warehouse_id'] : null;
-                        $transactionItem->amount = $transactionItemDto['amount'];
-                        $transactionItem->unit_value = $transactionItemDto['unit_value'];
-                        $transactionItem->tax_rate = isset($transactionItemDto['tax_rate']) && $transactionItemDto['tax_rate'] !== '' ? $transactionItemDto['tax_rate'] : null;
-                        $transactionItem->discount_rate = isset($transactionItemDto['discount_rate']) && $transactionItemDto['discount_rate'] !== '' ? $transactionItemDto['discount_rate'] : null;
-                        $transactionItem->company_id = $company_id;
-                        $transactionItem->status = Constants::STATUS_ACTIVE_DB;
-                        $transactionItem->created_by = $user_id;
-                        $transactionItem->updated_by = $user_id;
-
-                        $success = $success && $transactionItem->validate() && $transactionItem->save();
-                    }
-
-                    $model->status = Constants::STATUS_ACTIVE_DB;
-                    $model->updated_by = $user_id;
-                    $model->updated_at = Utils::getDateNowDB();
-
-                    $success = $success && $model->validate() && $model->save();
-
-                    if ($success) {
-                        $transaction->commit();
-                        return $this->redirect(['view', 'transaction_id' => $model->transaction_id]);
-                    } else {
-                        $transaction->rollBack();
-                    }
-                } catch (Exception $ex) {
-                    $transaction->rollBack();
-                }
-            }
-        }
-
-        return $this->render('draft', [
-            'model' => $model,
-            'transactionDto' => $transactionDto,
-            'document' => $document,
-            'supplier' => $supplier,
-            'linked_transaction' => $linked_transaction,
-            'products' => $products,
-            'warehouses' => $warehouses,
-        ]);
     }
 
     /**
@@ -575,6 +543,55 @@ class TransactionController extends Controller
         $transactionDto->total_value = $total;
     }
 
+    /**
+     * To manage the action of the Save submit button.
+     * @param \app\models\entities\Transaction $model
+     * @param \app\models\TransactionDto $transactionDto
+     * @param mixed $company_id
+     * @return bool If the creation of the transaction items was successful.
+     */
+    private function actionSaveDraft(Transaction $model, TransactionDto $transactionDto, $company_id): bool
+    {
+        $user_id = Yii::$app->user->identity->user_id;
+        $transaction = Yii::$app->db->beginTransaction();
+        try {
+            $success = true;
+            foreach ($transactionDto->transaction_items as $transactionItemDto) {
+                $transactionItem = new TransactionItem();
+
+                $transactionItem->isNewRecord = true;
+                $transactionItem->transaction_id = $model->transaction_id;
+                $transactionItem->product_id = $transactionItemDto['product_id'];
+                $transactionItem->warehouse_id = isset($transactionItemDto['warehouse_id']) && $transactionItemDto['warehouse_id'] !== '' ? $transactionItemDto['warehouse_id'] : null;
+                $transactionItem->amount = $transactionItemDto['amount'];
+                $transactionItem->unit_value = $transactionItemDto['unit_value'];
+                $transactionItem->tax_rate = isset($transactionItemDto['tax_rate']) && $transactionItemDto['tax_rate'] !== '' ? $transactionItemDto['tax_rate'] : null;
+                $transactionItem->discount_rate = isset($transactionItemDto['discount_rate']) && $transactionItemDto['discount_rate'] !== '' ? $transactionItemDto['discount_rate'] : null;
+                $transactionItem->company_id = $company_id;
+                $transactionItem->status = Constants::STATUS_ACTIVE_DB;
+                $transactionItem->created_by = $user_id;
+                $transactionItem->updated_by = $user_id;
+
+                $success = $success && $transactionItem->validate() && $transactionItem->save();
+            }
+
+            $model->status = Constants::STATUS_ACTIVE_DB;
+            $model->updated_by = $user_id;
+            $model->updated_at = Utils::getDateNowDB();
+
+            $success = $success && $model->validate() && $model->save();
+
+            if ($success) {
+                $transaction->commit();
+                return true;
+            }
+            $transaction->rollBack();
+        } catch (Exception $ex) {
+            $transaction->rollBack();
+        }
+        return false;
+    }
+
     public function actionGetProductInfo($document_id, $product_id, $warehouse_id = '')
     {
         Utils::validateCompanySelected();
@@ -610,6 +627,31 @@ class TransactionController extends Controller
             'taxRate' => $taxRate,
             'discountRate' => $discountRate,
         ]);
+    }
+
+    /**
+     * Deletes an existing draft Transaction model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param int $transaction_id Transaction ID
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDeleteDraft($transaction_id)
+    {
+        $model = $this->findModel($transaction_id);
+        $user_id = Yii::$app->user->identity->user_id;
+
+        if ($model->status !== Constants::STATUS_DRAFT_DB) {
+            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION));
+        }
+
+        $model->status = Constants::STATUS_DELETED_DB;
+        $model->updated_by = $user_id;
+        $model->updated_at = Utils::getDateNowDB();
+
+        $model->save();
+
+        return $this->redirect(['index']);
     }
 
     /**

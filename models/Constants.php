@@ -83,5 +83,6 @@ class Constants
     const MESSAGE_COMMENT_COMPANY = 'You should enter a feedback for the applicant.';
     const MESSAGE_SELECT_COMPANY = "You should select a company to continue.";
     const MESSAGE_INFO_NOT_BELONG_COMPANY = "That information does not belong to your selected company.";
+    const MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION = "You can only delete a draft transaction.";
 
 }

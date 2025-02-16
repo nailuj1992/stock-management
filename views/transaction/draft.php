@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Utils;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
@@ -20,6 +21,21 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
 <div class="transaction-draft">
 
     <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?php
+        if (Utils::belongsToCompany($model->company_id)) {
+            $question = Yii::t('app', "Are you sure you want to delete the transaction {code}-{name}?", ['code' => $model->document->code, 'name' => $model->num_transaction]);
+            echo Html::a(Yii::t('app', 'Delete'), ['delete-draft', 'transaction_id' => $model->transaction_id], [
+                'class' => "btn btn-danger",
+                'data' => [
+                    'confirm' => $question,
+                    'method' => 'post',
+                ],
+            ]);
+        }
+        ?>
+    </p>
 
     <div class="transaction-form">
 
