@@ -52,8 +52,11 @@ class TransactionItemDto extends \yii\db\ActiveRecord
         return [
             [['amount', 'unit_value', 'product_id'], 'required'],
             [['amount', 'product_id', 'warehouse_id'], 'integer'],
+            [['amount'], 'integer', 'min' => 1],
             [['unit_value', 'tax_rate', 'discount_rate', 'total_value'], 'number'],
+            [['unit_value'], 'number', 'min' => 0],
             [['status'], 'string', 'max' => 1],
+            [['tax_rate', 'discount_rate'], 'number', 'min' => 0, 'max' => 100],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => Product::class, 'targetAttribute' => ['product_id' => 'product_id']],
             [['warehouse_id'], 'exist', 'skipOnError' => true, 'targetClass' => Warehouse::class, 'targetAttribute' => ['warehouse_id' => 'warehouse_id']],
         ];

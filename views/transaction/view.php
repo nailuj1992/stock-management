@@ -1,7 +1,5 @@
 <?php
 
-use app\models\Constants;
-use app\models\Utils;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\bootstrap5\ActiveForm;

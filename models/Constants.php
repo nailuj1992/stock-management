@@ -60,6 +60,8 @@ class Constants
     const OPTION_YES = "Yes";
     const OPTION_NO = "No";
 
+    const OPTION_ALL = "All";
+
     const SELECTED_COMPANY_ID = 'selected_company_id';
 
     const MAX_LENGTH_NUM_TRANSACTION = 10;

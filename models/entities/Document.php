@@ -158,6 +158,11 @@ class Document extends \yii\db\ActiveRecord
         return $this->has_taxes === Constants::OPTION_YES_DB;
     }
 
+    public function isIntendedForOutput()
+    {
+        return $this->intended_for === Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB;
+    }
+
     public static function getActionsIntendedFor()
     {
         $resp = [

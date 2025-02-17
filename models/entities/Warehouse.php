@@ -120,12 +120,24 @@ class Warehouse extends \yii\db\ActiveRecord
         return Utils::getFullStatus($this->status);
     }
 
-    public static function getActiveWarehousesForCompany($company_id)
+    private static function getActiveWarehousesForCompanyQuery($company_id)
     {
-        $warehouses = self::find()->select(['warehouse_id', 'concat(code, \' - \', name) as name'])
+        return self::find()->select(['warehouse_id', 'concat(code, \' - \', name) as name'])
             ->where(['=', 'company_id', $company_id])
             ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
             ->asArray()->all();
+    }
+
+    public static function getActiveWarehousesForCompany($company_id)
+    {
+        $warehouses = self::getActiveWarehousesForCompanyQuery($company_id);
+        return ArrayHelper::map($warehouses, 'warehouse_id', 'name');
+    }
+
+    public static function getActiveWarehousesForCompanyOrAll($company_id)
+    {
+        $warehouses = self::getActiveWarehousesForCompanyQuery($company_id);
+        $warehouses[] = ['warehouse_id' => Constants::OPTION_ALL, 'name' => Yii::t('app', 'All')];
         return ArrayHelper::map($warehouses, 'warehouse_id', 'name');
     }
 }

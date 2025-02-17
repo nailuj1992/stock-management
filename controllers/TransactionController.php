@@ -9,12 +9,14 @@ use app\models\entities\Supplier;
 use app\models\entities\Transaction;
 use app\models\entities\TransactionItem;
 use app\models\entities\Warehouse;
+use app\models\ExistencesDto;
 use app\models\TransactionDto;
 use app\models\TransactionItemDto;
 use app\models\Utils;
 use Exception;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
@@ -54,6 +56,7 @@ class TransactionController extends Controller
                                 'document-has-taxes',
                                 'get-product-info',
                                 'delete-draft',
+                                'existences',
                             ],
                             'roles' => [Constants::ROLE_USER],
                         ],
@@ -344,17 +347,47 @@ class TransactionController extends Controller
             $this->request->isPost && Yii::$app->request->post('save') == 'true'
             && isset($this->request->post()['TransactionItemDto'])
         ) {
-            $transactionDto->transaction_items = $this->request->post()['TransactionItemDto'];
+            $transactionDto->transaction_items = [];
+            $transactionItems = $this->request->post()['TransactionItemDto'];
+            foreach ($transactionItems as $item) {
+                $transactionItemDto = new TransactionItemDto();
+                $transactionItemDto->product_id = $item['product_id'];
+                $transactionItemDto->warehouse_id = $item['warehouse_id'];
+                $transactionItemDto->amount = $item['amount'];
+                $transactionItemDto->unit_value = $item['unit_value'];
+                $transactionItemDto->tax_rate = $item['tax_rate'];
+                $transactionItemDto->discount_rate = $item['discount_rate'];
+                $transactionItemDto->total_value = TransactionDto::calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
+                $transactionDto->transaction_items[] = $transactionItemDto;
+            }
 
             $errors = 0;
             if (!empty($transactionDto->transaction_items)) {
                 foreach ($transactionDto->transaction_items as $transactionItemDto) {
-                    // TODO Add existences validation only for Output transactions.
+                    $product_id = $transactionItemDto->product_id;
+                    $warehouse_id = $transactionItemDto->warehouse_id;
 
-                    // if ($transactionItemDto->amount === '' || $transactionItemDto->amount === '0') {
-                    //     $transactionItemDto->addError('amount', Yii::t('app', 'Amount should be greater than 0.'));
-                    //     $errors++;
-                    // }
+                    $product = Product::findOne(['product_id' => $product_id]);
+                    if ($product === null) {
+                        break;
+                    }
+                    $existencesList = ExistencesDto::getExistences($company_id, $product_id, $warehouse_id);
+                    if (!isset($existencesList) || empty($existencesList)) {
+                        break;
+                    }
+
+                    $existence = $existencesList[0];
+                    $amount = (int) $transactionItemDto->amount;
+                    $gap = $document->isIntendedForOutput() ? $existence->amountDifference - $amount : $existence->amountDifference + $amount;
+
+                    if (
+                        ($product->hasExistences() && $gap < $product->minimum_stock)
+                        || (!$product->hasExistences() && $gap < 0)
+                    ) {
+                        $transactionItemDto->addError('amount', Yii::t('app', 'Amount is below the minimum stock.'));
+                        $transactionDto->addError('amount', Yii::t('app', 'Amount is below the minimum stock.'));
+                        $errors++;
+                    }
                 }
             }
 
@@ -501,12 +534,12 @@ class TransactionController extends Controller
 
                 $transactionItem->isNewRecord = true;
                 $transactionItem->transaction_id = $model->transaction_id;
-                $transactionItem->product_id = $transactionItemDto['product_id'];
-                $transactionItem->warehouse_id = isset($transactionItemDto['warehouse_id']) && $transactionItemDto['warehouse_id'] !== '' ? $transactionItemDto['warehouse_id'] : null;
-                $transactionItem->amount = $transactionItemDto['amount'];
-                $transactionItem->unit_value = $transactionItemDto['unit_value'];
-                $transactionItem->tax_rate = isset($transactionItemDto['tax_rate']) && $transactionItemDto['tax_rate'] !== '' ? $transactionItemDto['tax_rate'] : null;
-                $transactionItem->discount_rate = isset($transactionItemDto['discount_rate']) && $transactionItemDto['discount_rate'] !== '' ? $transactionItemDto['discount_rate'] : null;
+                $transactionItem->product_id = $transactionItemDto->product_id;
+                $transactionItem->warehouse_id = isset($transactionItemDto->warehouse_id) && $transactionItemDto->warehouse_id !== '' ? $transactionItemDto->warehouse_id : null;
+                $transactionItem->amount = $transactionItemDto->amount;
+                $transactionItem->unit_value = $transactionItemDto->unit_value;
+                $transactionItem->tax_rate = isset($transactionItemDto->tax_rate) && $transactionItemDto->tax_rate !== '' ? $transactionItemDto->tax_rate : null;
+                $transactionItem->discount_rate = isset($transactionItemDto->discount_rate) && $transactionItemDto->discount_rate !== '' ? $transactionItemDto->discount_rate : null;
                 $transactionItem->company_id = $company_id;
                 $transactionItem->status = Constants::STATUS_ACTIVE_DB;
                 $transactionItem->created_by = $user_id;
@@ -613,5 +646,45 @@ class TransactionController extends Controller
         }
 
         throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+    }
+
+    /**
+     * Shows the availability of a product inside a warehouse.
+     * @return string
+     */
+    public function actionExistences()
+    {
+        Utils::validateCompanySelected();
+        $company_id = Utils::getCompanySelected();
+
+        Utils::belongsToCompany($company_id);
+
+        $products = Product::getActiveProductsForCompany($company_id);
+        $warehouses = Warehouse::getActiveWarehousesForCompanyOrAll($company_id);
+        $model = new ExistencesDto();
+
+        if ($this->request->isPost && isset($this->request->post()['ExistencesDto'])) {
+            $existencesRequest = $this->request->post()['ExistencesDto'];
+            $model->product_id = $existencesRequest['product_id'];
+            $model->warehouse_id = $existencesRequest['warehouse_id'];
+
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => ExistencesDto::getExistences($company_id, $model->product_id, $model->warehouse_id),
+            ]);
+            return $this->render('existences', [
+                'model' => $model,
+                'products' => $products,
+                'warehouses' => $warehouses,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('existences', [
+            'model' => $model,
+            'products' => $products,
+            'warehouses' => $warehouses,
+        ]);
     }
 }
