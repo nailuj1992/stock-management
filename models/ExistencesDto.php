@@ -44,8 +44,8 @@ class ExistencesDto extends \yii\db\ActiveRecord
     public static function getExistences($company_id, $product_id, $warehouse_id = '')
     {
         $sql = "SELECT p.product_id, CONCAT(p.code, ' - ', p.name) AS product, w.warehouse_id, CONCAT(w.code, ' - ', w.name) AS warehouse, "
-            . "SUM(CASE WHEN d.intended_for = 'I' THEN it.amount ELSE 0 end) AS amountInput, "
-            . "SUM(CASE WHEN d.intended_for = 'O' THEN it.amount ELSE 0 end) AS amountOutput "
+            . "SUM(CASE WHEN d.intended_for = :intendedInput THEN it.amount ELSE 0 end) AS amountInput, "
+            . "SUM(CASE WHEN d.intended_for = :intendedOutput THEN it.amount ELSE 0 end) AS amountOutput "
             . "FROM transaction_item it "
             . "LEFT JOIN transaction t ON it.transaction_id = t.transaction_id AND t.status = :status "
             . "LEFT JOIN document d ON t.document_id = d.document_id AND d.status = :status "
@@ -62,6 +62,8 @@ class ExistencesDto extends \yii\db\ActiveRecord
 
         $connection = Yii::$app->getDb();
         $command = $connection->createCommand($sql, [
+            ':intendedInput' => Constants::DOCUMENT_ACTION_INTENDED_INPUT_DB,
+            ':intendedOutput' => Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB,
             ':status' => Constants::STATUS_ACTIVE_DB,
             ':companyId' => $company_id,
             ':productId' => $product_id,
