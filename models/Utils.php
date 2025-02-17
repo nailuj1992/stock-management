@@ -26,6 +26,14 @@ class Utils
         return date('Y-m-d H:i:s');
     }
 
+    public static function formatDate($date)
+    {
+        $unixTime = strtotime($date);
+        $format = Yii::$app->formatter->dateFormat;
+        return date(str_replace("php:", "", $format), $unixTime);
+    }
+
+
     public static function generateTimeMark()
     {
         $now = new \DateTime();
@@ -65,6 +73,12 @@ class Utils
                 break;
             case Constants::STATUS_INACTIVE_DB:
                 $resp = Constants::STATUS_INACTIVE;
+                break;
+            case Constants::STATUS_NULL_DB:
+                $resp = Constants::STATUS_NULLED;
+                break;
+            case Constants::STATUS_DRAFT_DB:
+                $resp = Constants::STATUS_DRAFT;
                 break;
             default:
                 $resp = "-";

@@ -2,6 +2,7 @@
 
 namespace app\models\entities;
 
+use app\models\Utils;
 use Yii;
 
 /**
@@ -63,12 +64,12 @@ class Transaction extends \yii\db\ActiveRecord
     {
         return [
             'transaction_id' => Yii::t('app', 'Transaction ID'),
-            'num_transaction' => Yii::t('app', 'Num Transaction'),
-            'document_id' => Yii::t('app', 'Document ID'),
+            'num_transaction' => Yii::t('app', '# Transaction'),
+            'document_id' => Yii::t('app', 'Document'),
             'creation_date' => Yii::t('app', 'Creation Date'),
             'expiration_date' => Yii::t('app', 'Expiration Date'),
-            'linked_transaction_id' => Yii::t('app', 'Linked Transaction ID'),
-            'supplier_id' => Yii::t('app', 'Supplier ID'),
+            'linked_transaction_id' => Yii::t('app', 'Linked Transaction'),
+            'supplier_id' => Yii::t('app', 'Supplier'),
             'company_id' => Yii::t('app', 'Company ID'),
             'status' => Yii::t('app', 'Status'),
             'created_by' => Yii::t('app', 'Created By'),
@@ -126,5 +127,20 @@ class Transaction extends \yii\db\ActiveRecord
     public function getTransactions()
     {
         return $this->hasMany(Transaction::class, ['linked_transaction_id' => 'transaction_id']);
+    }
+
+    public function isActive()
+    {
+        return Utils::isActive($this->status);
+    }
+
+    public function isInactive()
+    {
+        return Utils::isInactive($this->status);
+    }
+
+    public function getFullStatus()
+    {
+        return Utils::getFullStatus($this->status);
     }
 }

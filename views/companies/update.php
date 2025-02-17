@@ -44,23 +44,23 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
         <?php $states = State::getStates($model->country); ?>
         <?php $cities = City::getCities($model->state); ?>
         <?= $form->field($model, 'country')->dropDownList($countries, [
-            'prompt' => 'Select...',
+            'prompt' => Yii::t('app', 'Select...'),
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/state/dynamic-states']) . '/?country_id=" + $(this).val(), function(data) {
                     $("#companyform-state").html(data);
-                    $("#companyform-city").html("<option value=\"\">Select...</option>");
+                    $("#companyform-city").html("<option value=\"\">' . Yii::t('app', 'Select...') . '</option>");
                 });',
         ]) ?>
 
         <?= $form->field($model, 'state')->dropDownList($states, [
-            'prompt' => 'Select...',
+            'prompt' => Yii::t('app', 'Select...'),
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/city/dynamic-cities']) . '/?state_id=" + $(this).val(), function(data) {
                     $("#companyform-city").html(data);
                 });',
         ]) ?>
 
-        <?= $form->field($model, 'city')->dropDownList($cities, ['prompt' => 'Select...']) ?>
+        <?= $form->field($model, 'city')->dropDownList($cities, ['prompt' => Yii::t('app', 'Select...')]) ?>
 
         <div class="form-group">
             <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

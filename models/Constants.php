@@ -13,10 +13,13 @@ class Constants
     const STATUS_ACTIVE_DB = "A";
     const STATUS_INACTIVE_DB = "I";
     const STATUS_NULL_DB = "N";
+    const STATUS_DRAFT_DB = "B";
+    const STATUS_DELETED_DB = "D";
 
     const STATUS_ACTIVE = "Active";
     const STATUS_INACTIVE = "Inactive";
     const STATUS_NULLED = "Nulled";
+    const STATUS_DRAFT = "Draft";
 
     const STATUS_APPROVED_DB = "A";
     const STATUS_REJECTED_DB = "R";
@@ -57,7 +60,11 @@ class Constants
     const OPTION_YES = "Yes";
     const OPTION_NO = "No";
 
+    const OPTION_ALL = "All";
+
     const SELECTED_COMPANY_ID = 'selected_company_id';
+
+    const MAX_LENGTH_NUM_TRANSACTION = 10;
 
     const MESSAGE_PAGE_NOT_EXISTS = 'The requested page does not exist.';
     const MESSAGE_INCORRECT_LOGIN = 'Incorrect email or password.';
@@ -78,5 +85,6 @@ class Constants
     const MESSAGE_COMMENT_COMPANY = 'You should enter a feedback for the applicant.';
     const MESSAGE_SELECT_COMPANY = "You should select a company to continue.";
     const MESSAGE_INFO_NOT_BELONG_COMPANY = "That information does not belong to your selected company.";
+    const MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION = "You can only delete a draft transaction.";
 
 }

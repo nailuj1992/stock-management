@@ -68,6 +68,12 @@ $config = [
                 ],
             ],
         ],
+        'formatter' => [
+            'dateFormat' => 'php:d/m/Y',
+            'decimalSeparator' => ',',
+            'thousandSeparator' => ' ',
+            'currencyCode' => 'COP',
+        ],
     ],
     'params' => $params,
 ];

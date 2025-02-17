@@ -19,7 +19,7 @@ use app\models\entities\Country;
 
     <?php $countries = Country::getCountries(); ?>
 
-    <?= $form->field($model, 'country_id')->dropDownList($countries, ['prompt' => 'Select...']) ?>
+    <?= $form->field($model, 'country_id')->dropDownList($countries, ['prompt' => Yii::t('app', 'Select...')]) ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

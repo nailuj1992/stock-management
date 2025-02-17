@@ -2,8 +2,10 @@
 
 namespace app\models\entities;
 
+use app\models\Constants;
 use app\models\Utils;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "warehouse".
@@ -116,5 +118,26 @@ class Warehouse extends \yii\db\ActiveRecord
     public function getFullStatus()
     {
         return Utils::getFullStatus($this->status);
+    }
+
+    private static function getActiveWarehousesForCompanyQuery($company_id)
+    {
+        return self::find()->select(['warehouse_id', 'concat(code, \' - \', name) as name'])
+            ->where(['=', 'company_id', $company_id])
+            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
+            ->asArray()->all();
+    }
+
+    public static function getActiveWarehousesForCompany($company_id)
+    {
+        $warehouses = self::getActiveWarehousesForCompanyQuery($company_id);
+        return ArrayHelper::map($warehouses, 'warehouse_id', 'name');
+    }
+
+    public static function getActiveWarehousesForCompanyOrAll($company_id)
+    {
+        $warehouses = self::getActiveWarehousesForCompanyQuery($company_id);
+        $warehouses[] = ['warehouse_id' => Constants::OPTION_ALL, 'name' => Yii::t('app', 'All')];
+        return ArrayHelper::map($warehouses, 'warehouse_id', 'name');
     }
 }

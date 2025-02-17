@@ -57,7 +57,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'label' => Yii::t('app', 'Tax Rate'),
-                'value' => $model->tax_rate . '%',
+                'value' => isset($model->tax_rate) ? $model->tax_rate . '%' : '-',
+            ],
+            [
+                'label' => Yii::t('app', 'Discount Rate'),
+                'value' => isset($model->discount_rate) ? $model->discount_rate . '%' : '-',
             ],
             [
                 'label' => Yii::t('app', 'Minimum Stock'),
@@ -65,7 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'label' => Yii::t('app', 'Suggested Value'),
-                'value' => isset($model->minimum_stock) ? '$' . $model->sugested_value : '',
+                'value' => isset($model->sugested_value) ? '$' . $model->sugested_value : '-',
             ],
             [
                 'label' => Yii::t('app', 'Status'),

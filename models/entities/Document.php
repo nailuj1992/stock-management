@@ -138,6 +138,31 @@ class Document extends \yii\db\ActiveRecord
         return Utils::getFullYesNo($this->has_other_transaction);
     }
 
+    public function appliesForSupplier()
+    {
+        return $this->apply_for === Constants::DOCUMENT_APPLY_SUPPLIER_DB;
+    }
+
+    public function hasOtherTransaction()
+    {
+        return $this->has_other_transaction === Constants::OPTION_YES_DB;
+    }
+
+    public function hasExpiration()
+    {
+        return $this->has_expiration === Constants::OPTION_YES_DB;
+    }
+
+    public function hasTaxes()
+    {
+        return $this->has_taxes === Constants::OPTION_YES_DB;
+    }
+
+    public function isIntendedForOutput()
+    {
+        return $this->intended_for === Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB;
+    }
+
     public static function getActionsIntendedFor()
     {
         $resp = [
@@ -166,5 +191,14 @@ class Document extends \yii\db\ActiveRecord
             ]
         ];
         return ArrayHelper::map($resp, 'code', 'name');
+    }
+
+    public static function getActiveDocumentsForCompany($company_id)
+    {
+        $documents = self::find()->select(['document_id', 'concat(code, \' - \', name) as name'])
+            ->where(['=', 'company_id', $company_id])
+            ->andWhere(['=', 'status', Constants::STATUS_ACTIVE_DB])
+            ->asArray()->all();
+        return ArrayHelper::map($documents, 'document_id', 'name');
     }
 }

@@ -57,8 +57,8 @@ use yii\helpers\Html;
             <div class="col-lg-6 mb-3">
                 <h2><?= Yii::t('app', 'Companies') ?></h2>
 
-                <p><?= Yii::t('app', 'Here you can see the companies assigned to you.') ?></p>
-                <p><?= Yii::t('app', 'You can select a company over here.') ?></p>
+                <p><?= Yii::t('app', "Here, you can view the companies assigned to you.") ?></p>
+                <p><?= Yii::t('app', "You can select a company in this section.") ?></p>
 
                 <p>
                     <?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/companies/'], ['class' => 'btn btn-outline-info']) ?>
@@ -94,7 +94,7 @@ use yii\helpers\Html;
                         <div class="col-lg-3 mb-3">
                             <h2><?= Yii::t('app', 'Documents') ?></h2>
 
-                            <p><?= Yii::t('app', 'Here you can see the documents in your company.') ?></p>
+                            <p><?= Yii::t('app', "Here, you can view the types of documents used in your company.") ?></p>
 
                             <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/document/'], ['class' => 'btn btn-outline-info']) ?>
                             </p>
@@ -102,7 +102,7 @@ use yii\helpers\Html;
                         <div class="col-lg-3 mb-3">
                             <h2><?= Yii::t('app', 'Products') ?></h2>
 
-                            <p><?= Yii::t('app', 'Here you can see the products in your company.') ?></p>
+                            <p><?= Yii::t('app', "Here, you can view the products available in your company.") ?></p>
 
                             <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/product/'], ['class' => 'btn btn-outline-info']) ?>
                             </p>
@@ -110,7 +110,7 @@ use yii\helpers\Html;
                         <div class="col-lg-3 mb-3">
                             <h2><?= Yii::t('app', 'Warehouses') ?></h2>
 
-                            <p><?= Yii::t('app', 'Here you can see the warehouses in your company.') ?></p>
+                            <p><?= Yii::t('app', "Here, you can explore the warehouses within your company.") ?></p>
 
                             <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/warehouse/'], ['class' => 'btn btn-outline-info']) ?>
                             </p>
@@ -118,10 +118,28 @@ use yii\helpers\Html;
                         <div class="col-lg-3 mb-3">
                             <h2><?= Yii::t('app', 'Suppliers') ?></h2>
 
-                            <p><?= Yii::t('app', 'Here you can see the suppliers for your company.') ?></p>
+                            <p><?= Yii::t('app', "Here, you can explore your company's suppliers.") ?></p>
 
                             <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/supplier/'], ['class' => 'btn btn-outline-info']) ?>
                             </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-3 mb-3">
+                            <h2><?= Yii::t('app', 'Transactions') ?></h2>
+
+                            <p><?= Yii::t('app', "Here, you can view your company's transactions.") ?>
+                            </p>
+
+                            <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/transaction/'], ['class' => 'btn btn-outline-info']) ?>
+                        </div>
+                        <div class="col-lg-3 mb-3">
+                            <h2><?= Yii::t('app', 'Existences') ?></h2>
+
+                            <p><?= Yii::t('app', "Here, you can oversee and manage your product inventory.") ?>
+                            </p>
+
+                            <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/transaction/existences'], ['class' => 'btn btn-outline-info']) ?>
                         </div>
                     </div>
                     <?php
