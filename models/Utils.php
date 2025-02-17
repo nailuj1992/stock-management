@@ -33,6 +33,16 @@ class Utils
         return date(str_replace("php:", "", $format), $unixTime);
     }
 
+    public static function formatDateSql($date)
+    {
+        $unixTime = date_parse_from_format('d/m/Y', $date);
+        $format = 'Y-m-d';
+        $year = $unixTime['year'];
+        $month = $unixTime['month'];
+        $day = $unixTime['day'];
+        return date($format, `$year-$month-$day`);
+    }
+
 
     public static function generateTimeMark()
     {

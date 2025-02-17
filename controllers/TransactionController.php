@@ -212,11 +212,17 @@ class TransactionController extends Controller
             ->where(['=', '`transaction`.company_id', $company_id])
             ->andWhere(['=', '`transaction`.status', Constants::STATUS_ACTIVE_DB])
             ->andWhere(['=', '`document`.has_other_transaction', Constants::OPTION_NO_DB]);
-        if ($document->intended_for === Constants::DOCUMENT_ACTION_INTENDED_INPUT_DB) {
+        if ($document->isIntendedForInput()) {
+            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.intended_for', Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB]);
+        }
+        if ($document->isIntendedForOutput()) {
             $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.intended_for', Constants::DOCUMENT_ACTION_INTENDED_INPUT_DB]);
         }
-        if ($document->intended_for === Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB) {
-            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.intended_for', Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB]);
+        if ($document->appliesForSupplier()) {
+            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.apply_for', Constants::DOCUMENT_APPLY_SUPPLIER_DB]);
+        }
+        if ($document->appliesForCustomer()) {
+            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.apply_for', Constants::DOCUMENT_APPLY_CUSTOMER_DB]);
         }
         $other_transactionsQuery = $other_transactionsQuery->orderBy(['`transaction`.created_at' => SORT_DESC, '`transaction`.num_transaction' => SORT_DESC])
             ->asArray()->all();
@@ -366,12 +372,13 @@ class TransactionController extends Controller
                 foreach ($transactionDto->transaction_items as $transactionItemDto) {
                     $product_id = $transactionItemDto->product_id;
                     $warehouse_id = $transactionItemDto->warehouse_id;
-
                     $product = Product::findOne(['product_id' => $product_id]);
                     if ($product === null) {
                         break;
                     }
-                    $existencesList = ExistencesDto::getExistences($company_id, $product_id, $warehouse_id);
+
+                    $creationDate = Utils::formatDateSql($transactionDto->creation_date);
+                    $existencesList = ExistencesDto::getExistences($company_id, $product_id, $warehouse_id, $creationDate);
                     if (!isset($existencesList) || empty($existencesList)) {
                         break;
                     }

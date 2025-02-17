@@ -143,6 +143,11 @@ class Document extends \yii\db\ActiveRecord
         return $this->apply_for === Constants::DOCUMENT_APPLY_SUPPLIER_DB;
     }
 
+    public function appliesForCustomer()
+    {
+        return $this->apply_for === Constants::DOCUMENT_APPLY_CUSTOMER_DB;
+    }
+
     public function hasOtherTransaction()
     {
         return $this->has_other_transaction === Constants::OPTION_YES_DB;
@@ -161,6 +166,11 @@ class Document extends \yii\db\ActiveRecord
     public function isIntendedForOutput()
     {
         return $this->intended_for === Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB;
+    }
+
+    public function isIntendedForInput()
+    {
+        return $this->intended_for === Constants::DOCUMENT_ACTION_INTENDED_INPUT_DB;
     }
 
     public static function getActionsIntendedFor()
