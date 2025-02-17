@@ -11,6 +11,7 @@ class ExistencesDto extends \yii\db\ActiveRecord
     public $product;
     public $warehouse_id;
     public $warehouse;
+    public $cutoff_date;
     public $amountInput;
     public $amountOutput;
     public $amountDifference;
@@ -23,8 +24,9 @@ class ExistencesDto extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['product_id'], 'required'],
+            [['product_id', 'cutoff_date'], 'required'],
             [['product_id'], 'integer'],
+            [['cutoff_date'], 'safe'],
         ];
     }
 
@@ -35,13 +37,14 @@ class ExistencesDto extends \yii\db\ActiveRecord
             'product' => Yii::t('app', 'Product'),
             'warehouse_id' => Yii::t('app', 'Warehouse'),
             'warehouse' => Yii::t('app', 'Warehouse'),
+            'cutoff_date' => Yii::t('app', 'Cut-off Date'),
             'amountInput' => Yii::t('app', 'Amount Input'),
             'amountOutput' => Yii::t('app', 'Amount Output'),
             'amountDifference' => Yii::t('app', 'Amount'),
         ];
     }
 
-    public static function getExistences($company_id, $product_id, $warehouse_id = '')
+    public static function getExistences($company_id, $product_id, $warehouse_id = '', string $date = null): array
     {
         $sql = "SELECT p.product_id, CONCAT(p.code, ' - ', p.name) AS product, w.warehouse_id, CONCAT(w.code, ' - ', w.name) AS warehouse, "
             . "SUM(CASE WHEN d.intended_for = :intendedInput THEN it.amount ELSE 0 end) AS amountInput, "
@@ -58,6 +61,9 @@ class ExistencesDto extends \yii\db\ActiveRecord
         } elseif ($warehouse_id !== Constants::OPTION_ALL) {
             $sql .= "AND w.warehouse_id = :warehouseId ";
         }
+        if (isset($date)) {
+            $sql .= "AND t.creation_date <= :date ";
+        }
         $sql .= "GROUP BY p.product_id, w.warehouse_id";
 
         $connection = Yii::$app->getDb();
@@ -67,7 +73,8 @@ class ExistencesDto extends \yii\db\ActiveRecord
             ':status' => Constants::STATUS_ACTIVE_DB,
             ':companyId' => $company_id,
             ':productId' => $product_id,
-            ':warehouseId' => $warehouse_id
+            ':warehouseId' => $warehouse_id,
+            ':date' => $date
         ]);
         $result = $command->queryAll();
 

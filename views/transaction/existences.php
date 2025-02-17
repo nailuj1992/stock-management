@@ -25,6 +25,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'warehouse_id')->dropDownList($warehouses, ['prompt' => Yii::t('app', 'Empty')]) ?>
 
+        <?= $form->field($model, 'cutoff_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
+
         <div class="form-group">
             <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-success']) ?>
         </div>
@@ -33,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     </div>
 
-    <?php if (isset($dataProvider) && $dataProvider->totalCount > 0) { ?>
+    <?php if (isset($dataProvider)) { ?>
         <?= GridView::widget([
             'dataProvider' => $dataProvider,
             'columns' => [

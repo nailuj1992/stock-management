@@ -667,9 +667,10 @@ class TransactionController extends Controller
             $existencesRequest = $this->request->post()['ExistencesDto'];
             $model->product_id = $existencesRequest['product_id'];
             $model->warehouse_id = $existencesRequest['warehouse_id'];
+            $model->cutoff_date = $existencesRequest['cutoff_date'];
 
             $dataProvider = new ArrayDataProvider([
-                'allModels' => ExistencesDto::getExistences($company_id, $model->product_id, $model->warehouse_id),
+                'allModels' => ExistencesDto::getExistences($company_id, $model->product_id, $model->warehouse_id, $model->cutoff_date),
             ]);
             return $this->render('existences', [
                 'model' => $model,
