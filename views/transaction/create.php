@@ -1,9 +1,12 @@
 <?php
 
+use app\models\entities\Document;
+use app\models\entities\Transaction;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
 /** @var yii\web\View $this */
+/** @var string $company_id */
 /** @var app\models\TransactionDto $model */
 /** @var app\models\entities\Document[] $documents */
 /** @var app\models\entities\Supplier[] $suppliers */
@@ -53,14 +56,19 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'num_transaction')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'min' => 0]) ?>
 
-        <?= $form->field($model, 'supplier_id')->dropDownList($suppliers, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => true]) ?>
+        <?= $form->field($model, 'supplier_id')->dropDownList($suppliers, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => isset($model->document_id) ? !Document::isDocumentForSuppliers($model->document_id) : true]) ?>
 
-        <?php $other_transactions = []; ?>
-        <?= $form->field($model, 'linked_transaction_id')->dropDownList($other_transactions, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => true]) ?>
+        <?php
+        $other_transactions = [];
+        if (isset($model->document_id) && Document::isDocumentLinkedWithOtherTransaction($model->document_id)) {
+            $other_transactions = Transaction::getLinkedTransactions($model->document_id, $company_id);
+        }
+        ?>
+        <?= $form->field($model, 'linked_transaction_id')->dropDownList($other_transactions, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => isset($model->document_id) ? !Document::isDocumentLinkedWithOtherTransaction($model->document_id) : true]) ?>
 
         <?= $form->field($model, 'creation_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
 
-        <?= $form->field($model, 'expiration_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date', 'disabled' => true]) ?>
+        <?= $form->field($model, 'expiration_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date', 'disabled' => isset($model->document_id) ? !Document::documentHasExpiration($model->document_id) : true]) ?>
 
         <div class="form-group">
             <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

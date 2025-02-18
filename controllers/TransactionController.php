@@ -10,6 +10,7 @@ use app\models\entities\Transaction;
 use app\models\entities\TransactionItem;
 use app\models\entities\Warehouse;
 use app\models\ExistencesDto;
+use app\models\KardexSearchDto;
 use app\models\TransactionDto;
 use app\models\TransactionItemDto;
 use app\models\Utils;
@@ -18,7 +19,6 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
-use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -57,6 +57,7 @@ class TransactionController extends Controller
                                 'get-product-info',
                                 'delete-draft',
                                 'existences',
+                                'kardex',
                             ],
                             'roles' => [Constants::ROLE_USER],
                         ],
@@ -164,24 +165,47 @@ class TransactionController extends Controller
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
-                $user_id = Yii::$app->user->identity->user_id;
+                $errors = 0;
+                $document = Document::findOne(['document_id' => $model->document_id]);
+                if ($document->appliesForSupplier() && (!isset($model->supplier_id) || $model->supplier_id === '')) {
+                    $model->addError('supplier_id', Yii::t('app', 'This field is required.'));
+                    $errors++;
+                }
+                if ($document->hasOtherTransaction() && (!isset($model->linked_transaction_id) || $model->linked_transaction_id === '')) {
+                    $model->addError('linked_transaction_id', Yii::t('app', 'This field is required.'));
+                    $errors++;
+                }
+                if ($document->hasExpiration()) {
+                    if (!isset($model->expiration_date) || $model->expiration_date === '') {
+                        $model->addError('expiration_date', Yii::t('app', 'This field is required.'));
+                        $errors++;
+                    }
+                    if (strtotime($model->expiration_date) < strtotime($model->creation_date)) {
+                        $model->addError('expiration_date', Yii::t('app', 'Expiration date should be later or equals to Creation date.'));
+                        $errors++;
+                    }
+                }
 
-                $transaction = new Transaction();
+                if ($errors === 0) {
+                    $user_id = Yii::$app->user->identity->user_id;
 
-                $transaction->isNewRecord = true;
-                $transaction->num_transaction = $model->num_transaction;
-                $transaction->document_id = $model->document_id;
-                $transaction->creation_date = $model->creation_date;
-                $transaction->expiration_date = $model->expiration_date;
-                $transaction->linked_transaction_id = $model->linked_transaction_id;
-                $transaction->supplier_id = $model->supplier_id;
-                $transaction->company_id = $company_id;
+                    $transaction = new Transaction();
 
-                $transaction->status = Constants::STATUS_DRAFT_DB;
-                $transaction->created_by = $user_id;
-                $transaction->updated_by = $user_id;
-                if ($transaction->validate() && $transaction->save()) {
-                    return $this->redirect(['draft', 'transaction_id' => $transaction->transaction_id]);
+                    $transaction->isNewRecord = true;
+                    $transaction->num_transaction = $model->num_transaction;
+                    $transaction->document_id = $model->document_id;
+                    $transaction->creation_date = $model->creation_date;
+                    $transaction->expiration_date = $model->expiration_date;
+                    $transaction->linked_transaction_id = $model->linked_transaction_id;
+                    $transaction->supplier_id = $model->supplier_id;
+                    $transaction->company_id = $company_id;
+
+                    $transaction->status = Constants::STATUS_DRAFT_DB;
+                    $transaction->created_by = $user_id;
+                    $transaction->updated_by = $user_id;
+                    if ($transaction->validate() && $transaction->save()) {
+                        return $this->redirect(['draft', 'transaction_id' => $transaction->transaction_id]);
+                    }
                 }
             }
         } else {
@@ -190,6 +214,7 @@ class TransactionController extends Controller
 
         return $this->render('create', [
             'model' => $model,
+            'company_id' => $company_id,
             'documents' => $documents,
             'suppliers' => $suppliers,
         ]);
@@ -202,36 +227,13 @@ class TransactionController extends Controller
 
         Utils::validateBelongsToCompany($company_id);
 
-        $document = Document::findOne(['document_id' => $document_id]);
-        if ($document === null) {
-            return null;
-        }
-
-        $other_transactionsQuery = Transaction::find()->select(['`transaction`.transaction_id', 'concat(`document`.code, \' - \', `transaction`.num_transaction) as num_transaction'])
-            ->leftJoin('document', '`document`.document_id = `transaction`.document_id')
-            ->where(['=', '`transaction`.company_id', $company_id])
-            ->andWhere(['=', '`transaction`.status', Constants::STATUS_ACTIVE_DB])
-            ->andWhere(['=', '`document`.has_other_transaction', Constants::OPTION_NO_DB]);
-        if ($document->isIntendedForInput()) {
-            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.intended_for', Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB]);
-        }
-        if ($document->isIntendedForOutput()) {
-            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.intended_for', Constants::DOCUMENT_ACTION_INTENDED_INPUT_DB]);
-        }
-        if ($document->appliesForSupplier()) {
-            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.apply_for', Constants::DOCUMENT_APPLY_SUPPLIER_DB]);
-        }
-        if ($document->appliesForCustomer()) {
-            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.apply_for', Constants::DOCUMENT_APPLY_CUSTOMER_DB]);
-        }
-        $other_transactionsQuery = $other_transactionsQuery->orderBy(['`transaction`.created_at' => SORT_DESC, '`transaction`.num_transaction' => SORT_DESC])
-            ->asArray()->all();
-        $other_transactions = ArrayHelper::map($other_transactionsQuery, 'transaction_id', 'num_transaction');
+        $other_transactions = Transaction::getLinkedTransactions($document_id, $company_id);
 
         $resp = Html::tag('option', Html::encode(Yii::t('app', 'Select...')), ['value' => '']);
         foreach ($other_transactions as $key => $value) {
             $resp .= Html::tag('option', Html::encode($value), ['value' => $key, 'selected' => false]);
         }
+
         return $resp;
     }
 
@@ -270,11 +272,7 @@ class TransactionController extends Controller
 
         Utils::validateBelongsToCompany($company_id);
 
-        $document = Document::findOne(['document_id' => $document_id]);
-        if ($document === null) {
-            return false;
-        }
-        return $document->appliesForSupplier();
+        return Document::isDocumentForSuppliers($document_id);
     }
 
     public function actionIsDocumentLinkedWithOtherTransaction($document_id)
@@ -284,11 +282,7 @@ class TransactionController extends Controller
 
         Utils::validateBelongsToCompany($company_id);
 
-        $document = Document::findOne(['document_id' => $document_id]);
-        if ($document === null) {
-            return false;
-        }
-        return $document->hasOtherTransaction();
+        return Document::isDocumentLinkedWithOtherTransaction($document_id);
     }
 
     public function actionDocumentHasExpiration($document_id)
@@ -298,11 +292,7 @@ class TransactionController extends Controller
 
         Utils::validateBelongsToCompany($company_id);
 
-        $document = Document::findOne(['document_id' => $document_id]);
-        if ($document === null) {
-            return false;
-        }
-        return $document->hasExpiration();
+        return Document::documentHasExpiration($document_id);
     }
 
     /**
@@ -369,9 +359,21 @@ class TransactionController extends Controller
 
             $errors = 0;
             if (!empty($transactionDto->transaction_items)) {
+                $keysProductWarehouse = [];
                 foreach ($transactionDto->transaction_items as $transactionItemDto) {
                     $product_id = $transactionItemDto->product_id;
                     $warehouse_id = $transactionItemDto->warehouse_id;
+
+                    $warehouseIdKey = isset($warehouse_id) ? $warehouse_id : 'null';
+                    if (!isset($keysProductWarehouse[$product_id . '_' . $warehouseIdKey])) {
+                        $keysProductWarehouse[$product_id . '_' . $warehouseIdKey] = true;
+                    } else {
+                        $transactionItemDto->addError('product_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
+                        $transactionItemDto->addError('warehouse_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
+                        $transactionDto->addError('product_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
+                        $errors++;
+                    }
+
                     $product = Product::findOne(['product_id' => $product_id]);
                     if ($product === null) {
                         break;
@@ -451,7 +453,7 @@ class TransactionController extends Controller
             $transactionItemDto->discount_rate = $transactionItem['discount_rate'];
             $transactionItemDto->total_value = TransactionDto::calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
 
-            $info = $this->actionGetProductInfo($transactionItemDto->product_id, $transactionItemDto->warehouse_id);
+            $info = $this->actionGetProductInfo($transactionDto->transaction_id, $transactionItemDto->product_id, $transactionItemDto->warehouse_id);
             if (isset($info)) {
                 $infoMap = json_decode($info);
                 if (isset($infoMap->{'taxRate'})) {
@@ -572,14 +574,18 @@ class TransactionController extends Controller
         return false;
     }
 
-    public function actionGetProductInfo($document_id, $product_id, $warehouse_id = '')
+    public function actionGetProductInfo($transaction_id, $product_id, $warehouse_id = '')
     {
         Utils::validateCompanySelected();
         $company_id = Utils::getCompanySelected();
 
         Utils::validateBelongsToCompany($company_id);
 
-        $document = Document::findOne(['document_id' => $document_id]);
+        $transaction = Transaction::findOne(['transaction_id' => $transaction_id]);
+        if ($transaction === null) {
+            return null;
+        }
+        $document = Document::findOne(['document_id' => $transaction->document_id]);
         if ($document === null) {
             return null;
         }
@@ -587,18 +593,32 @@ class TransactionController extends Controller
         if ($product === null) {
             return null;
         }
-        if ($warehouse_id === '') {
-            $warehouse_id = null;
-        }
-        if ($document->intended_for === Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB) {
-            if (isset($warehouse_id)) {
-                $warehouse = Warehouse::findOne(['warehouse_id' => $warehouse_id]);
+
+        $creationDate = $transaction->creation_date;
+        if ($document->isIntendedForOutput()) {
+            if (!$product->hasExistences()) {
+                $value = $product->sugested_value;
+            } else {
+                $kardex = KardexSearchDto::getKardex($company_id, $product_id, $warehouse_id, $creationDate);
+                if (!isset($kardex) || empty($kardex)) {
+                    $value = $product->sugested_value;
+                } else {
+                    $value = $kardex[count($kardex) - 1]->unit_value;
+                }
             }
-            $value = $product->sugested_value;// TODO Await for kardex implementation
             $taxRate = $product->tax_rate;
             $discountRate = $product->discount_rate;
         } else {
-            $value = '';
+            if (!$product->hasExistences()) {
+                $value = '';
+            } else {
+                $kardex = KardexSearchDto::getKardex($company_id, $product_id, $warehouse_id, $creationDate);
+                if (!isset($kardex) || empty($kardex)) {
+                    $value = '';
+                } else {
+                    $value = $kardex[count($kardex) - 1]->unit_value;
+                }
+            }
             $taxRate = '';
             $discountRate = '';
         }
@@ -690,6 +710,47 @@ class TransactionController extends Controller
         }
 
         return $this->render('existences', [
+            'model' => $model,
+            'products' => $products,
+            'warehouses' => $warehouses,
+        ]);
+    }
+
+    /**
+     * Shows the kardex of a product inside a warehouse.
+     * @return string
+     */
+    public function actionKardex()
+    {
+        Utils::validateCompanySelected();
+        $company_id = Utils::getCompanySelected();
+
+        Utils::belongsToCompany($company_id);
+
+        $products = Product::getActiveProductsForCompany($company_id);
+        $warehouses = Warehouse::getActiveWarehousesForCompany($company_id);
+        $model = new KardexSearchDto();
+
+        if ($this->request->isPost && isset($this->request->post()['KardexSearchDto'])) {
+            $kardexRequest = $this->request->post()['KardexSearchDto'];
+            $model->product_id = $kardexRequest['product_id'];
+            $model->warehouse_id = $kardexRequest['warehouse_id'];
+            $model->cutoff_date = $kardexRequest['cutoff_date'];
+
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => KardexSearchDto::getKardex($company_id, $model->product_id, $model->warehouse_id, $model->cutoff_date),
+            ]);
+            return $this->render('kardex', [
+                'model' => $model,
+                'products' => $products,
+                'warehouses' => $warehouses,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('kardex', [
             'model' => $model,
             'products' => $products,
             'warehouses' => $warehouses,

@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 'onchange' => '
                                 const warehouseId = $("#transaction-item-' . $i . '-warehouse_id").val()
                                 const productId = $(this).val()
-                                fillValuesProduct("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '", ' . $transactionDto->document_id . ', productId, warehouseId, ' . $i . ')
+                                fillValuesProduct("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '", ' . $transactionDto->transaction_id . ', productId, warehouseId, ' . $i . ')
                                 ',
                             ])->label(false)->error(false) ?>
                         </td>
@@ -83,6 +83,11 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 'prompt' => Yii::t('app', 'Empty'),
                                 'id' => 'transaction-item-' . $i . '-warehouse_id',
                                 'name' => 'TransactionItemDto[' . $i . '][warehouse_id]',
+                                'onchange' => '
+                                const productId = $("#transaction-item-' . $i . '-product_id").val()
+                                const warehouseId = $(this).val()
+                                fillValuesProduct("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '", ' . $transactionDto->transaction_id . ', productId, warehouseId, ' . $i . ')
+                                ',
                             ])->label(false)->error(false) ?>
                         </td>
                         <td class="col-1">
@@ -223,8 +228,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
         }
     }
 
-    function fillValuesProduct(url, documentId, productId, warehouseId, i) {
-        $.get(url + "/?document_id=" + documentId + "&product_id=" + productId + "&warehouse_id=" + warehouseId, function (data) {
+    function fillValuesProduct(url, transactionId, productId, warehouseId, i) {
+        $.get(url + "/?transaction_id=" + transactionId + "&product_id=" + productId + "&warehouse_id=" + warehouseId, function (data) {
             if (!data) {
                 $("#transaction-item-" + i + "-unit_value").val("")
                 $("#transaction-item-" + i + "-tax_rate").val("")

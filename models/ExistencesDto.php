@@ -2,9 +2,21 @@
 
 namespace app\models;
 
-use app\models\Utils;
 use Yii;
 
+
+/**
+ * This is the model class for "ExistencesDto".
+ *
+ * @property string $product_id
+ * @property string $product
+ * @property string $warehouse_id
+ * @property string $warehouse
+ * @property string $cutoff_date
+ * @property int $amountInput
+ * @property int $amountOutput
+ * @property int $amountDifference
+ */
 class ExistencesDto extends \yii\db\ActiveRecord
 {
     public $product_id;
@@ -44,6 +56,14 @@ class ExistencesDto extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * Gets the existence of a product on a warehouse, at a certain date.
+     * @param mixed $company_id
+     * @param mixed $product_id
+     * @param mixed $warehouse_id
+     * @param string $date
+     * @return ExistencesDto[]
+     */
     public static function getExistences($company_id, $product_id, $warehouse_id = '', string $date = null): array
     {
         $sql = "SELECT p.product_id, CONCAT(p.code, ' - ', p.name) AS product, w.warehouse_id, CONCAT(w.code, ' - ', w.name) AS warehouse, "
@@ -74,7 +94,7 @@ class ExistencesDto extends \yii\db\ActiveRecord
             ':companyId' => $company_id,
             ':productId' => $product_id,
             ':warehouseId' => $warehouse_id,
-            ':date' => $date
+            ':date' => $date,
         ]);
         $result = $command->queryAll();
 

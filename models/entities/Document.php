@@ -211,4 +211,31 @@ class Document extends \yii\db\ActiveRecord
             ->asArray()->all();
         return ArrayHelper::map($documents, 'document_id', 'name');
     }
+
+    public static function isDocumentForSuppliers($document_id)
+    {
+        $document = self::findOne(['document_id' => $document_id]);
+        if ($document === null) {
+            return false;
+        }
+        return $document->appliesForSupplier();
+    }
+
+    public static function isDocumentLinkedWithOtherTransaction($document_id)
+    {
+        $document = self::findOne(['document_id' => $document_id]);
+        if ($document === null) {
+            return false;
+        }
+        return $document->hasOtherTransaction();
+    }
+
+    public static function documentHasExpiration($document_id)
+    {
+        $document = self::findOne(['document_id' => $document_id]);
+        if ($document === null) {
+            return false;
+        }
+        return $document->hasExpiration();
+    }
 }

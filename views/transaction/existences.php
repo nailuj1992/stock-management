@@ -61,6 +61,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             },
                 ],
             ],
+            'headerRowOptions' => ['class' => 'text-align-center'],
+            'rowOptions' => ['class' => 'text-align-center'],
         ]); ?>
     <?php } ?>
 

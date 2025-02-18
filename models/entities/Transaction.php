@@ -2,8 +2,10 @@
 
 namespace app\models\entities;
 
+use app\models\Constants;
 use app\models\Utils;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "transaction".
@@ -142,5 +144,34 @@ class Transaction extends \yii\db\ActiveRecord
     public function getFullStatus()
     {
         return Utils::getFullStatus($this->status);
+    }
+
+    public static function getLinkedTransactions($document_id, $company_id)
+    {
+        $document = Document::findOne(['document_id' => $document_id]);
+        if ($document === null) {
+            return null;
+        }
+
+        $other_transactionsQuery = self::find()->select(['`transaction`.transaction_id', 'concat(`document`.code, \' - \', `transaction`.num_transaction) as num_transaction'])
+            ->leftJoin('document', '`document`.document_id = `transaction`.document_id')
+            ->where(['=', '`transaction`.company_id', $company_id])
+            ->andWhere(['=', '`transaction`.status', Constants::STATUS_ACTIVE_DB])
+            ->andWhere(['=', '`document`.has_other_transaction', Constants::OPTION_NO_DB]);
+        if ($document->isIntendedForInput()) {
+            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.intended_for', Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB]);
+        }
+        if ($document->isIntendedForOutput()) {
+            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.intended_for', Constants::DOCUMENT_ACTION_INTENDED_INPUT_DB]);
+        }
+        if ($document->appliesForSupplier()) {
+            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.apply_for', Constants::DOCUMENT_APPLY_SUPPLIER_DB]);
+        }
+        if ($document->appliesForCustomer()) {
+            $other_transactionsQuery = $other_transactionsQuery->andWhere(['=', '`document`.apply_for', Constants::DOCUMENT_APPLY_CUSTOMER_DB]);
+        }
+        $other_transactionsQuery = $other_transactionsQuery->orderBy(['`transaction`.created_at' => SORT_DESC, '`transaction`.num_transaction' => SORT_DESC])
+            ->asArray()->all();
+        return ArrayHelper::map($other_transactionsQuery, 'transaction_id', 'num_transaction');
     }
 }

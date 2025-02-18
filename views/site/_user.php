@@ -141,6 +141,14 @@ use yii\helpers\Html;
 
                             <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/transaction/existences'], ['class' => 'btn btn-outline-info']) ?>
                         </div>
+                        <div class="col-lg-3 mb-3">
+                            <h2><?= Yii::t('app', 'Kardex') ?></h2>
+
+                            <p><?= Yii::t('app', "Here, you can oversee and manage the Kardex records of your product inventory.") ?>
+                            </p>
+
+                            <p><?= Html::a(Yii::t('app', 'Continue {symbol}', ['symbol' => '&raquo;']), ['/transaction/kardex'], ['class' => 'btn btn-outline-info']) ?>
+                        </div>
                     </div>
                     <?php
                 }
