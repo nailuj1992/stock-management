@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 13, 2025 at 06:11 PM
+-- Generation Time: Feb 18, 2025 at 03:29 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -255,8 +255,8 @@ CREATE TABLE `document` (
 INSERT INTO `document` (`document_id`, `code`, `name`, `intended_for`, `apply_for`, `has_taxes`, `has_expiration`, `has_other_transaction`, `company_id`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
 (2, 'FV', 'Factura de Venta', 'O', 'C', 'Y', 'N', 'N', 1, 'A', 5, '2024-09-01 20:23:36', 5, '2024-09-03 06:22:45'),
 (3, 'FC', 'Factura de Compra', 'I', 'S', 'N', 'Y', 'N', 1, 'A', 5, '2024-09-01 20:51:02', 5, '2024-09-02 05:51:18'),
-(4, 'NC', 'Nota Credito', 'I', 'C', 'N', 'N', 'Y', 1, 'A', 5, '2024-09-02 18:22:38', 5, '2024-09-02 18:22:38'),
-(5, 'ND', 'Nota Debito', 'O', 'S', 'N', 'N', 'Y', 1, 'A', 5, '2024-09-02 18:22:58', 5, '2024-09-02 18:22:58');
+(4, 'DC', 'Devoluciones Cliente', 'I', 'C', 'N', 'N', 'Y', 1, 'A', 5, '2024-09-02 18:22:38', 5, '2025-02-18 06:34:27'),
+(5, 'DP', 'Devoluciones Proveedor', 'O', 'S', 'N', 'N', 'Y', 1, 'A', 5, '2024-09-02 18:22:58', 5, '2025-02-18 06:34:46');
 
 -- --------------------------------------------------------
 
@@ -287,7 +287,7 @@ CREATE TABLE `product` (
 --
 
 INSERT INTO `product` (`product_id`, `code`, `name`, `description`, `has_existences`, `tax_rate`, `discount_rate`, `minimum_stock`, `sugested_value`, `company_id`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
-(1, '12345ASD', 'Chocoramo', 'Producto increiblemente popular y delicioso', 'Y', 19, NULL, 10, 2000, 1, 'A', 5, '2024-09-03 00:16:14', 5, '2024-09-03 09:16:40');
+(1, '12345ASD', 'Chocoramo', 'Producto increiblemente popular y delicioso', 'Y', 19, 2, 10, 4500, 1, 'A', 5, '2024-09-03 00:16:14', 5, '2025-02-13 23:20:40');
 
 -- --------------------------------------------------------
 
@@ -375,6 +375,28 @@ CREATE TABLE `transaction` (
   `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
 
+--
+-- Dumping data for table `transaction`
+--
+
+INSERT INTO `transaction` (`transaction_id`, `num_transaction`, `document_id`, `creation_date`, `expiration_date`, `linked_transaction_id`, `supplier_id`, `company_id`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
+(1, '0000000001', 3, '2025-02-13', '2025-02-28', NULL, 1, 1, 'A', 7, '2025-02-15 06:09:00', 7, '2025-02-17 00:05:26'),
+(2, '0000000001', 2, '2025-02-16', NULL, NULL, NULL, 1, 'D', 7, '2025-02-16 20:13:05', 7, '2025-02-17 02:39:00'),
+(3, '0000000002', 2, '2025-02-16', NULL, NULL, NULL, 1, 'D', 7, '2025-02-16 20:41:18', 7, '2025-02-17 02:45:14'),
+(4, '0000000003', 2, '2025-02-16', NULL, NULL, NULL, 1, 'A', 7, '2025-02-16 20:45:29', 7, '2025-02-17 02:45:40'),
+(5, '0000000004', 2, '2025-02-17', NULL, NULL, NULL, 1, 'A', 7, '2025-02-16 20:50:15', 5, '2025-02-17 10:39:58'),
+(6, '0000000002', 3, '2025-02-18', '2025-02-28', NULL, 2, 1, 'A', 7, '2025-02-16 20:50:40', 5, '2025-02-18 08:55:52'),
+(7, '0000000001', 4, '2025-02-19', NULL, 5, NULL, 1, 'A', 7, '2025-02-16 21:12:51', 5, '2025-02-17 23:26:24'),
+(8, '0000000005', 2, '2025-02-19', NULL, NULL, NULL, 1, 'A', 7, '2025-02-16 22:42:52', 7, '2025-02-17 04:43:03'),
+(9, '0000000006', 2, '2025-02-20', NULL, NULL, NULL, 1, 'A', 5, '2025-02-17 04:40:20', 5, '2025-02-17 23:36:09'),
+(10, '0000000007', 2, '2025-02-20', NULL, NULL, NULL, 1, 'A', 5, '2025-02-17 17:39:21', 5, '2025-02-17 23:39:42'),
+(11, '0000000008', 2, '2025-02-20', NULL, NULL, NULL, 1, 'A', 5, '2025-02-17 17:40:03', 5, '2025-02-18 07:04:13'),
+(12, '0000000001', 5, '2025-02-20', NULL, 1, 1, 1, 'A', 5, '2025-02-17 22:12:41', 5, '2025-02-18 04:13:54'),
+(16, '0000000002', 4, '2025-02-20', NULL, NULL, NULL, 1, 'D', 5, '2025-02-18 02:08:49', 5, '2025-02-18 08:08:54'),
+(17, '0000000003', 3, '2025-02-28', '2025-02-28', NULL, 1, 1, 'D', 5, '2025-02-18 02:33:19', 5, '2025-02-18 08:33:28'),
+(18, '0000000002', 5, '2025-02-21', NULL, 1, 1, 1, 'B', 5, '2025-02-18 02:35:55', 5, '2025-02-18 02:35:55'),
+(19, '0000000009', 2, '2025-02-21', NULL, NULL, NULL, 1, 'B', 5, '2025-02-18 13:47:49', 5, '2025-02-18 13:47:49');
+
 -- --------------------------------------------------------
 
 --
@@ -397,6 +419,29 @@ CREATE TABLE `transaction_item` (
   `updated_by` int(10) DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf32 COLLATE=utf32_general_ci;
+
+--
+-- Dumping data for table `transaction_item`
+--
+
+INSERT INTO `transaction_item` (`transaction_item_id`, `transaction_id`, `amount`, `unit_value`, `tax_rate`, `discount_rate`, `product_id`, `warehouse_id`, `company_id`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
+(1, 1, 15, 4500, NULL, NULL, 1, 1, 1, 'A', 7, '2025-02-16 18:05:26', 7, '2025-02-16 18:05:26'),
+(2, 1, 13, 4400, NULL, NULL, 1, 2, 1, 'A', 7, '2025-02-16 18:05:26', 7, '2025-02-16 18:05:26'),
+(3, 1, 14, 4600, NULL, NULL, 1, 3, 1, 'A', 7, '2025-02-16 18:05:26', 7, '2025-02-16 18:05:26'),
+(4, 1, 8, 4100, NULL, NULL, 1, 4, 1, 'A', 7, '2025-02-16 18:05:26', 7, '2025-02-16 18:05:26'),
+(5, 1, 5, 4000, NULL, NULL, 1, NULL, 1, 'A', 7, '2025-02-16 18:05:26', 7, '2025-02-16 18:05:26'),
+(6, 4, 1, 4500, 19, 2, 1, NULL, 1, 'A', 7, '2025-02-16 20:45:40', 7, '2025-02-16 20:45:40'),
+(12, 8, 4, 4500, 19, 2, 1, 2, 1, 'A', 7, '2025-02-16 22:43:03', 7, '2025-02-16 22:43:03'),
+(13, 5, 1, 4500, 19, 2, 1, 3, 1, 'A', 5, '2025-02-17 04:39:58', 5, '2025-02-17 04:39:58'),
+(14, 7, 1, 4500, NULL, 2, 1, 3, 1, 'A', 5, '2025-02-17 17:26:24', 5, '2025-02-17 17:26:24'),
+(15, 9, 1, 4500, 19, 2, 1, NULL, 1, 'A', 5, '2025-02-17 17:36:09', 5, '2025-02-17 17:36:09'),
+(16, 10, 1, 4500, 19, 2, 1, 3, 1, 'A', 5, '2025-02-17 17:39:42', 5, '2025-02-17 17:39:42'),
+(17, 12, 1, 4500, NULL, NULL, 1, 1, 1, 'A', 5, '2025-02-17 22:13:54', 5, '2025-02-17 22:13:54'),
+(18, 12, 1, 4400, NULL, NULL, 1, 2, 1, 'A', 5, '2025-02-17 22:13:54', 5, '2025-02-17 22:13:54'),
+(19, 12, 1, 4600, NULL, NULL, 1, 3, 1, 'A', 5, '2025-02-17 22:13:54', 5, '2025-02-17 22:13:54'),
+(20, 11, 3, 4600, 19, 2, 1, 3, 1, 'A', 5, '2025-02-18 01:04:13', 5, '2025-02-18 01:04:13'),
+(23, 6, 1, 4400, NULL, NULL, 1, 2, 1, 'A', 5, '2025-02-18 02:55:52', 5, '2025-02-18 02:55:52'),
+(24, 6, 2, 4100, NULL, NULL, 1, 4, 1, 'A', 5, '2025-02-18 02:55:52', 5, '2025-02-18 02:55:52');
 
 -- --------------------------------------------------------
 
@@ -426,7 +471,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `email`, `password`, `auth_key`, `access_token`, `name`, `phone`, `address`, `city`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
-(1, 'admin@admin.com', '1398b8a4076328726d2802b0c5acfb81c83188a42fe18ed1887a8482d1b0b8a8', NULL, NULL, 'Admin', '12345678', 'Admin address', 1, 'A', 1, '2024-08-14 05:34:25', 1, '2024-08-17 04:06:19'),
+(1, 'admin@admin.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'Admin', '12345678', 'Admin address', 1, 'A', 1, '2024-08-14 05:34:25', 1, '2024-08-17 04:06:19'),
 (5, 'user@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'user 1', '1234232342', 'calle user asd123', 17, 'A', 1, '2024-08-15 07:20:16', 5, '2024-08-17 07:34:58'),
 (6, 'user2@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User two', '433654987', 'fake street 12345', 1, 'A', 1, '2024-08-15 23:04:34', 6, '2024-08-17 05:26:35'),
 (7, 'user3@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User 3', '12344433', 'fake street 456', 5, 'A', 1, '2024-08-16 05:15:23', 7, '2024-08-16 14:15:57'),
@@ -694,13 +739,13 @@ ALTER TABLE `supplier`
 -- AUTO_INCREMENT for table `transaction`
 --
 ALTER TABLE `transaction`
-  MODIFY `transaction_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `transaction_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `transaction_item`
 --
 ALTER TABLE `transaction_item`
-  MODIFY `transaction_item_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `transaction_item_id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `user`
