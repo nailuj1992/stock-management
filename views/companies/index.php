@@ -98,7 +98,6 @@ $this->params['breadcrumbs'][] = $this->title;
         <span>These are the companies where you can apply to enter.</span>
         <p>
             <?= Html::a('List Applications', ['/application/list'], ['class' => 'btn btn-primary']) ?>
-            <?= Html::a('Create Application', ['application/create'], ['class' => 'btn btn-success']) ?>
         </p>
     </div>
 
