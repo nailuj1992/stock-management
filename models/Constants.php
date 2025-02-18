@@ -16,11 +16,6 @@ class Constants
     const STATUS_DRAFT_DB = "B";
     const STATUS_DELETED_DB = "D";
 
-    const STATUS_ACTIVE = "Active";
-    const STATUS_INACTIVE = "Inactive";
-    const STATUS_NULLED = "Nulled";
-    const STATUS_DRAFT = "Draft";
-
     const STATUS_APPROVED_DB = "A";
     const STATUS_REJECTED_DB = "R";
     const STATUS_PENDING_DB = "P";
@@ -74,7 +69,7 @@ class Constants
 
     const MESSAGE_NON_ACTIVE_USER = "You cannot perform this action while you appear as a non-active user.";
     const MESSAGE_NOT_ENOUGH_PERMISSIONS = "You do not have permission to visit this page.";
-    const MESSAGE_ACTIVATE_ACCOUNT = "You should change your password to activate your account.";
+
     const MESSAGE_OWNER_NOT_DEMOTE = "The owner of a company cannot be demoted.";
     const MESSAGE_CANNOT_PROMOTE_INACTIVE = "You cannot promote/demote inactive users.";
     const MESSAGE_CANNOT_ACTIVATE_YOURSELF = "You cannot activate/deactivate yourself.";
@@ -83,7 +78,7 @@ class Constants
     const MESSAGE_NOT_CREATE_NEW_APPLICATION_EXISTING_PENDING = "You cannot create a new application for this company while you have another pending one.";
     const MESSAGE_COMMENT_USER = 'You should enter a comment for the company.';
     const MESSAGE_COMMENT_COMPANY = 'You should enter a feedback for the applicant.';
-    const MESSAGE_SELECT_COMPANY = "You should select a company to continue.";
+
     const MESSAGE_INFO_NOT_BELONG_COMPANY = "That information does not belong to your selected company.";
     const MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION = "You can only delete a draft transaction.";
 

@@ -79,22 +79,22 @@ class Utils
         $resp = null;
         switch ($status) {
             case Constants::STATUS_ACTIVE_DB:
-                $resp = Constants::STATUS_ACTIVE;
+                $resp = TextConstants::STATUS_ACTIVE;
                 break;
             case Constants::STATUS_INACTIVE_DB:
-                $resp = Constants::STATUS_INACTIVE;
+                $resp = TextConstants::STATUS_INACTIVE;
                 break;
             case Constants::STATUS_NULL_DB:
-                $resp = Constants::STATUS_NULLED;
+                $resp = TextConstants::STATUS_NULLED;
                 break;
             case Constants::STATUS_DRAFT_DB:
-                $resp = Constants::STATUS_DRAFT;
+                $resp = TextConstants::STATUS_DRAFT;
                 break;
             default:
                 $resp = "-";
                 break;
         }
-        return Yii::t('app', $resp);
+        return Yii::t(TextConstants::STATUS, $resp);
     }
 
     public static function getFullAction($action)
@@ -322,7 +322,7 @@ class Utils
     {
         $session = Yii::$app->session;
         if (!$session->has(Constants::SELECTED_COMPANY_ID)) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_SELECT_COMPANY));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_SELECT_COMPANY));
         }
     }
 

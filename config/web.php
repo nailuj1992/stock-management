@@ -6,7 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic',
     'name' => 'Stock Management',
-    'language' => 'es-ES',
+    'language' => 'es-CO',
     'sourceLanguage' => 'en-US',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
@@ -57,14 +57,23 @@ $config = [
         ],
         'i18n' => [
             'translations' => [
-                'app*' => [
-                    'class' => 'yii\i18n\PhpMessageSource',
-                    //'basePath' => '@app/messages',
-                    //'sourceLanguage' => 'en-US',
-                    'fileMap' => [
-                        'app' => 'app.php',
-                        'app/error' => 'error.php',
-                    ],
+                '*' => [
+                    'class' => 'yii\i18n\DbMessageSource',
+                    'forceTranslation' => true,
+                    'sourceMessageTable' => '{{%source_message}}',
+                    'messageTable' => '{{%message}}',
+                    'enableCaching' => false,
+                    'cachingDuration' => 3600,
+                    'sourceLanguage' => 'code'
+                ],
+                'app' => [
+                    'class' => 'yii\i18n\DbMessageSource',
+                    'forceTranslation' => true,
+                    'sourceMessageTable' => '{{%source_message}}',
+                    'messageTable' => '{{%message}}',
+                    'enableCaching' => false,
+                    'cachingDuration' => 3600,
+                    'sourceLanguage' => 'code'
                 ],
             ],
         ],
