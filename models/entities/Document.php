@@ -238,4 +238,13 @@ class Document extends \yii\db\ActiveRecord
         }
         return $document->hasExpiration();
     }
+
+    public static function documentHasTaxes($document_id)
+    {
+        $document = self::findOne(['document_id' => $document_id]);
+        if ($document === null) {
+            return false;
+        }
+        return $document->hasTaxes();
+    }
 }

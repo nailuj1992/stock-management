@@ -424,11 +424,7 @@ class TransactionController extends Controller
 
         Utils::validateBelongsToCompany($company_id);
 
-        $document = Document::findOne(['document_id' => $document_id]);
-        if ($document === null) {
-            return false;
-        }
-        return $document->hasTaxes();
+        return Document::documentHasTaxes($document_id);
     }
 
     /**

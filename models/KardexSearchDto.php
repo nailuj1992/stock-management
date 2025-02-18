@@ -80,7 +80,7 @@ class KardexSearchDto extends \yii\db\ActiveRecord
         if (isset($date)) {
             $sql .= "AND t.creation_date <= :date ";
         }
-        $sql .= "ORDER BY t.creation_date, t.updated_at";
+        $sql .= "ORDER BY t.creation_date, t.created_at";
 
         $connection = Yii::$app->getDb();
         $command = $connection->createCommand($sql, [
@@ -155,15 +155,12 @@ class KardexSearchDto extends \yii\db\ActiveRecord
                             $kardexItem->amount_input = null;
                             $kardexItem->unit_value_input = null;
 
-                            $linkedItem = null;
-                            for ($j = 0; $j < $i && !isset($linkedItem); $j++) {
-                                if ($kardexItem->linked_transaction_id === $kardex[$j]->transaction_id) {
-                                    $linkedItem = $kardex[$j];
-                                }
-                            }
-                            if (!isset($linkedItem)) {
+                            $j = self::searchLinkedTransactionDevolutionUsingBinary($kardex, 0, $i - 1, $kardexItem);
+                            if ($j === -1) {
                                 break;
                             }
+                            $linkedItem = $kardex[$j];
+
                             $kardexItem->total_value_output = $kardexItem->amount_output * $linkedItem->unit_value;
 
                             $sumValues = $previousItem->total_value_balance + $kardexItem->total_value_output;
@@ -209,5 +206,22 @@ class KardexSearchDto extends \yii\db\ActiveRecord
             }
         }
         return $kardex;
+    }
+
+    private static function searchLinkedTransactionDevolutionUsingBinary(array $kardex, int $left, int $right, KardexDto $kardexItem)
+    {
+        if ($left > $right) {
+            return -1;
+        }
+
+        $mid = $left + ($right - $left) / 2;
+
+        if ($kardex[$mid]->transaction_id === $kardexItem->linked_transaction_id) {
+            return $mid;
+        } elseif ($kardex[$mid]->transaction_id < $kardexItem->linked_transaction_id) {
+            return self::searchLinkedTransactionDevolutionUsingBinary($kardex, $mid + 1, $right, $kardexItem);
+        } else {
+            return self::searchLinkedTransactionDevolutionUsingBinary($kardex, $left, $mid - 1, $kardexItem);
+        }
     }
 }

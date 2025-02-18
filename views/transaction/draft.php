@@ -75,6 +75,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 const warehouseId = $("#transaction-item-' . $i . '-warehouse_id").val()
                                 const productId = $(this).val()
                                 fillValuesProduct("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '", ' . $transactionDto->transaction_id . ', productId, warehouseId, ' . $i . ')
+                                $("#transaction-item-' . $i . '-unit_value").change()
                                 ',
                             ])->label(false)->error(false) ?>
                         </td>
@@ -87,6 +88,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 const productId = $("#transaction-item-' . $i . '-product_id").val()
                                 const warehouseId = $(this).val()
                                 fillValuesProduct("' . yii\helpers\Url::to(['/transaction/get-product-info']) . '", ' . $transactionDto->transaction_id . ', productId, warehouseId, ' . $i . ')
+                                $("#transaction-item-' . $i . '-unit_value").change()
                                 ',
                             ])->label(false)->error(false) ?>
                         </td>
