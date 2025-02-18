@@ -10,6 +10,7 @@ use app\models\entities\Transaction;
 use app\models\entities\TransactionItem;
 use app\models\entities\Warehouse;
 use app\models\ExistencesDto;
+use app\models\KardexSearchDto;
 use app\models\TransactionDto;
 use app\models\TransactionItemDto;
 use app\models\Utils;
@@ -57,6 +58,7 @@ class TransactionController extends Controller
                                 'get-product-info',
                                 'delete-draft',
                                 'existences',
+                                'kardex',
                             ],
                             'roles' => [Constants::ROLE_USER],
                         ],
@@ -451,7 +453,7 @@ class TransactionController extends Controller
             $transactionItemDto->discount_rate = $transactionItem['discount_rate'];
             $transactionItemDto->total_value = TransactionDto::calculateTotalValueProduct($transactionItemDto->amount, $transactionItemDto->unit_value, $transactionItemDto->discount_rate);
 
-            $info = $this->actionGetProductInfo($transactionItemDto->product_id, $transactionItemDto->warehouse_id);
+            $info = $this->actionGetProductInfo($transactionDto->transaction_id, $transactionItemDto->product_id, $transactionItemDto->warehouse_id);
             if (isset($info)) {
                 $infoMap = json_decode($info);
                 if (isset($infoMap->{'taxRate'})) {
@@ -572,14 +574,18 @@ class TransactionController extends Controller
         return false;
     }
 
-    public function actionGetProductInfo($document_id, $product_id, $warehouse_id = '')
+    public function actionGetProductInfo($transaction_id, $product_id, $warehouse_id = '')
     {
         Utils::validateCompanySelected();
         $company_id = Utils::getCompanySelected();
 
         Utils::validateBelongsToCompany($company_id);
 
-        $document = Document::findOne(['document_id' => $document_id]);
+        $transaction = Transaction::findOne(['transaction_id' => $transaction_id]);
+        if ($transaction === null) {
+            return null;
+        }
+        $document = Document::findOne(['document_id' => $transaction->document_id]);
         if ($document === null) {
             return null;
         }
@@ -587,18 +593,32 @@ class TransactionController extends Controller
         if ($product === null) {
             return null;
         }
-        if ($warehouse_id === '') {
-            $warehouse_id = null;
-        }
-        if ($document->intended_for === Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB) {
-            if (isset($warehouse_id)) {
-                $warehouse = Warehouse::findOne(['warehouse_id' => $warehouse_id]);
+
+        $creationDate = $transaction->creation_date;
+        if ($document->isIntendedForOutput()) {
+            if (!$product->hasExistences()) {
+                $value = $product->sugested_value;
+            } else {
+                $kardex = KardexSearchDto::getKardex($company_id, $product_id, $warehouse_id, $creationDate);
+                if (!isset($kardex) || empty($kardex)) {
+                    $value = $product->sugested_value;
+                } else {
+                    $value = $kardex[count($kardex) - 1]->unit_value;
+                }
             }
-            $value = $product->sugested_value;// TODO Await for kardex implementation
             $taxRate = $product->tax_rate;
             $discountRate = $product->discount_rate;
         } else {
-            $value = '';
+            if (!$product->hasExistences()) {
+                $value = '';
+            } else {
+                $kardex = KardexSearchDto::getKardex($company_id, $product_id, $warehouse_id, $creationDate);
+                if (!isset($kardex) || empty($kardex)) {
+                    $value = '';
+                } else {
+                    $value = $kardex[count($kardex) - 1]->unit_value;
+                }
+            }
             $taxRate = '';
             $discountRate = '';
         }
@@ -690,6 +710,47 @@ class TransactionController extends Controller
         }
 
         return $this->render('existences', [
+            'model' => $model,
+            'products' => $products,
+            'warehouses' => $warehouses,
+        ]);
+    }
+
+    /**
+     * Shows the kardex of a product inside a warehouse.
+     * @return string
+     */
+    public function actionKardex()
+    {
+        Utils::validateCompanySelected();
+        $company_id = Utils::getCompanySelected();
+
+        Utils::belongsToCompany($company_id);
+
+        $products = Product::getActiveProductsForCompany($company_id);
+        $warehouses = Warehouse::getActiveWarehousesForCompany($company_id);
+        $model = new KardexSearchDto();
+
+        if ($this->request->isPost && isset($this->request->post()['KardexSearchDto'])) {
+            $kardexRequest = $this->request->post()['KardexSearchDto'];
+            $model->product_id = $kardexRequest['product_id'];
+            $model->warehouse_id = $kardexRequest['warehouse_id'];
+            $model->cutoff_date = $kardexRequest['cutoff_date'];
+
+            $dataProvider = new ArrayDataProvider([
+                'allModels' => KardexSearchDto::getKardex($company_id, $model->product_id, $model->warehouse_id, $model->cutoff_date),
+            ]);
+            return $this->render('kardex', [
+                'model' => $model,
+                'products' => $products,
+                'warehouses' => $warehouses,
+                'dataProvider' => $dataProvider,
+            ]);
+        } else {
+            $model->loadDefaultValues();
+        }
+
+        return $this->render('kardex', [
             'model' => $model,
             'products' => $products,
             'warehouses' => $warehouses,
