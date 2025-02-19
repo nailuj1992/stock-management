@@ -6,6 +6,7 @@ use app\models\Constants;
 use app\models\entities\ApplicationCompany;
 use app\models\entities\Company;
 use app\models\entities\UserCompany;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -156,7 +157,7 @@ class ApplicationController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 if (!isset($model->comment_user) || strlen(trim($model->comment_user)) == 0) {
-                    $model->addError('comment_user', Yii::t('app', Constants::MESSAGE_COMMENT_USER));
+                    $model->addError('comment_user', Yii::t(TextConstants::APPLICATION, TextConstants::COMPANY_APPLICATION_MESSAGE_COMMENT));
                 }
 
                 $model->user_id = $user_id;
@@ -232,7 +233,7 @@ class ApplicationController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
                 if (!isset($model->comment_company) || strlen(trim($model->comment_company)) == 0) {
-                    $model->addError('comment_company', Yii::t('app', Constants::MESSAGE_COMMENT_COMPANY));
+                    $model->addError('comment_company', Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_MESSAGE_FEEDBACK));
                 }
 
                 $model->status = Constants::STATUS_REJECTED_DB;

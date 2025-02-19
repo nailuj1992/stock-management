@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 
@@ -20,7 +21,7 @@ $this->params['breadcrumbs'][] = $model->name;
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'country_id' => $model->country_id], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                'confirm' => Yii::t(TextConstants::APP, TextConstants::MESSAGE_CONFIRMATION_DELETE),
                 'method' => 'post',
             ],
         ]) ?>

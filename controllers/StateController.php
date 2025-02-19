@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Constants;
 use app\models\entities\State;
+use app\models\TextConstants;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -165,7 +166,7 @@ class StateController extends Controller
     {
         if (Yii::$app->request->isGet) {
             $states = State::getStates($country_id);
-            $resp = Html::tag('option', Html::encode(Yii::t('app', 'Select...')), ['value' => '']);
+            $resp = Html::tag('option', Html::encode(Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)), ['value' => '']);
             foreach ($states as $key => $value) {
                 $resp .= Html::tag('option', Html::encode($value), ['value' => $key, 'selected' => $state_id !== '' && $state_id == $key]);
             }

@@ -45,7 +45,7 @@ class SupplierEdit extends \yii\db\ActiveRecord
             [['code'], 'string', 'max' => 20],
             [['name', 'email', 'address'], 'string', 'max' => 100],
             [['phone'], 'string', 'max' => 13],
-            [['phone'], 'validatePhone', 'message' => Yii::t('app', Constants::MESSAGE_VALIDATE_PHONE)],
+            [['phone'], 'validatePhone', 'message' => Yii::t(TextConstants::APP, TextConstants::MESSAGE_VALIDATE_PHONE)],
             [['email'], 'email'],
             [['code', 'company_id'], 'unique', 'targetAttribute' => ['code', 'company_id']],
             [['city'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city' => 'city_id']],

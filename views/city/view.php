@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\entities\Country;
@@ -22,7 +23,7 @@ $this->params['breadcrumbs'][] = $model->name;
         <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'city_id' => $model->city_id], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                'confirm' => Yii::t(TextConstants::APP, TextConstants::MESSAGE_CONFIRMATION_DELETE),
                 'method' => 'post',
             ],
         ]) ?>
@@ -40,11 +41,11 @@ $this->params['breadcrumbs'][] = $model->name;
             'code',
             'name',
             [
-                'label' => Yii::t('app', 'State'),
+                'label' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
                 'value' => $state->code . " - " . $state->name,
             ],
             [
-                'label' => Yii::t('app', 'Country'),
+                'label' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
                 'value' => $country->code . " - " . $country->name,
             ],
         ],

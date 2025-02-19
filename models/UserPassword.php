@@ -35,13 +35,13 @@ class UserPassword extends \yii\db\ActiveRecord
                 'password',
                 'match',
                 'pattern' => '/^.*(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/',
-                'message' => Yii::t('app', Constants::MESSAGE_PASSWORD_VALIDATION)
+                'message' => Yii::t(TextConstants::APP, TextConstants::MESSAGE_PASSWORD_VALIDATION)
             ],
             [
                 'repassword',
                 'compare',
                 'compareAttribute' => 'password',
-                'message' => Yii::t('app', Constants::MESSAGE_PASSWORDS_NOT_MATCH),
+                'message' => Yii::t(TextConstants::APP, TextConstants::MESSAGE_PASSWORDS_NOT_MATCH),
             ],
             [['email'], 'email'],
             [['email'], 'unique'],
@@ -54,10 +54,10 @@ class UserPassword extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'user_id' => Yii::t('app', 'ID'),
-            'email' => Yii::t('app', 'Email'),
-            'password' => Yii::t('app', 'Password'),
-            'repassword' => Yii::t('app', 'Re-enter Password'),
+            'user_id' => Yii::t(TextConstants::USER, TextConstants::USER_MODEL_ID),
+            'email' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_EMAIL),
+            'password' => Yii::t(TextConstants::USER, TextConstants::USER_MODEL_PASSWORD),
+            'repassword' => Yii::t(TextConstants::USER, TextConstants::USER_MODEL_REPASSWORD),
         ];
     }
 

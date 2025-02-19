@@ -7,6 +7,7 @@ use app\models\entities\State;
 use app\models\CityForm;
 use app\models\CitySearch;
 use app\models\Constants;
+use app\models\TextConstants;
 use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -176,7 +177,7 @@ class CityController extends Controller
     {
         if (Yii::$app->request->isGet) {
             $cities = City::getCities($state_id);
-            $resp = Html::tag('option', Html::encode(Yii::t('app', 'Select...')), ['value' => '']);
+            $resp = Html::tag('option', Html::encode(Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)), ['value' => '']);
             foreach ($cities as $key => $value) {
                 $resp .= Html::tag('option', Html::encode($value), ['value' => $key, 'selected' => $city_id !== '' && $city_id == $key]);
             }

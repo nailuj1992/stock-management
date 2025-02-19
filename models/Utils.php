@@ -153,19 +153,19 @@ class Utils
         $resp = null;
         switch ($status) {
             case Constants::STATUS_APPROVED_DB:
-                $resp = Constants::STATUS_APPROVED;
+                $resp = TextConstants::STATUS_APPROVED;
                 break;
             case Constants::STATUS_REJECTED_DB:
-                $resp = Constants::STATUS_REJECTED;
+                $resp = TextConstants::STATUS_REJECTED;
                 break;
             case Constants::STATUS_PENDING_DB:
-                $resp = Constants::STATUS_PENDING;
+                $resp = TextConstants::STATUS_PENDING;
                 break;
             default:
                 $resp = "-";
                 break;
         }
-        return Yii::t('app', $resp);
+        return Yii::t(TextConstants::STATUS, $resp);
     }
 
     public static function getFullRole($role)
@@ -173,19 +173,19 @@ class Utils
         $resp = null;
         switch ($role) {
             case Constants::ROLE_OWNER_DB:
-                $resp = Constants::ROLE_OWNER;
+                $resp = TextConstants::ROLE_OWNER;
                 break;
             case Constants::ROLE_SUPERVISOR_DB:
-                $resp = Constants::ROLE_SUPERVISOR;
+                $resp = TextConstants::ROLE_SUPERVISOR;
                 break;
             case Constants::ROLE_MEMBER_DB:
-                $resp = Constants::ROLE_MEMBER;
+                $resp = TextConstants::ROLE_MEMBER;
                 break;
             default:
                 $resp = "-";
                 break;
         }
-        return Yii::t('app', $resp);
+        return Yii::t(TextConstants::ROLE, $resp);
     }
 
     public static function getRoles()
@@ -193,11 +193,11 @@ class Utils
         $resp = [
             [
                 'code' => Constants::ROLE_SUPERVISOR_DB,
-                'name' => Yii::t('app', Constants::ROLE_SUPERVISOR)
+                'name' => Yii::t(TextConstants::ROLE, TextConstants::ROLE_SUPERVISOR)
             ],
             [
                 'code' => Constants::ROLE_MEMBER_DB,
-                'name' => Yii::t('app', Constants::ROLE_MEMBER)
+                'name' => Yii::t(TextConstants::ROLE, TextConstants::ROLE_MEMBER)
             ]
         ];
         return ArrayHelper::map($resp, 'code', 'name');

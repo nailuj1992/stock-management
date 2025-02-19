@@ -44,7 +44,7 @@ class CompanyForm extends \yii\db\ActiveRecord
             [['code'], 'string', 'max' => 20],
             [['name'], 'string', 'max' => 200],
             [['phone'], 'string', 'max' => 13],
-            [['phone'], 'validatePhone', 'message' => Yii::t('app', Constants::MESSAGE_VALIDATE_PHONE)],
+            [['phone'], 'validatePhone', 'message' => Yii::t(TextConstants::APP, TextConstants::MESSAGE_VALIDATE_PHONE)],
             [['code'], 'unique'],
             [['city'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city' => 'city_id']],
         ];
@@ -56,13 +56,13 @@ class CompanyForm extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
-            'phone' => Yii::t('app', 'Phone'),
-            'address' => Yii::t('app', 'Address'),
-            'country' => Yii::t('app', 'Country'),
-            'state' => Yii::t('app', 'State'),
-            'city' => Yii::t('app', 'City'),
+            'code' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
+            'phone' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_PHONE),
+            'address' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_ADDRESS),
+            'country' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
+            'state' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
+            'city' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
         ];
     }
 

@@ -2,6 +2,7 @@
 
 namespace app\models\entities;
 
+use app\models\TextConstants;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -43,9 +44,9 @@ class Country extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'country_id' => Yii::t('app', 'Country ID'),
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
+            'country_id' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
+            'code' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
         ];
     }
 
@@ -59,7 +60,8 @@ class Country extends \yii\db\ActiveRecord
         return $this->hasMany(State::class, ['country_id' => 'country_id']);
     }
 
-    public static function getCountries() {
+    public static function getCountries()
+    {
         $query = self::find()->asArray()->all();
         return ArrayHelper::map($query, 'country_id', 'name');
     }
