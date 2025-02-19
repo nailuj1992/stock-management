@@ -159,7 +159,7 @@ class StateController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 
     public function actionDynamicStates($country_id, $state_id = '')

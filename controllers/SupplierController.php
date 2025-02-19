@@ -8,6 +8,7 @@ use app\models\entities\Country;
 use app\models\entities\State;
 use app\models\entities\Supplier;
 use app\models\SupplierEdit;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -227,6 +228,6 @@ class SupplierController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 }

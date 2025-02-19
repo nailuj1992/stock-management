@@ -170,7 +170,7 @@ class CityController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 
     public function actionDynamicCities($state_id, $city_id = '')

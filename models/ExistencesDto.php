@@ -78,7 +78,7 @@ class ExistencesDto extends \yii\db\ActiveRecord
             . "AND p.product_id = :productId ";
         if (!isset($warehouse_id) || $warehouse_id === '') {
             $sql .= "AND w.warehouse_id IS NULL ";
-        } elseif ($warehouse_id !== Constants::OPTION_ALL) {
+        } elseif ($warehouse_id !== Constants::OPTION_ALL_SELECT) {
             $sql .= "AND w.warehouse_id = :warehouseId ";
         }
         if (isset($date)) {

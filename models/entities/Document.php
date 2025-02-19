@@ -3,6 +3,7 @@
 namespace app\models\entities;
 
 use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -178,11 +179,11 @@ class Document extends \yii\db\ActiveRecord
         $resp = [
             [
                 'code' => Constants::DOCUMENT_ACTION_INTENDED_INPUT_DB,
-                'name' => Yii::t('app', Constants::DOCUMENT_ACTION_INTENDED_INPUT)
+                'name' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_ACTION_INTENDED_INPUT)
             ],
             [
                 'code' => Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB,
-                'name' => Yii::t('app', Constants::DOCUMENT_ACTION_INTENDED_OUTPUT)
+                'name' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_ACTION_INTENDED_OUTPUT)
             ]
         ];
         return ArrayHelper::map($resp, 'code', 'name');
@@ -193,11 +194,11 @@ class Document extends \yii\db\ActiveRecord
         $resp = [
             [
                 'code' => Constants::DOCUMENT_APPLY_SUPPLIER_DB,
-                'name' => Yii::t('app', Constants::DOCUMENT_APPLY_SUPPLIER)
+                'name' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_APPLY_SUPPLIER)
             ],
             [
                 'code' => Constants::DOCUMENT_APPLY_CUSTOMER_DB,
-                'name' => Yii::t('app', Constants::DOCUMENT_APPLY_CUSTOMER)
+                'name' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_APPLY_CUSTOMER)
             ]
         ];
         return ArrayHelper::map($resp, 'code', 'name');

@@ -20,7 +20,6 @@ class Constants
     const STATUS_REJECTED_DB = "R";
     const STATUS_PENDING_DB = "P";
 
-
     const ROLE_ADMIN = "admin";
     const ROLE_USER = "user";
 
@@ -28,47 +27,21 @@ class Constants
     const ROLE_SUPERVISOR_DB = "S";
     const ROLE_MEMBER_DB = "M";
 
-
     const DEFAULT_USER_CREATE = 1;
 
     const DOCUMENT_ACTION_INTENDED_INPUT_DB = "I";
     const DOCUMENT_ACTION_INTENDED_OUTPUT_DB = "O";
 
-    const DOCUMENT_ACTION_INTENDED_INPUT = "Input";
-    const DOCUMENT_ACTION_INTENDED_OUTPUT = "Output";
-
     const DOCUMENT_APPLY_SUPPLIER_DB = "S";
     const DOCUMENT_APPLY_CUSTOMER_DB = "C";
 
-    const DOCUMENT_APPLY_SUPPLIER = "Supplier";
-    const DOCUMENT_APPLY_CUSTOMER = "Customer";
+    const OPTION_ALL_SELECT = "all";
 
     const OPTION_YES_DB = "Y";
     const OPTION_NO_DB = "N";
 
-    const OPTION_YES = "Yes";
-    const OPTION_NO = "No";
-
-    const OPTION_ALL = "All";
-
     const SELECTED_COMPANY_ID = 'selected_company_id';
 
     const MAX_LENGTH_NUM_TRANSACTION = 10;
-
-    const MESSAGE_PAGE_NOT_EXISTS = 'The requested page does not exist.';
-    const MESSAGE_INCORRECT_LOGIN = 'Incorrect email or password.';
-
-    const MESSAGE_NON_ACTIVE_USER = "You cannot perform this action while you appear as a non-active user.";
-    const MESSAGE_NOT_ENOUGH_PERMISSIONS = "You do not have permission to visit this page.";
-
-    const MESSAGE_OWNER_NOT_DEMOTE = "The owner of a company cannot be demoted.";
-    const MESSAGE_CANNOT_PROMOTE_INACTIVE = "You cannot promote/demote inactive users.";
-    const MESSAGE_CANNOT_ACTIVATE_YOURSELF = "You cannot activate/deactivate yourself.";
-    const MESSAGE_OWNER_NOT_ACTIVATE = "The owner of a company cannot be activated/deactivated.";
-    const MESSAGE_CANNOT_ACTIVATE_SUPERVISORS = "You cannot activate/deactivate other supervisors.";
-    const MESSAGE_NOT_CREATE_NEW_APPLICATION_EXISTING_PENDING = "You cannot create a new application for this company while you have another pending one.";
-
-    const MESSAGE_INFO_NOT_BELONG_COMPANY = "That information does not belong to your selected company.";
-    const MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION = "You can only delete a draft transaction.";
 
 }

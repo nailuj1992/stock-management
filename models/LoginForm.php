@@ -51,7 +51,7 @@ class LoginForm extends Model
             $user = $this->getUser();
 
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, Yii::t('app', Constants::MESSAGE_INCORRECT_LOGIN));
+                $this->addError($attribute, Yii::t(TextConstants::APP, TextConstants::MESSAGE_INCORRECT_LOGIN));
             }
         }
     }

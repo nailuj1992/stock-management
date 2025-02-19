@@ -102,16 +102,16 @@ class Utils
         $resp = null;
         switch ($action) {
             case Constants::DOCUMENT_ACTION_INTENDED_INPUT_DB:
-                $resp = Constants::DOCUMENT_ACTION_INTENDED_INPUT;
+                $resp = TextConstants::DOCUMENT_ACTION_INTENDED_INPUT;
                 break;
             case Constants::DOCUMENT_ACTION_INTENDED_OUTPUT_DB:
-                $resp = Constants::DOCUMENT_ACTION_INTENDED_OUTPUT;
+                $resp = TextConstants::DOCUMENT_ACTION_INTENDED_OUTPUT;
                 break;
             default:
                 $resp = "-";
                 break;
         }
-        return Yii::t('app', $resp);
+        return Yii::t(TextConstants::DOCUMENT, $resp);
     }
 
     public static function getFullApply($apply)
@@ -119,16 +119,16 @@ class Utils
         $resp = null;
         switch ($apply) {
             case Constants::DOCUMENT_APPLY_SUPPLIER_DB:
-                $resp = Constants::DOCUMENT_APPLY_SUPPLIER;
+                $resp = TextConstants::DOCUMENT_APPLY_SUPPLIER;
                 break;
             case Constants::DOCUMENT_APPLY_CUSTOMER_DB:
-                $resp = Constants::DOCUMENT_APPLY_CUSTOMER;
+                $resp = TextConstants::DOCUMENT_APPLY_CUSTOMER;
                 break;
             default:
                 $resp = "-";
                 break;
         }
-        return Yii::t('app', $resp);
+        return Yii::t(TextConstants::DOCUMENT, $resp);
     }
 
     public static function getFullYesNo($answer)
@@ -136,16 +136,16 @@ class Utils
         $resp = null;
         switch ($answer) {
             case Constants::OPTION_YES_DB:
-                $resp = Constants::OPTION_YES;
+                $resp = TextConstants::OPTION_YES;
                 break;
             case Constants::OPTION_NO_DB:
-                $resp = Constants::OPTION_NO;
+                $resp = TextConstants::OPTION_NO;
                 break;
             default:
                 $resp = "-";
                 break;
         }
-        return Yii::t('app', $resp);
+        return Yii::t(TextConstants::APP, $resp);
     }
 
     public static function getFullStatusApplication($status)
@@ -208,11 +208,11 @@ class Utils
         $resp = [
             [
                 'code' => Constants::OPTION_YES_DB,
-                'name' => Yii::t('app', Constants::OPTION_YES)
+                'name' => Yii::t(TextConstants::APP, TextConstants::OPTION_YES)
             ],
             [
                 'code' => Constants::OPTION_NO_DB,
-                'name' => Yii::t('app', Constants::OPTION_NO)
+                'name' => Yii::t(TextConstants::APP, TextConstants::OPTION_NO)
             ]
         ];
         return ArrayHelper::map($resp, 'code', 'name');
@@ -266,7 +266,7 @@ class Utils
     public static function validateActiveUser()
     {
         if (!self::isActiveUser()) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_NON_ACTIVE_USER));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_NON_ACTIVE_USER));
         }
     }
 
@@ -278,7 +278,7 @@ class Utils
     public static function validateOwnerOfCompany($company_id)
     {
         if (!self::isOwnerOfCompany($company_id)) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_NOT_ENOUGH_PERMISSIONS));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_NOT_ENOUGH_PERMISSIONS));
         }
     }
 
@@ -290,7 +290,7 @@ class Utils
     public static function validateOwnerOrSupervisorOfCompany($company_id)
     {
         if (!self::isOwnerOrSupervisorOfCompany($company_id)) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_NOT_ENOUGH_PERMISSIONS));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_NOT_ENOUGH_PERMISSIONS));
         }
     }
 
@@ -302,7 +302,7 @@ class Utils
     public static function validateMemberOfCompany($company_id)
     {
         if (!self::isMemberOfCompany($company_id)) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_NOT_ENOUGH_PERMISSIONS));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_NOT_ENOUGH_PERMISSIONS));
         }
     }
 
@@ -314,7 +314,7 @@ class Utils
     public static function validateBelongsToCompany($company_id)
     {
         if (!self::belongsToCompany($company_id)) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_NOT_ENOUGH_PERMISSIONS));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_NOT_ENOUGH_PERMISSIONS));
         }
     }
 
@@ -339,7 +339,7 @@ class Utils
     public static function validateCompanyMatches($company_id)
     {
         if ($company_id != self::getCompanySelected()) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_INFO_NOT_BELONG_COMPANY));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MESSAGE_INFO_NOT_BELONG_COMPANY));
         }
     }
 

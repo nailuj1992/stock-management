@@ -11,6 +11,7 @@ use app\models\entities\TransactionItem;
 use app\models\entities\Warehouse;
 use app\models\ExistencesDto;
 use app\models\KardexSearchDto;
+use app\models\TextConstants;
 use app\models\TransactionDto;
 use app\models\TransactionItemDto;
 use app\models\Utils;
@@ -132,7 +133,7 @@ class TransactionController extends Controller
         $company_id = $model->company_id;
 
         if (in_array($model->status, [Constants::STATUS_DRAFT_DB, Constants::STATUS_DELETED_DB])) {
-            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+            throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
         }
 
         $transactionDto = TransactionDto::newTransactionDto($model);
@@ -323,7 +324,7 @@ class TransactionController extends Controller
         $model = $this->findModel($transaction_id);
 
         if ($model->status !== Constants::STATUS_DRAFT_DB) {
-            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+            throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
         }
 
         $transactionDto = TransactionDto::newTransactionDto($model);
@@ -649,7 +650,7 @@ class TransactionController extends Controller
         $user_id = Yii::$app->user->identity->user_id;
 
         if ($model->status !== Constants::STATUS_DRAFT_DB) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION));
         }
 
         $model->status = Constants::STATUS_DELETED_DB;
@@ -679,7 +680,7 @@ class TransactionController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 
     /**

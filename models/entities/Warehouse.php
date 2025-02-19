@@ -3,6 +3,7 @@
 namespace app\models\entities;
 
 use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -137,7 +138,7 @@ class Warehouse extends \yii\db\ActiveRecord
     public static function getActiveWarehousesForCompanyOrAll($company_id)
     {
         $warehouses = self::getActiveWarehousesForCompanyQuery($company_id);
-        $warehouses[] = ['warehouse_id' => Constants::OPTION_ALL, 'name' => Yii::t('app', 'All')];
+        $warehouses[] = ['warehouse_id' => Constants::OPTION_ALL_SELECT, 'name' => Yii::t(TextConstants::APP, TextConstants::OPTION_ALL)];
         return ArrayHelper::map($warehouses, 'warehouse_id', 'name');
     }
 }
