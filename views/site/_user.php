@@ -73,7 +73,7 @@ use yii\helpers\Html;
                 <div class="col-lg-6 mb-3">
                     <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_SELECTED_COMPANY) ?></h2>
                     <h3><?= $company->name ?></h3>
-                    <h6><?= Yii::t('app', 'NIT') ?>: <?= $company->code ?></h6>
+                    <h6><?= Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_CODE) ?>: <?= $company->code ?></h6>
                 </div>
                 <?php
             }
