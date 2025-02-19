@@ -174,4 +174,13 @@ class Transaction extends \yii\db\ActiveRecord
             ->asArray()->all();
         return ArrayHelper::map($other_transactionsQuery, 'transaction_id', 'num_transaction');
     }
+
+    public static function getSupplierOnTransaction($transaction_id)
+    {
+        $transaction = self::findOne(['transaction_id' => $transaction_id]);
+        if ($transaction === null) {
+            return null;
+        }
+        return $transaction->supplier_id;
+    }
 }

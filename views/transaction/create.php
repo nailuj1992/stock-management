@@ -56,15 +56,26 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'num_transaction')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'min' => 0]) ?>
 
-        <?= $form->field($model, 'supplier_id')->dropDownList($suppliers, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => isset($model->document_id) ? !Document::isDocumentForSuppliers($model->document_id) : true]) ?>
-
         <?php
         $other_transactions = [];
         if (isset($model->document_id) && Document::isDocumentLinkedWithOtherTransaction($model->document_id)) {
             $other_transactions = Transaction::getLinkedTransactions($model->document_id, $company_id);
         }
         ?>
-        <?= $form->field($model, 'linked_transaction_id')->dropDownList($other_transactions, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => isset($model->document_id) ? !Document::isDocumentLinkedWithOtherTransaction($model->document_id) : true]) ?>
+        <?= $form->field($model, 'linked_transaction_id')->dropDownList($other_transactions, [
+            'prompt' => Yii::t('app', 'Select...'),
+            'disabled' => isset($model->document_id) ? !Document::isDocumentLinkedWithOtherTransaction($model->document_id) : true,
+            'onchange' => '
+                $.get("' . yii\helpers\Url::to(['/transaction/get-supplier-on-transaction']) . '/?transaction_id=" + $(this).val(), function(data) {
+                    if (data) {
+                        $("#transactiondto-supplier_id").prop("disabled", false);
+                        $("#transactiondto-supplier_id").val(data);
+                    }
+                });
+                ',
+        ]) ?>
+
+        <?= $form->field($model, 'supplier_id')->dropDownList($suppliers, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => isset($model->document_id) ? !Document::isDocumentForSuppliers($model->document_id) : true]) ?>
 
         <?= $form->field($model, 'creation_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
 
