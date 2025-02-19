@@ -3,6 +3,7 @@
 namespace app\models\entities;
 
 use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -62,19 +63,19 @@ class Supplier extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'supplier_id' => Yii::t('app', 'Supplier ID'),
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
-            'email' => Yii::t('app', 'Email'),
-            'phone' => Yii::t('app', 'Phone'),
-            'address' => Yii::t('app', 'Address'),
-            'city' => Yii::t('app', 'City'),
-            'company_id' => Yii::t('app', 'Company ID'),
-            'status' => Yii::t('app', 'Status'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'supplier_id' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
+            'code' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
+            'email' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_EMAIL),
+            'phone' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_PHONE),
+            'address' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_ADDRESS),
+            'city' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
+            'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
+            'status' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
+            'created_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_BY),
+            'created_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_AT),
+            'updated_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_BY),
+            'updated_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_AT),
         ];
     }
 

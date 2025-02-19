@@ -50,14 +50,14 @@ class WarehouseEdit extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'warehouse_id' => Yii::t('app', 'Warehouse ID'),
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
-            'address' => Yii::t('app', 'Address'),
-            'country' => Yii::t('app', 'Country'),
-            'state' => Yii::t('app', 'State'),
-            'city' => Yii::t('app', 'City'),
-            'company_id' => Yii::t('app', 'Company ID'),
+            'warehouse_id' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
+            'code' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
+            'address' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_ADDRESS),
+            'country' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
+            'state' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
+            'city' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
+            'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
         ];
     }
 }

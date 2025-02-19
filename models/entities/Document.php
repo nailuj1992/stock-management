@@ -62,20 +62,20 @@ class Document extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'document_id' => Yii::t('app', 'Document ID'),
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
-            'intended_for' => Yii::t('app', 'Intended For'),
-            'apply_for' => Yii::t('app', 'Apply For'),
-            'has_taxes' => Yii::t('app', 'Has Taxes'),
-            'has_expiration' => Yii::t('app', 'Has Expiration'),
-            'has_other_transaction' => Yii::t('app', 'Applies over other transaction?'),
-            'company_id' => Yii::t('app', 'Company ID'),
-            'status' => Yii::t('app', 'Status'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'document_id' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_ID),
+            'code' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
+            'intended_for' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_INTENDED_FOR),
+            'apply_for' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_APPLY_FOR),
+            'has_taxes' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_HAS_TAXES),
+            'has_expiration' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_HAS_EXPIRATION),
+            'has_other_transaction' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_HAS_OTHER_TRANSACTION),
+            'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
+            'status' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
+            'created_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_BY),
+            'created_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_AT),
+            'updated_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_BY),
+            'updated_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_AT),
         ];
     }
 

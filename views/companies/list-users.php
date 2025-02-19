@@ -84,10 +84,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
                     'activate' => function ($url, $model, $key) {
                     if ($model->isActive()) {
-                        $label = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_DEACTIVATE);
+                        $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_DEACTIVATE);
                         $question = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_CONFIRMATION_DEACTIVATE, ['name' => $model->user->name]);
                     } elseif ($model->isInactive()) {
-                        $label = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_ACTIVATE);
+                        $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_ACTIVATE);
                         $question = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_CONFIRMATION_ACTIVATE, ['name' => $model->user->name]);
                     }
                     $user = UserCompany::findUserCompanyRow(Yii::$app->user->identity->user_id, $model->company_id);
