@@ -52,6 +52,7 @@ class TransactionController extends Controller
                                 'is-document-for-suppliers',
                                 'is-document-linked-with-other-transaction',
                                 'get-linked-transactions',
+                                'get-supplier-on-transaction',
                                 'document-has-expiration',
                                 'document-has-taxes',
                                 'get-product-info',
@@ -235,6 +236,16 @@ class TransactionController extends Controller
         }
 
         return $resp;
+    }
+
+    public function actionGetSupplierOnTransaction($transaction_id)
+    {
+        Utils::validateCompanySelected();
+        $company_id = Utils::getCompanySelected();
+
+        Utils::validateBelongsToCompany($company_id);
+
+        return Transaction::getSupplierOnTransaction($transaction_id);
     }
 
     public function actionGetNextNumTransaction($document_id)
