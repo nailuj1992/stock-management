@@ -1,6 +1,7 @@
 <?php
 
 use app\models\entities\Product;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
@@ -32,7 +33,7 @@ use yii\bootstrap5\ActiveForm;
     <?= $form->field($model, 'sugested_value')->textInput(['type' => 'number', 'min' => 0]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

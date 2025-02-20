@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -19,16 +20,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php
         if (Utils::isOwnerOrSupervisorOfCompany($model->company_id)) {
-            echo Html::a(Yii::t('app', 'Update'), ['update', 'product_id' => $model->product_id], ['class' => 'btn btn-primary']);
+            echo Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE), ['update', 'product_id' => $model->product_id], ['class' => 'btn btn-primary']);
 
             if ($model->isActive()) {
-                $label = Yii::t('app', 'Deactivate');
+                $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_DEACTIVATE);
                 $class = "btn btn-danger";
-                $question = Yii::t('app', "Are you sure you want to deactivate the product {code}-{name}?", ['code' => $model->code, 'name' => $model->name]);
+                $question = Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_INDEX_CONFIRMATION_DEACTIVATE, ['code' => $model->code, 'name' => $model->name]);
             } elseif ($model->isInactive()) {
-                $label = Yii::t('app', 'Activate');
+                $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_ACTIVATE);
                 $class = "btn btn-warning";
-                $question = Yii::t('app', "Are you sure you want to activate the product {code}-{name}?", ['code' => $model->code, 'name' => $model->name]);
+                $question = Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_INDEX_CONFIRMATION_ACTIVATE, ['code' => $model->code, 'name' => $model->name]);
             }
             echo Html::a($label, ['activate', 'product_id' => $model->product_id], [
                 'class' => $class,
@@ -52,27 +53,27 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'description',
             [
-                'label' => Yii::t('app', 'Has Existences?'),
+                'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_HAS_EXISTENCES),
                 'value' => $model->getFullExistences(),
             ],
             [
-                'label' => Yii::t('app', 'Tax Rate'),
+                'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_TAX_RATE),
                 'value' => isset($model->tax_rate) ? $model->tax_rate . '%' : '-',
             ],
             [
-                'label' => Yii::t('app', 'Discount Rate'),
+                'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_DISCOUNT_RATE),
                 'value' => isset($model->discount_rate) ? $model->discount_rate . '%' : '-',
             ],
             [
-                'label' => Yii::t('app', 'Minimum Stock'),
+                'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_MINIMUM_STOCK),
                 'value' => $model->minimum_stock,
             ],
             [
-                'label' => Yii::t('app', 'Suggested Value'),
+                'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_SUGGESTED_VALUE),
                 'value' => isset($model->sugested_value) ? '$' . $model->sugested_value : '-',
             ],
             [
-                'label' => Yii::t('app', 'Status'),
+                'label' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
                 'value' => $model->getFullStatus(),
             ],
         ],

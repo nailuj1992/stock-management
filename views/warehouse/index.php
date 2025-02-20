@@ -4,6 +4,7 @@ use app\models\entities\City;
 use app\models\entities\Country;
 use app\models\entities\State;
 use app\models\entities\Warehouse;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -40,28 +41,28 @@ $this->params['breadcrumbs'][] = $this->title;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Code'),
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->code;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Name'),
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->name;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Address'),
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_ADDRESS),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->address;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'City'),
+                'attribute' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
                 'format' => 'raw',
                 'value' => function ($model) {
                 $city = City::findOne(['city_id' => $model->city]);
@@ -69,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'State'),
+                'attribute' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
                 'format' => 'raw',
                 'value' => function ($model) {
                 $city = City::findOne(['city_id' => $model->city]);
@@ -78,7 +79,7 @@ $this->params['breadcrumbs'][] = $this->title;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Country'),
+                'attribute' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
                 'format' => 'raw',
                 'value' => function ($model) {
                 $city = City::findOne(['city_id' => $model->city]);
@@ -88,7 +89,7 @@ $this->params['breadcrumbs'][] = $this->title;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Status'),
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->getFullStatus();
@@ -99,23 +100,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{view} {update} {activate}',
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
-                    return Html::a(Yii::t('app', 'View'), ['view', 'warehouse_id' => $model->warehouse_id], ['class' => 'btn btn-outline-info btn-xs']);
+                    return Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_VIEW), ['view', 'warehouse_id' => $model->warehouse_id], ['class' => 'btn btn-outline-info btn-xs']);
                 },
                     'update' => function ($url, $model, $key) {
                     if (Utils::isOwnerOrSupervisorOfCompany($model->company_id)) {
-                        return Html::a(Yii::t('app', 'Update'), ['update', 'warehouse_id' => $model->warehouse_id], ['class' => 'btn btn-outline-secondary btn-xs']);
+                        return Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE), ['update', 'warehouse_id' => $model->warehouse_id], ['class' => 'btn btn-outline-secondary btn-xs']);
                     }
                 },
                     'activate' => function ($url, $model, $key) {
                     if (Utils::isOwnerOrSupervisorOfCompany($model->company_id)) {
                         if ($model->isActive()) {
-                            $label = Yii::t('app', 'Deactivate');
+                            $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_DEACTIVATE);
                             $class = "btn btn-outline-danger btn-xs";
-                            $question = Yii::t('app', "Are you sure you want to deactivate the warehouse {code}-{name}?", ['code' => $model->code, 'name' => $model->name]);
+                            $question = Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_INDEX_CONFIRMATION_DEACTIVATE, ['code' => $model->code, 'name' => $model->name]);
                         } elseif ($model->isInactive()) {
-                            $label = Yii::t('app', 'Activate');
+                            $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_ACTIVATE);
                             $class = "btn btn-outline-warning btn-xs";
-                            $question = Yii::t('app', "Are you sure you want to activate the warehouse {code}-{name}?", ['code' => $model->code, 'name' => $model->name]);
+                            $question = Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_INDEX_CONFIRMATION_ACTIVATE, ['code' => $model->code, 'name' => $model->name]);
                         }
                         return Html::a($label, ['activate', 'warehouse_id' => $model->warehouse_id], [
                             'class' => $class,
