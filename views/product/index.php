@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Constants;
 use app\models\entities\Product;
 use app\models\TextConstants;
 use app\models\Utils;
@@ -31,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'attribute' => '#',
+                'attribute' => Constants::NUM,
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->product_id;

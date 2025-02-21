@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Constants;
 use app\models\entities\ApplicationCompany;
 use app\models\TextConstants;
 use app\models\Utils;
@@ -28,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'attribute' => '#',
+                'attribute' => Constants::NUM,
                 'format' => 'raw',
                 'value' => function ($model) {
                         return $model->company->company_id;
@@ -106,7 +107,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProviderListUserNotBelong,
         'columns' => [
             [
-                'attribute' => '#',
+                'attribute' => Constants::NUM,
                 'format' => 'raw',
                 'value' => function ($model) {
                     return $model->company_id;

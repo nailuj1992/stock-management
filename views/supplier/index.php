@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Constants;
 use app\models\entities\City;
 use app\models\entities\Supplier;
 use app\models\TextConstants;
@@ -32,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'attribute' => '#',
+                'attribute' => Constants::NUM,
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->supplier_id;

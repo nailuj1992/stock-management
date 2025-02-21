@@ -3,6 +3,7 @@
 namespace app\models\entities;
 
 use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -67,17 +68,17 @@ class Transaction extends \yii\db\ActiveRecord
         return [
             'transaction_id' => Yii::t('app', 'Transaction ID'),
             'num_transaction' => Yii::t('app', '# Transaction'),
-            'document_id' => Yii::t('app', 'Document'),
+            'document_id' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_ID),
             'creation_date' => Yii::t('app', 'Creation Date'),
             'expiration_date' => Yii::t('app', 'Expiration Date'),
             'linked_transaction_id' => Yii::t('app', 'Linked Transaction'),
-            'supplier_id' => Yii::t('app', 'Supplier'),
-            'company_id' => Yii::t('app', 'Company ID'),
-            'status' => Yii::t('app', 'Status'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'supplier_id' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
+            'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
+            'status' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
+            'created_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_BY),
+            'created_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_AT),
+            'updated_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_BY),
+            'updated_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_AT),
         ];
     }
 

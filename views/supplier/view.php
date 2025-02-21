@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Constants;
 use app\models\entities\City;
 use app\models\entities\Country;
 use app\models\entities\State;
@@ -55,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'label' => '#',
+                'label' => Constants::NUM,
                 'value' => $model->supplier_id,
             ],
             'code',

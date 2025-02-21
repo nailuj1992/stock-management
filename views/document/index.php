@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Constants;
 use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
@@ -28,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'attribute' => '#',
+                'attribute' => Constants::NUM,
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->document_id;

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Constants;
 use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
@@ -46,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'label' => '#',
+                'label' => Constants::NUM,
                 'value' => $model->document_id,
             ],
             'code',

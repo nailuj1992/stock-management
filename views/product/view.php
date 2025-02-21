@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'label' => '#',
+                'label' => Constants::NUM,
                 'value' => $model->product_id,
             ],
             'code',

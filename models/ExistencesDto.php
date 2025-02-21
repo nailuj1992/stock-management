@@ -45,10 +45,10 @@ class ExistencesDto extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'product_id' => Yii::t('app', 'Product'),
-            'product' => Yii::t('app', 'Product'),
-            'warehouse_id' => Yii::t('app', 'Warehouse'),
-            'warehouse' => Yii::t('app', 'Warehouse'),
+            'product_id' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
+            'product' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
+            'warehouse_id' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
+            'warehouse' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
             'cutoff_date' => Yii::t('app', 'Cut-off Date'),
             'amountInput' => Yii::t('app', 'Amount Input'),
             'amountOutput' => Yii::t('app', 'Amount Output'),
