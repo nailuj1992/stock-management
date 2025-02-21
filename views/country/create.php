@@ -1,12 +1,13 @@
 <?php
 
+use app\models\TextConstants;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\entities\Country $model */
 
-$this->title = Yii::t('app', 'Create Country');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Countries'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_BUTTON_CREATE);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_COUNTRIES_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="country-create">

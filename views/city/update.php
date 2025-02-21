@@ -1,15 +1,16 @@
 <?php
 
+use app\models\TextConstants;
 use yii\helpers\Html;
 
 /** @var yii\web\View $this */
 /** @var app\models\entities\City $city */
 /** @var app\models\CityForm $model */
 
-$this->title = Yii::t('app', 'Update City: {name}', ['name' => $model->name]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Cities'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::CITY, TextConstants::CITY_TITLE_UPDATE, ['name' => $model->name]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_CITIES_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'city_id' => $model->city_id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->params['breadcrumbs'][] = Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE);
 ?>
 <div class="city-update">
 

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 use app\models\entities\Country;
@@ -19,10 +20,10 @@ use app\models\entities\Country;
 
     <?php $countries = Country::getCountries(); ?>
 
-    <?= $form->field($model, 'country_id')->dropDownList($countries, ['prompt' => Yii::t('app', 'Select...')]) ?>
+    <?= $form->field($model, 'country_id')->dropDownList($countries, ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)]) ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

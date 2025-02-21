@@ -5,10 +5,10 @@ namespace app\controllers;
 use app\models\entities\City;
 use app\models\entities\State;
 use app\models\CityForm;
-use app\models\CitySearch;
 use app\models\Constants;
 use app\models\TextConstants;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -60,11 +60,21 @@ class CityController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CitySearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => City::find(),
+            /*
+            'pagination' => [
+                'pageSize' => 50
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'city_id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
