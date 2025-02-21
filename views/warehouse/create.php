@@ -8,8 +8,8 @@ use yii\bootstrap5\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\models\WarehouseEdit $model */
 
-$this->title = Yii::t('app', 'Create Warehouse');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Warehouses'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_BUTTON_CREATE);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_WAREHOUSES_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="warehouse-create">

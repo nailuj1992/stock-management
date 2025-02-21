@@ -8,8 +8,8 @@ use yii\bootstrap5\ActiveForm;
 /** @var yii\web\View $this */
 /** @var app\models\SupplierEdit $model */
 
-$this->title = Yii::t('app', 'Create Supplier');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Suppliers'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_BUTTON_CREATE);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_SUPPLIERS_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="supplier-create">

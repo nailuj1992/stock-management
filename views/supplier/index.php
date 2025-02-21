@@ -12,7 +12,7 @@ use yii\grid\GridView;
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Suppliers');
+$this->title = Yii::t(TextConstants::INDEX, TextConstants::INDEX_SUPPLIERS_TITLE);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="supplier-index">
@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php
         if (Utils::isOwnerOrSupervisorOfCompany($companyId)) {
-            echo Html::a(Yii::t('app', 'Create Supplier'), ['create'], ['class' => 'btn btn-success']);
+            echo Html::a(Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_BUTTON_CREATE), ['create'], ['class' => 'btn btn-success']);
         }
         ?>
     </p>

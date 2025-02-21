@@ -14,7 +14,7 @@ use yii\grid\GridView;
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Warehouses');
+$this->title = Yii::t(TextConstants::INDEX, TextConstants::INDEX_WAREHOUSES_TITLE);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="warehouse-index">
@@ -24,7 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php
         if (Utils::isOwnerOrSupervisorOfCompany($companyId)) {
-            echo Html::a(Yii::t('app', 'Create Warehouse'), ['create'], ['class' => 'btn btn-success']);
+            echo Html::a(Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_BUTTON_CREATE), ['create'], ['class' => 'btn btn-success']);
         }
         ?>
     </p>

@@ -11,12 +11,12 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\SupplierEdit $model */
 /** @var app\models\entities\Supplier $supplier */
 
-$this->title = Yii::t('app', 'Update Supplier: {name}', [
+$this->title = Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_TITLE_UPDATE, [
     'name' => $model->name,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Suppliers'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_SUPPLIERS_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'supplier_id' => $model->supplier_id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->params['breadcrumbs'][] = Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE);
 ?>
 <div class="supplier-update">
 

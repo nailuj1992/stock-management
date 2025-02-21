@@ -11,12 +11,12 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\WarehouseEdit $model */
 /** @var app\models\entities\Warehouse $warehouse */
 
-$this->title = Yii::t('app', 'Update Warehouse: {name}', [
+$this->title = Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_TITLE_UPDATE, [
     'name' => $model->name,
 ]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Warehouses'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_WAREHOUSES_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'warehouse_id' => $model->warehouse_id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->params['breadcrumbs'][] = Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE);
 ?>
 <div class="warehouse-update">
 
