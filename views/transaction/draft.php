@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
@@ -68,7 +70,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                     <tr class="form-group">
                         <td class="col-2">
                             <?= $form->field($transaction_item, 'product_id')->dropDownList($products, [
-                                'prompt' => Yii::t('app', 'Select...'),
+                                'prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT),
                                 'id' => 'transaction-item-' . $i . '-product_id',
                                 'name' => 'TransactionItemDto[' . $i . '][product_id]',
                                 'onchange' => '
@@ -180,7 +182,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                         </td>
                         <?php if (count($transactionDto->transaction_items) > 1) { ?>
                             <td class="align-content-stretch text-align-center">
-                                <?= Html::submitButton(Yii::t('app', '-'), ['name' => 'removeRow', 'value' => 'row-' . $i, 'class' => 'btn btn-danger']) ?>
+                                <?= Html::submitButton(Constants::MINUS, ['name' => 'removeRow', 'value' => 'row-' . $i, 'class' => 'btn btn-danger']) ?>
                             </td>
                         <?php } ?>
                     </tr>
@@ -202,7 +204,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
             ->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'disabled' => true]) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Save'), ['name' => 'save', 'value' => 'true', 'class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['name' => 'save', 'value' => 'true', 'class' => 'btn btn-success']) ?>
             <?= Html::submitButton(Yii::t('app', 'Add other item'), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
         </div>
 

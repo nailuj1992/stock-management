@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Constants;
+use app\models\TextConstants;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use yii\grid\GridView;
@@ -21,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'product_id')->dropDownList($products, ['prompt' => Yii::t('app', 'Select...')]) ?>
+        <?= $form->field($model, 'product_id')->dropDownList($products, ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)]) ?>
 
         <?= $form->field($model, 'warehouse_id')->dropDownList($warehouses, ['prompt' => Yii::t('app', 'Empty')]) ?>
 
@@ -65,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'value' => function ($model) {
                                 if (!isset($model->amount_input)) {
-                                    return '-';
+                                    return Constants::MINUS;
                                 }
                                 return $model->hasOtherTransaction() ? '( ' . $model->amount_input . ' )' : $model->amount_input;
                             },
@@ -75,7 +77,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'value' => function ($model) {
                                 if (!isset($model->total_value_input)) {
-                                    return '-';
+                                    return Constants::MINUS;
                                 }
                                 return $model->hasOtherTransaction() ? '$ ( ' . $model->total_value_input . ' )' : '$ ' . $model->total_value_input;
                             },
@@ -85,7 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'value' => function ($model) {
                                 if (!isset($model->amount_output)) {
-                                    return '-';
+                                    return Constants::MINUS;
                                 }
                                 return $model->hasOtherTransaction() ? '( ' . $model->amount_output . ' )' : $model->amount_output;
                             },
@@ -95,7 +97,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                     'value' => function ($model) {
                                 if (!isset($model->total_value_output)) {
-                                    return '-';
+                                    return Constants::MINUS;
                                 }
                                 return $model->hasOtherTransaction() ? '$ ( ' . $model->total_value_output . ' )' : '$ ' . $model->total_value_output;
                             },

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
@@ -8,8 +9,8 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\UserPassword $model */
 /** @var yii\bootstrap5\ActiveForm $form */
 
-$this->title = Yii::t('app', 'Change Password');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Settings'), 'url' => ['view']];
+$this->title = Yii::t(TextConstants::APP, TextConstants::TITLE_CHANGE_PASSWORD);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::APP, TextConstants::TITLE_SETTINGS), 'url' => ['view']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-update">
@@ -35,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'repassword')->passwordInput(['maxlength' => true, 'autocomplete' => false]) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['class' => 'btn btn-success']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

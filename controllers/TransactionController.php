@@ -170,20 +170,20 @@ class TransactionController extends Controller
                 $errors = 0;
                 $document = Document::findOne(['document_id' => $model->document_id]);
                 if ($document->appliesForSupplier() && (!isset($model->supplier_id) || $model->supplier_id === '')) {
-                    $model->addError('supplier_id', Yii::t('app', 'This field is required.'));
+                    $model->addError('supplier_id', Yii::t(TextConstants::APP, TextConstants::MESSAGE_FIELD_REQUIRED));
                     $errors++;
                 }
                 if ($document->hasOtherTransaction() && (!isset($model->linked_transaction_id) || $model->linked_transaction_id === '')) {
-                    $model->addError('linked_transaction_id', Yii::t('app', 'This field is required.'));
+                    $model->addError('linked_transaction_id', Yii::t(TextConstants::APP, TextConstants::MESSAGE_FIELD_REQUIRED));
                     $errors++;
                 }
                 if ($document->hasExpiration()) {
                     if (!isset($model->expiration_date) || $model->expiration_date === '') {
-                        $model->addError('expiration_date', Yii::t('app', 'This field is required.'));
+                        $model->addError('expiration_date', Yii::t(TextConstants::APP, TextConstants::MESSAGE_FIELD_REQUIRED));
                         $errors++;
                     }
                     if (strtotime($model->expiration_date) < strtotime($model->creation_date)) {
-                        $model->addError('expiration_date', Yii::t('app', 'Expiration date should be later or equals to Creation date.'));
+                        $model->addError('expiration_date', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_EXPIRATION_LATER_CREATION_DATE));
                         $errors++;
                     }
                 }
@@ -231,7 +231,7 @@ class TransactionController extends Controller
 
         $other_transactions = Transaction::getLinkedTransactions($document_id, $company_id);
 
-        $resp = Html::tag('option', Html::encode(Yii::t('app', 'Select...')), ['value' => '']);
+        $resp = Html::tag('option', Html::encode(Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)), ['value' => '']);
         foreach ($other_transactions as $key => $value) {
             $resp .= Html::tag('option', Html::encode($value), ['value' => $key, 'selected' => false]);
         }
@@ -380,9 +380,9 @@ class TransactionController extends Controller
                     if (!isset($keysProductWarehouse[$product_id . '_' . $warehouseIdKey])) {
                         $keysProductWarehouse[$product_id . '_' . $warehouseIdKey] = true;
                     } else {
-                        $transactionItemDto->addError('product_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
-                        $transactionItemDto->addError('warehouse_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
-                        $transactionDto->addError('product_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
+                        $transactionItemDto->addError('product_id', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_UNIQUE_PRODUCT_WAREHOUSE));
+                        $transactionItemDto->addError('warehouse_id', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_UNIQUE_PRODUCT_WAREHOUSE));
+                        $transactionDto->addError('product_id', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_UNIQUE_PRODUCT_WAREHOUSE));
                         $errors++;
                     }
 
@@ -405,8 +405,8 @@ class TransactionController extends Controller
                         ($product->hasExistences() && $gap < $product->minimum_stock)
                         || (!$product->hasExistences() && $gap < 0)
                     ) {
-                        $transactionItemDto->addError('amount', Yii::t('app', 'Amount is below the minimum stock.'));
-                        $transactionDto->addError('amount', Yii::t('app', 'Amount is below the minimum stock.'));
+                        $transactionItemDto->addError('amount', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_AMOUNT_BELOW_MINIMUM_STOCK));
+                        $transactionDto->addError('amount', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_AMOUNT_BELOW_MINIMUM_STOCK));
                         $errors++;
                     }
                 }

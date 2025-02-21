@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Constants;
 use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
@@ -58,11 +59,11 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_TAX_RATE),
-                'value' => isset($model->tax_rate) ? $model->tax_rate . '%' : '-',
+                'value' => isset($model->tax_rate) ? $model->tax_rate . '%' : Constants::MINUS,
             ],
             [
                 'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_DISCOUNT_RATE),
-                'value' => isset($model->discount_rate) ? $model->discount_rate . '%' : '-',
+                'value' => isset($model->discount_rate) ? $model->discount_rate . '%' : Constants::MINUS,
             ],
             [
                 'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_MINIMUM_STOCK),
@@ -70,7 +71,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'label' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_SUGGESTED_VALUE),
-                'value' => isset($model->sugested_value) ? '$' . $model->sugested_value : '-',
+                'value' => isset($model->sugested_value) ? '$' . $model->sugested_value : Constants::MINUS,
             ],
             [
                 'label' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),

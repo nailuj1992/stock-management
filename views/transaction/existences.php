@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use yii\grid\GridView;
@@ -21,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'product_id')->dropDownList($products, ['prompt' => Yii::t('app', 'Select...')]) ?>
+        <?= $form->field($model, 'product_id')->dropDownList($products, ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)]) ?>
 
         <?= $form->field($model, 'warehouse_id')->dropDownList($warehouses, ['prompt' => Yii::t('app', 'Empty')]) ?>
 

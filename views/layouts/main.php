@@ -4,6 +4,7 @@
 /** @var string $content */
 
 use app\assets\AppAsset;
+use app\models\TextConstants;
 use app\widgets\Alert;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
@@ -41,19 +42,19 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         echo Nav::widget([
             'options' => ['class' => 'navbar-nav'],
             'items' => [
-                ['label' => Yii::t('app', 'Home'), 'url' => ['/']],
-                ['label' => Yii::t('app', 'About'), 'url' => ['/site/about']],
-                ['label' => Yii::t('app', 'Contact'), 'url' => ['/site/contact']],
+                ['label' => Yii::t(TextConstants::APP, TextConstants::BUTTON_HOME), 'url' => ['/']],
+                // ['label' => Yii::t(TextConstants::APP, 'About'), 'url' => ['/site/about']],
+                // ['label' => Yii::t(TextConstants::APP, 'Contact'), 'url' => ['/site/contact']],
                 Yii::$app->user->isGuest
                 ? ''
                 : '<li class="nav-item">'
-                . Html::a(Yii::t('app', 'Profile ({name})', ['name' => Yii::$app->user->identity->name]), ['/user/view/'], ['class' => 'nav-link btn btn-link'])
+                . Html::a(Yii::t(TextConstants::APP, TextConstants::TITLE_PROFILE, ['name' => Yii::$app->user->identity->name]), ['/user/view/'], ['class' => 'nav-link btn btn-link'])
                 . '</li>',
                 Yii::$app->user->isGuest
-                ? ['label' => Yii::t('app', 'Login'), 'url' => ['/site/login']]
+                ? ['label' => Yii::t(TextConstants::APP, TextConstants::BUTTON_LOGIN), 'url' => ['/site/login']]
                 : '<li class="nav-item">'
                 . Html::beginForm(['/site/logout'])
-                . Html::submitButton(Yii::t('app', 'Logout'), ['class' => 'nav-link btn btn-link logout'])
+                . Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_LOGOUT), ['class' => 'nav-link btn btn-link logout'])
                 . Html::endForm()
                 . '</li>',
             ]

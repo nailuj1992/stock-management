@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\entities\City;
@@ -9,7 +10,7 @@ use app\models\entities\Country;
 /** @var yii\web\View $this */
 /** @var app\models\entities\User $model */
 
-$this->title = Yii::t('app', 'Settings');
+$this->title = Yii::t(TextConstants::APP, TextConstants::TITLE_SETTINGS);
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -18,8 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update info'), ['update'], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Change Password'), ['change'], ['class' => 'btn btn-secondary']) ?>
+        <?= Html::a(Yii::t(TextConstants::APP, TextConstants::TITLE_UPDATE_INFO), ['update'], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t(TextConstants::APP, TextConstants::TITLE_CHANGE_PASSWORD), ['change'], ['class' => 'btn btn-secondary']) ?>
     </p>
 
     <?php
@@ -36,19 +37,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'phone',
             'address',
             [
-                'label' => Yii::t('app', 'City'),
+                'label' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
                 'value' => $city->name,
             ],
             [
-                'label' => Yii::t('app', 'State'),
+                'label' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
                 'value' => $state->name,
             ],
             [
-                'label' => Yii::t('app', 'Country'),
+                'label' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
                 'value' => $country->name,
             ],
             [
-                'label' => Yii::t('app', 'Status'),
+                'label' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_ADDRESS),
                 'value' => $model->getFullStatus(),
             ],
         ],

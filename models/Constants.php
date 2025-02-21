@@ -44,4 +44,6 @@ class Constants
 
     const MAX_LENGTH_NUM_TRANSACTION = 10;
 
+    const MINUS = '-';
+
 }
