@@ -32,7 +32,6 @@ class KardexSearchDto extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            // [['product_id', 'cutoff_date'], 'required'],
             [['product_id', 'initial_date', 'final_date'], 'required'],
             [['product_id', 'warehouse_id'], 'integer'],
             [['cutoff_date'], 'safe'],
