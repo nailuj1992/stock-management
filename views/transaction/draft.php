@@ -181,7 +181,7 @@ $this->params['breadcrumbs'][] = Yii::t(TextConstants::TRANSACTION, TextConstant
                                 ->label(false)->error(false) ?>
                         </td>
                         <?php if (count($transactionDto->transaction_items) > 1) { ?>
-                            <td class="align-content-stretch text-align-center">
+                            <td class="col-1 align-content-stretch text-align-center">
                                 <?= Html::submitButton(Constants::MINUS, ['name' => 'removeRow', 'value' => 'row-' . $i, 'class' => 'btn btn-danger']) ?>
                             </td>
                         <?php } ?>
