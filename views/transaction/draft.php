@@ -14,9 +14,9 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\entities\Warehouse[] $warehouses */
 
 $name = $document->code . ' - ' . $model->num_transaction;
-$this->title = Yii::t('app', 'Draft Transaction: {name}', ['name' => $name]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Transactions'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name]);
+$this->title = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_TITLE_DRAFT, ['name' => $name]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_TRANSACTIONS_TITLE), 'url' => ['index']];
+$this->params['breadcrumbs'][] = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_TITLE_DRAFT_MINI, ['name' => $name]);
 ?>
 <div class="transaction-draft">
 
@@ -45,9 +45,9 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
 
         <?= $form->field($transactionDto, 'num_transaction')->textInput(['disabled' => true, 'type' => 'number']) ?>
 
-        <?= $form->field($transactionDto, 'supplier')->textInput(['disabled' => true]) ?>
-
         <?= $form->field($transactionDto, 'linked_transaction')->textInput(['disabled' => true]) ?>
+
+        <?= $form->field($transactionDto, 'supplier')->textInput(['disabled' => true]) ?>
 
         <?= $form->field($transactionDto, 'creation_date')->textInput(['disabled' => true]) ?>
 
@@ -205,7 +205,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
 
         <div class="form-group">
             <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['name' => 'save', 'value' => 'true', 'class' => 'btn btn-success']) ?>
-            <?= Html::submitButton(Yii::t('app', 'Add other item'), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_BUTTON_ADD_ITEM), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

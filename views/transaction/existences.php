@@ -11,7 +11,7 @@ use yii\grid\GridView;
 /** @var app\models\entities\Warehouse[] $warehouses */
 /** @var yii\data\ArrayDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Existences');
+$this->title = Yii::t(TextConstants::INDEX, TextConstants::INDEX_EXISTENCES_TITLE);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="existences-view">

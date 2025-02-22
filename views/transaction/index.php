@@ -10,7 +10,7 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var yii\data\ActiveDataProvider $dataProviderDraft */
 
-$this->title = Yii::t('app', 'View Transactions');
+$this->title = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_TITLE_INDEX);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="transaction-index">
@@ -19,12 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?php if (Utils::belongsToCompany($companyId)) { ?>
-            <?= Html::a(Yii::t('app', 'Create Transaction'), ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a(Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_BUTTON_CREATE), ['create'], ['class' => 'btn btn-success']) ?>
         <?php } ?>
     </p>
 
     <?php if ($dataProviderDraft->totalCount > 0) { ?>
-        <h2><?= Html::encode(Yii::t('app', 'Drafts')) ?></h2>
+        <h2><?= Html::encode(Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_SUBTITLE_DRAFTS)) ?></h2>
 
         <?= GridView::widget([
             'dataProvider' => $dataProviderDraft,
@@ -74,7 +74,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ]); ?>
 
-        <h2><?= Html::encode(Yii::t('app', 'Saved Transactions')) ?></h2>
+        <h2><?= Html::encode(Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_SUBTITLE_SAVED)) ?></h2>
 
     <?php } ?>
 

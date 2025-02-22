@@ -12,8 +12,8 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\entities\Document $document */
 
 $name = $document->code . ' - ' . $model->num_transaction;
-$this->title = Yii::t('app', 'Transaction: {name}', ['name' => $name]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Transactions'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_TITLE_VIEW, ['name' => $name]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_TRANSACTIONS_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="transaction-view">
@@ -26,12 +26,12 @@ $this->params['breadcrumbs'][] = $this->title;
             'document',
             'num_transaction',
             [
-                'label' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
-                'value' => isset($transactionDto->supplier) && $transactionDto->supplier !== '' ? $transactionDto->supplier : Constants::NA,
-            ],
-            [
                 'label' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_LINKED),
                 'value' => isset($transactionDto->linked_transaction) && $transactionDto->linked_transaction !== '' ? $transactionDto->linked_transaction : Constants::NA,
+            ],
+            [
+                'label' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
+                'value' => isset($transactionDto->supplier) && $transactionDto->supplier !== '' ? $transactionDto->supplier : Constants::NA,
             ],
             'creation_date',
             [

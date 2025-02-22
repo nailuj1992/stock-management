@@ -14,8 +14,8 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\entities\Product[] $products */
 /** @var app\models\entities\Warehouse[] $warehouses */
 
-$this->title = Yii::t('app', 'Create Transaction');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Transactions'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_BUTTON_CREATE);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_TRANSACTIONS_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="transaction-create">

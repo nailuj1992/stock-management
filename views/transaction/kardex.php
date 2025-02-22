@@ -12,7 +12,7 @@ use yii\grid\GridView;
 /** @var app\models\entities\Warehouse[] $warehouses */
 /** @var yii\data\ArrayDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Kardex');
+$this->title = Yii::t(TextConstants::INDEX, TextConstants::INDEX_KARDEX_TITLE);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="kardex-view">
