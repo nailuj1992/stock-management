@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 22, 2025 at 03:09 AM
+-- Generation Time: Feb 22, 2025 at 05:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -51,7 +51,7 @@ INSERT INTO `application_company` (`application_id`, `user_id`, `company_id`, `s
 (3, 7, 1, 'R', 'please please let me in!!!!', 'You are not valid.', 7, '2024-08-20 06:27:46', 24, '2024-08-20 06:27:46'),
 (4, 7, 1, 'A', 'Por favor por favor :(', NULL, 7, '2024-08-20 21:46:14', 24, '2024-08-20 21:46:14'),
 (5, 7, 3, 'A', 'otro try', NULL, 7, '2024-08-20 22:09:52', 6, '2024-08-20 22:09:52'),
-(6, 24, 2, 'P', 'Algo 1', NULL, 24, '2025-02-18 15:47:12', 24, '2025-02-18 15:47:12'),
+(6, 24, 2, 'R', 'Algo 1', 'algo', 24, '2025-02-18 15:47:12', 6, '2025-02-18 15:47:12'),
 (7, 24, 3, 'P', 'Algo 2', NULL, 24, '2025-02-18 15:47:23', 24, '2025-02-18 15:47:23'),
 (8, 6, 1, 'P', 'qwe 123', NULL, 6, '2025-02-19 00:01:07', 6, '2025-02-19 00:01:07');
 
@@ -330,11 +330,11 @@ INSERT INTO `message` (`id`, `language`, `translation`) VALUES
 (25, 'es-CO', 'Aquí puedes explorar las bodegas de tu empresa.'),
 (26, 'en-US', 'Suppliers'),
 (26, 'es-CO', 'Proveedores'),
-(27, 'en-US', 'Here, you can explore your company\'s suppliers.'),
+(27, 'en-US', 'Here, you can explore your company`s suppliers.'),
 (27, 'es-CO', 'Aquí puedes explorar los proveedores de tu empresa.'),
 (28, 'en-US', 'Transactions'),
 (28, 'es-CO', 'Transacciones'),
-(29, 'en-US', 'Here, you can view your company\'s transactions.'),
+(29, 'en-US', 'Here, you can view your company`s transactions.'),
 (29, 'es-CO', 'Aquí puedes ver las transacciones de tu empresa.'),
 (30, 'en-US', 'Existences'),
 (30, 'es-CO', 'Existencias'),
@@ -428,7 +428,7 @@ INSERT INTO `message` (`id`, `language`, `translation`) VALUES
 (74, 'es-CO', 'Por favor, ingresa solo dígitos, no más de 13.'),
 (75, 'en-US', 'New password must contain at least one lower- and upper-case character and a digit.'),
 (75, 'es-CO', 'La nueva contraseña debe contener al menos una letra minúscula, una mayúscula y un dígito.'),
-(76, 'en-US', 'Passwords don\'t match.'),
+(76, 'en-US', 'Passwords don`t match.'),
 (76, 'es-CO', 'Las contraseñas no coinciden.'),
 (77, 'en-US', 'Current Users'),
 (77, 'es-CO', 'Usuarios Actuales'),
@@ -733,7 +733,15 @@ INSERT INTO `message` (`id`, `language`, `translation`) VALUES
 (227, 'en-US', 'Transaction: {name}'),
 (227, 'es-CO', 'Transacción: {name}'),
 (228, 'en-US', 'Add more'),
-(228, 'es-CO', 'Añadir más');
+(228, 'es-CO', 'Añadir más'),
+(229, 'en-US', 'Final date should be later or equals to Initial date.'),
+(229, 'es-CO', 'La fecha final debe ser posterior o igual a la fecha inicial.'),
+(230, 'en-US', 'Initial Date'),
+(230, 'es-CO', 'Fecha Inicial'),
+(231, 'en-US', 'Final Date'),
+(231, 'es-CO', 'Fecha Final'),
+(232, 'en-US', 'INITIAL BALANCE'),
+(232, 'es-CO', 'INVENTARIO INICIAL');
 
 -- --------------------------------------------------------
 
@@ -1010,7 +1018,11 @@ INSERT INTO `source_message` (`id`, `category`, `message`) VALUES
 (225, 'transaction', 'TRANSACTION_SUBTITLE_DRAFTS'),
 (226, 'transaction', 'TRANSACTION_SUBTITLE_SAVED'),
 (227, 'transaction', 'TRANSACTION_TITLE_VIEW'),
-(228, 'transaction', 'TRANSACTION_BUTTON_ADD_ITEM');
+(228, 'transaction', 'TRANSACTION_BUTTON_ADD_ITEM'),
+(229, 'transaction', 'TRANSACTION_MESSAGE_FINAL_LATER_INITIAL_DATE'),
+(230, 'transaction', 'TRANSACTION_MODEL_INITIAL_DATE'),
+(231, 'transaction', 'TRANSACTION_MODEL_FINAL_DATE'),
+(232, 'transaction', 'TRANSACTION_KARDEX_INITIAL_STOCK');
 
 -- --------------------------------------------------------
 
@@ -1465,7 +1477,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `source_message`
 --
 ALTER TABLE `source_message`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=229;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=233;
 
 --
 -- AUTO_INCREMENT for table `state`

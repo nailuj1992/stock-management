@@ -27,7 +27,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'warehouse_id')->dropDownList($warehouses, ['prompt' => Yii::t(TextConstants::APP, textConstants::OPTION_EMPTY)]) ?>
 
-        <?= $form->field($model, 'cutoff_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
+        <?= $form->field($model, 'initial_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
+
+        <?= $form->field($model, 'final_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
 
         <div class="form-group">
             <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SEARCH), ['class' => 'btn btn-success']) ?>

@@ -744,17 +744,25 @@ class TransactionController extends Controller
             $kardexRequest = $this->request->post()['KardexSearchDto'];
             $model->product_id = $kardexRequest['product_id'];
             $model->warehouse_id = $kardexRequest['warehouse_id'];
-            $model->cutoff_date = $kardexRequest['cutoff_date'];
+            $model->initial_date = $kardexRequest['initial_date'];
+            $model->final_date = $kardexRequest['final_date'];
 
-            $dataProvider = new ArrayDataProvider([
-                'allModels' => KardexSearchDto::getKardex($company_id, $model->product_id, $model->warehouse_id, $model->cutoff_date),
-            ]);
-            return $this->render('kardex', [
-                'model' => $model,
-                'products' => $products,
-                'warehouses' => $warehouses,
-                'dataProvider' => $dataProvider,
-            ]);
+            $errors = 0;
+            if (strtotime($model->final_date) < strtotime($model->initial_date)) {
+                $model->addError('final_date', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_FINAL_LATER_INITIAL_DATE));
+                $errors++;
+            }
+            if ($errors === 0) {
+                $dataProvider = new ArrayDataProvider([
+                    'allModels' => KardexSearchDto::getKardexInRange($company_id, $model->product_id, $model->initial_date, $model->final_date, $model->warehouse_id),
+                ]);
+                return $this->render('kardex', [
+                    'model' => $model,
+                    'products' => $products,
+                    'warehouses' => $warehouses,
+                    'dataProvider' => $dataProvider,
+                ]);
+            }
         } else {
             $model->loadDefaultValues();
         }
