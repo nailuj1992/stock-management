@@ -87,6 +87,7 @@ class UserController extends Controller
             $user->status = Constants::STATUS_ACTIVE_DB;
             $user->created_by = Constants::DEFAULT_USER_CREATE;
             $user->updated_by = Constants::DEFAULT_USER_CREATE;
+            $user->updated_pwd_at = Utils::getDateNowDB();
 
             if ($model->validate() && $user->save()) {
                 $auth = Yii::$app->authManager;
@@ -164,16 +165,31 @@ class UserController extends Controller
         $model->setIsNewRecord(false);
 
         if ($this->request->isPost && $model->load($this->request->post())) {
-            $user->email = $model->email;
-            $user->password = Utils::sha($model->password);
-            if ($user->isInactive()) {
-                $user->status = Constants::STATUS_ACTIVE_DB;
-            }
-            $user->updated_by = $model->user_id;
-            $user->updated_at = Utils::getDateNowDB();
+            $newPassword = Utils::sha($model->password);
+            $oldPassword = $user->password;
 
-            if ($model->validate() && $user->save()) {
-                return $this->redirect(['view', 'user_id' => $model->user_id]);
+            $errors = 0;
+            if ($oldPassword !== Utils::sha($model->oldpassword)) {
+                $model->addError('oldpassword', Yii::t(TextConstants::APP, TextConstants::MESSAGE_OLD_PASSWORD_NOT_MATCH));
+                $errors++;
+            }
+            if ($oldPassword === $newPassword) {
+                $model->addError('password', Yii::t(TextConstants::APP, TextConstants::MESSAGE_NEW_OLD_PASSWORD_DIFFERENT));
+                $errors++;
+            }
+            if ($errors === 0) {
+                $user->email = $model->email;
+                $user->password = $newPassword;
+                if ($user->isInactive()) {
+                    $user->status = Constants::STATUS_ACTIVE_DB;
+                }
+                $user->updated_by = $model->user_id;
+                $user->updated_at = Utils::getDateNowDB();
+                $user->updated_pwd_at = Utils::getDateNowDB();
+
+                if ($model->validate() && $user->save()) {
+                    return $this->redirect(['view', 'user_id' => $model->user_id]);
+                }
             }
         }
 

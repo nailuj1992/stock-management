@@ -20,6 +20,7 @@ class UserLogin extends \yii\base\BaseObject implements \yii\web\IdentityInterfa
     public $created_at;
     public $updated_by;
     public $updated_at;
+    public $updated_pwd_at;
 
 
     /**

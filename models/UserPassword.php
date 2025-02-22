@@ -9,12 +9,14 @@ use Yii;
  *
  * @property string $user_id
  * @property string $email
+ * @property string $oldpassword
  * @property string $password
  * @property string $repassword
  */
 class UserPassword extends \yii\db\ActiveRecord
 {
     public $email;
+    public $oldpassword;
     public $password;
     public $repassword;
 
@@ -29,7 +31,7 @@ class UserPassword extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'email', 'password', 'repassword'], 'required'],
+            [['user_id', 'email', 'oldpassword', 'password', 'repassword'], 'required'],
             [['email', 'password', 'repassword'], 'string', 'max' => 100],
             [
                 'password',
@@ -56,6 +58,7 @@ class UserPassword extends \yii\db\ActiveRecord
         return [
             'user_id' => Yii::t(TextConstants::USER, TextConstants::USER_MODEL_ID),
             'email' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_EMAIL),
+            'oldpassword' => Yii::t(TextConstants::USER, TextConstants::USER_MODEL_OLD_PASSWORD),
             'password' => Yii::t(TextConstants::USER, TextConstants::USER_MODEL_PASSWORD),
             'repassword' => Yii::t(TextConstants::USER, TextConstants::USER_MODEL_REPASSWORD),
         ];

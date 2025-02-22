@@ -31,6 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'email')->textInput(['maxlength' => true, 'disabled' => true, 'autocomplete' => false]) ?>
 
+        <?= $form->field($model, 'oldpassword')->passwordInput(['maxlength' => true, 'autocomplete' => false]) ?>
+
         <?= $form->field($model, 'password')->passwordInput(['maxlength' => true, 'autocomplete' => false]) ?>
 
         <?= $form->field($model, 'repassword')->passwordInput(['maxlength' => true, 'autocomplete' => false]) ?>

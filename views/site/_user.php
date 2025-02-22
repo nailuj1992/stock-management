@@ -36,7 +36,7 @@ use yii\helpers\Html;
     } else {
         if (Utils::isInactiveUser()) {
             ?>
-            <div class="alert alert-danger">
+            <div class="alert alert-danger text-center">
                 <?= nl2br(Html::encode(Yii::t(TextConstants::INDEX, TextConstants::INDEX_MESSAGE_ACTIVATE_ACCOUNT))) ?>
             </div>
             <?php

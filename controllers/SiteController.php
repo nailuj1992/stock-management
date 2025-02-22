@@ -138,7 +138,7 @@ class SiteController extends Controller
                 Yii::$app->language = "en-US";
                 break;
             case "es":
-                Yii::$app->language = "es-ES";
+                Yii::$app->language = "es-CO";
                 break;
             default:
                 Yii::$app->language = "en-US";

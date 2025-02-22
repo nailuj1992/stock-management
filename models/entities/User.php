@@ -23,6 +23,7 @@ use Yii;
  * @property string|null $created_at
  * @property int|null $updated_by
  * @property string|null $updated_at
+ * @property string|null $updated_pwd_at
  *
  * @property AuthAssignment[] $authAssignments
  * @property City $city0
@@ -45,7 +46,7 @@ class User extends \yii\db\ActiveRecord
         return [
             [['email', 'password', 'name', 'phone', 'address', 'city', 'status'], 'required'],
             [['city', 'created_by', 'updated_by'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'updated_pwd_at'], 'safe'],
             [['email', 'password', 'address'], 'string', 'max' => 100],
             [['auth_key', 'access_token'], 'string', 'max' => 70],
             [['name'], 'string', 'max' => 200],
@@ -77,6 +78,7 @@ class User extends \yii\db\ActiveRecord
             'created_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_AT),
             'updated_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_BY),
             'updated_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_AT),
+            'updated_pwd_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_AT),
         ];
     }
 
