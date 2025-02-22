@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Constants;
+use app\models\TextConstants;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use yii\grid\GridView;
@@ -10,7 +12,7 @@ use yii\grid\GridView;
 /** @var app\models\entities\Warehouse[] $warehouses */
 /** @var yii\data\ArrayDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Kardex');
+$this->title = Yii::t(TextConstants::INDEX, TextConstants::INDEX_KARDEX_TITLE);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="kardex-view">
@@ -21,14 +23,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'product_id')->dropDownList($products, ['prompt' => Yii::t('app', 'Select...')]) ?>
+        <?= $form->field($model, 'product_id')->dropDownList($products, ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)]) ?>
 
-        <?= $form->field($model, 'warehouse_id')->dropDownList($warehouses, ['prompt' => Yii::t('app', 'Empty')]) ?>
+        <?= $form->field($model, 'warehouse_id')->dropDownList($warehouses, ['prompt' => Yii::t(TextConstants::APP, textConstants::OPTION_EMPTY)]) ?>
 
         <?= $form->field($model, 'cutoff_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SEARCH), ['class' => 'btn btn-success']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>
@@ -40,75 +42,75 @@ $this->params['breadcrumbs'][] = $this->title;
             'dataProvider' => $dataProvider,
             'columns' => [
                 [
-                    'attribute' => Yii::t('app', 'Date'),
+                    'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_DATE),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 return $model->creation_date;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Transaction'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_ID),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 return $model->transaction;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Unit Value'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_UNIT_VALUE),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 return '$ ' . $model->unit_value;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Amount Input'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_INPUT),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 if (!isset($model->amount_input)) {
-                                    return '-';
+                                    return Constants::MINUS;
                                 }
                                 return $model->hasOtherTransaction() ? '( ' . $model->amount_input . ' )' : $model->amount_input;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Value Input'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_VALUE_INPUT),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 if (!isset($model->total_value_input)) {
-                                    return '-';
+                                    return Constants::MINUS;
                                 }
                                 return $model->hasOtherTransaction() ? '$ ( ' . $model->total_value_input . ' )' : '$ ' . $model->total_value_input;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Amount Output'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_OUTPUT),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 if (!isset($model->amount_output)) {
-                                    return '-';
+                                    return Constants::MINUS;
                                 }
                                 return $model->hasOtherTransaction() ? '( ' . $model->amount_output . ' )' : $model->amount_output;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Value Output'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_VALUE_OUTPUT),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 if (!isset($model->total_value_output)) {
-                                    return '-';
+                                    return Constants::MINUS;
                                 }
                                 return $model->hasOtherTransaction() ? '$ ( ' . $model->total_value_output . ' )' : '$ ' . $model->total_value_output;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Amount Balance'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_BALANCE),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 return $model->amount_balance;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Value Balance'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_VALUE_BALANCE),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 return '$ ' . $model->total_value_balance;

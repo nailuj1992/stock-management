@@ -2,6 +2,7 @@
 
 namespace app\models\entities;
 
+use app\models\TextConstants;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -48,10 +49,10 @@ class City extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'city_id' => Yii::t('app', 'City ID'),
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
-            'state_id' => Yii::t('app', 'State ID'),
+            'city_id' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
+            'code' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
+            'state_id' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
         ];
     }
 
@@ -85,7 +86,8 @@ class City extends \yii\db\ActiveRecord
         return $this->hasMany(User::class, ['city' => 'city_id']);
     }
 
-    public static function getCities($idState) {
+    public static function getCities($idState)
+    {
         $query = self::find()->where(['state_id' => $idState])->asArray()->all();
         return ArrayHelper::map($query, 'city_id', 'name');
     }

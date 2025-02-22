@@ -3,6 +3,7 @@
 namespace app\models\entities;
 
 use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 use yii\helpers\ArrayHelper;
@@ -64,21 +65,21 @@ class Product extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'product_id' => Yii::t('app', 'Product ID'),
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
-            'description' => Yii::t('app', 'Description'),
-            'has_existences' => Yii::t('app', 'Has Existences?'),
-            'tax_rate' => Yii::t('app', 'Tax Rate'),
-            'discount_rate' => Yii::t('app', 'Discount Rate'),
-            'minimum_stock' => Yii::t('app', 'Minimum Stock'),
-            'sugested_value' => Yii::t('app', 'Suggested Value'),
-            'company_id' => Yii::t('app', 'Company ID'),
-            'status' => Yii::t('app', 'Status'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'product_id' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
+            'code' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
+            'description' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_DESCRIPTION),
+            'has_existences' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_HAS_EXISTENCES),
+            'tax_rate' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_TAX_RATE),
+            'discount_rate' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_DISCOUNT_RATE),
+            'minimum_stock' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_MINIMUM_STOCK),
+            'sugested_value' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_SUGGESTED_VALUE),
+            'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
+            'status' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
+            'created_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_BY),
+            'created_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_AT),
+            'updated_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_BY),
+            'updated_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_AT),
         ];
     }
 

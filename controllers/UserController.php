@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\TextConstants;
 use yii;
 use app\models\Constants;
 use app\models\UserEdit;
@@ -196,6 +197,6 @@ class UserController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 }

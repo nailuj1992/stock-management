@@ -2,6 +2,7 @@
 
 use app\models\entities\Document;
 use app\models\entities\Transaction;
+use app\models\TextConstants;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 
@@ -13,8 +14,8 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\entities\Product[] $products */
 /** @var app\models\entities\Warehouse[] $warehouses */
 
-$this->title = Yii::t('app', 'Create Transaction');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Transactions'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_BUTTON_CREATE);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_TRANSACTIONS_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="transaction-create">
@@ -26,7 +27,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php $form = ActiveForm::begin(); ?>
 
         <?= $form->field($model, 'document_id')->dropDownList($documents, [
-            'prompt' => Yii::t('app', 'Select...'),
+            'prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT),
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/transaction/get-next-num-transaction']) . '/?document_id=" + $(this).val(), function(data) {
                     $("#transactiondto-num_transaction").val(data);
@@ -63,7 +64,7 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         ?>
         <?= $form->field($model, 'linked_transaction_id')->dropDownList($other_transactions, [
-            'prompt' => Yii::t('app', 'Select...'),
+            'prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT),
             'disabled' => isset($model->document_id) ? !Document::isDocumentLinkedWithOtherTransaction($model->document_id) : true,
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/transaction/get-supplier-on-transaction']) . '/?transaction_id=" + $(this).val(), function(data) {
@@ -75,14 +76,14 @@ $this->params['breadcrumbs'][] = $this->title;
                 ',
         ]) ?>
 
-        <?= $form->field($model, 'supplier_id')->dropDownList($suppliers, ['prompt' => Yii::t('app', 'Select...'), 'disabled' => isset($model->document_id) ? !Document::isDocumentForSuppliers($model->document_id) : true]) ?>
+        <?= $form->field($model, 'supplier_id')->dropDownList($suppliers, ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT), 'disabled' => isset($model->document_id) ? !Document::isDocumentForSuppliers($model->document_id) : true]) ?>
 
         <?= $form->field($model, 'creation_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
 
         <?= $form->field($model, 'expiration_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date', 'disabled' => isset($model->document_id) ? !Document::documentHasExpiration($model->document_id) : true]) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['class' => 'btn btn-success']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

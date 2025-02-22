@@ -11,6 +11,7 @@ use app\models\entities\TransactionItem;
 use app\models\entities\Warehouse;
 use app\models\ExistencesDto;
 use app\models\KardexSearchDto;
+use app\models\TextConstants;
 use app\models\TransactionDto;
 use app\models\TransactionItemDto;
 use app\models\Utils;
@@ -132,7 +133,7 @@ class TransactionController extends Controller
         $company_id = $model->company_id;
 
         if (in_array($model->status, [Constants::STATUS_DRAFT_DB, Constants::STATUS_DELETED_DB])) {
-            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+            throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
         }
 
         $transactionDto = TransactionDto::newTransactionDto($model);
@@ -169,20 +170,20 @@ class TransactionController extends Controller
                 $errors = 0;
                 $document = Document::findOne(['document_id' => $model->document_id]);
                 if ($document->appliesForSupplier() && (!isset($model->supplier_id) || $model->supplier_id === '')) {
-                    $model->addError('supplier_id', Yii::t('app', 'This field is required.'));
+                    $model->addError('supplier_id', Yii::t(TextConstants::APP, TextConstants::MESSAGE_FIELD_REQUIRED));
                     $errors++;
                 }
                 if ($document->hasOtherTransaction() && (!isset($model->linked_transaction_id) || $model->linked_transaction_id === '')) {
-                    $model->addError('linked_transaction_id', Yii::t('app', 'This field is required.'));
+                    $model->addError('linked_transaction_id', Yii::t(TextConstants::APP, TextConstants::MESSAGE_FIELD_REQUIRED));
                     $errors++;
                 }
                 if ($document->hasExpiration()) {
                     if (!isset($model->expiration_date) || $model->expiration_date === '') {
-                        $model->addError('expiration_date', Yii::t('app', 'This field is required.'));
+                        $model->addError('expiration_date', Yii::t(TextConstants::APP, TextConstants::MESSAGE_FIELD_REQUIRED));
                         $errors++;
                     }
                     if (strtotime($model->expiration_date) < strtotime($model->creation_date)) {
-                        $model->addError('expiration_date', Yii::t('app', 'Expiration date should be later or equals to Creation date.'));
+                        $model->addError('expiration_date', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_EXPIRATION_LATER_CREATION_DATE));
                         $errors++;
                     }
                 }
@@ -230,7 +231,7 @@ class TransactionController extends Controller
 
         $other_transactions = Transaction::getLinkedTransactions($document_id, $company_id);
 
-        $resp = Html::tag('option', Html::encode(Yii::t('app', 'Select...')), ['value' => '']);
+        $resp = Html::tag('option', Html::encode(Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)), ['value' => '']);
         foreach ($other_transactions as $key => $value) {
             $resp .= Html::tag('option', Html::encode($value), ['value' => $key, 'selected' => false]);
         }
@@ -323,7 +324,7 @@ class TransactionController extends Controller
         $model = $this->findModel($transaction_id);
 
         if ($model->status !== Constants::STATUS_DRAFT_DB) {
-            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+            throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
         }
 
         $transactionDto = TransactionDto::newTransactionDto($model);
@@ -379,9 +380,9 @@ class TransactionController extends Controller
                     if (!isset($keysProductWarehouse[$product_id . '_' . $warehouseIdKey])) {
                         $keysProductWarehouse[$product_id . '_' . $warehouseIdKey] = true;
                     } else {
-                        $transactionItemDto->addError('product_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
-                        $transactionItemDto->addError('warehouse_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
-                        $transactionDto->addError('product_id', Yii::t('app', 'It should only be one product with its warehouse on this document.'));
+                        $transactionItemDto->addError('product_id', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_UNIQUE_PRODUCT_WAREHOUSE));
+                        $transactionItemDto->addError('warehouse_id', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_UNIQUE_PRODUCT_WAREHOUSE));
+                        $transactionDto->addError('product_id', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_UNIQUE_PRODUCT_WAREHOUSE));
                         $errors++;
                     }
 
@@ -404,8 +405,8 @@ class TransactionController extends Controller
                         ($product->hasExistences() && $gap < $product->minimum_stock)
                         || (!$product->hasExistences() && $gap < 0)
                     ) {
-                        $transactionItemDto->addError('amount', Yii::t('app', 'Amount is below the minimum stock.'));
-                        $transactionDto->addError('amount', Yii::t('app', 'Amount is below the minimum stock.'));
+                        $transactionItemDto->addError('amount', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_AMOUNT_BELOW_MINIMUM_STOCK));
+                        $transactionDto->addError('amount', Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_AMOUNT_BELOW_MINIMUM_STOCK));
                         $errors++;
                     }
                 }
@@ -649,7 +650,7 @@ class TransactionController extends Controller
         $user_id = Yii::$app->user->identity->user_id;
 
         if ($model->status !== Constants::STATUS_DRAFT_DB) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MESSAGE_INFO_DELETED_NOT_DRAFT_TRANSACTION));
         }
 
         $model->status = Constants::STATUS_DELETED_DB;
@@ -679,7 +680,7 @@ class TransactionController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 
     /**

@@ -1,8 +1,10 @@
 <?php
 
+use app\models\Constants;
 use app\models\entities\City;
 use app\models\entities\Country;
 use app\models\entities\State;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -11,7 +13,7 @@ use yii\widgets\DetailView;
 /** @var app\models\entities\Supplier $model */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Suppliers'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_SUPPLIERS_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -22,16 +24,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php
         if (Utils::isOwnerOrSupervisorOfCompany($model->company_id)) {
-            echo Html::a(Yii::t('app', 'Update'), ['update', 'supplier_id' => $model->supplier_id], ['class' => 'btn btn-primary']);
+            echo Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE), ['update', 'supplier_id' => $model->supplier_id], ['class' => 'btn btn-primary']);
 
             if ($model->isActive()) {
-                $label = Yii::t('app', 'Deactivate');
+                $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_DEACTIVATE);
                 $class = "btn btn-danger";
-                $question = Yii::t('app', "Are you sure you want to deactivate the supplier {code} - {name}?", ['code' => $model->code, 'name' => $model->name]);
+                $question = Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_INDEX_CONFIRMATION_DEACTIVATE, ['code' => $model->code, 'name' => $model->name]);
             } elseif ($model->isInactive()) {
-                $label = Yii::t('app', 'Activate');
+                $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_ACTIVATE);
                 $class = "btn btn-warning";
-                $question = Yii::t('app', "Are you sure you want to activate the supplier {code} - {name}?", ['code' => $model->code, 'name' => $model->name]);
+                $question = Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_INDEX_CONFIRMATION_ACTIVATE, ['code' => $model->code, 'name' => $model->name]);
             }
             echo Html::a($label, ['activate', 'supplier_id' => $model->supplier_id], [
                 'class' => $class,
@@ -54,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'label' => '#',
+                'label' => Constants::NUM,
                 'value' => $model->supplier_id,
             ],
             'code',
@@ -63,19 +65,19 @@ $this->params['breadcrumbs'][] = $this->title;
             'phone',
             'address',
             [
-                'label' => Yii::t('app', 'City'),
+                'label' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
                 'value' => $city->name,
             ],
             [
-                'label' => Yii::t('app', 'State'),
+                'label' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
                 'value' => $state->name,
             ],
             [
-                'label' => Yii::t('app', 'Country'),
+                'label' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
                 'value' => $country->name,
             ],
             [
-                'label' => Yii::t('app', 'Status'),
+                'label' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
                 'value' => $model->getFullStatus(),
             ],
         ],

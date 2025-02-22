@@ -5,16 +5,17 @@
 
 /** @var app\models\LoginForm $model */
 
+use app\models\TextConstants;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 
-$this->title = Yii::t('app', 'Login');
+$this->title = Yii::t(TextConstants::APP, TextConstants::BUTTON_LOGIN);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p><?= Yii::t('app', 'Please fill out the following fields to login:') ?></p>
+    <p><?= Yii::t(TextConstants::APP, TextConstants::MESSAGE_REQUIRED_FIELDS_LOGIN) ?></p>
 
     <div class="row">
         <div class="col-lg-5">
@@ -39,8 +40,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <div class="form-group">
                 <div>
-                    <?= Html::submitButton(Yii::t('app', 'Login'), ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
-                    <?= Html::a(Yii::t('app', 'Sign Up'), ['user/create'], ['class' => 'btn btn-light']) ?>
+                    <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_LOGIN), ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                    <?= Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_SIGNUP), ['user/create'], ['class' => 'btn btn-light']) ?>
                 </div>
             </div>
 

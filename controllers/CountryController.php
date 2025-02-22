@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Constants;
 use app\models\entities\Country;
+use app\models\TextConstants;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -152,6 +153,6 @@ class CountryController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 }

@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\TextConstants;
 use yii;
 use app\models\Constants;
 use app\models\UserCompanyForm;
@@ -223,7 +224,7 @@ class CompaniesController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 
     public function actionListUsers($company_id)
@@ -334,13 +335,13 @@ class CompaniesController extends Controller
         $model->setIsNewRecord(false);
 
         if (!isset($model)) {
-            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+            throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
         }
         if ($model->isOwner()) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_OWNER_NOT_DEMOTE));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MESSAGE_OWNER_NOT_DEMOTE));
         }
         if ($model->isInactive()) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_CANNOT_PROMOTE_INACTIVE));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MESSAGE_CANNOT_PROMOTE_INACTIVE));
         }
 
         if ($model->isMember()) {
@@ -371,16 +372,16 @@ class CompaniesController extends Controller
         $model->setIsNewRecord(false);
 
         if (!isset($model)) {
-            throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+            throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
         }
         if ($user->user_id == $user_id) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_CANNOT_ACTIVATE_YOURSELF));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MESSAGE_CANNOT_ACTIVATE_YOURSELF));
         }
         if ($model->isOwner()) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_OWNER_NOT_ACTIVATE));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MESSAGE_OWNER_NOT_ACTIVATE));
         }
         if ($user->isSupervisor() && $model->isSupervisor()) {
-            throw new ForbiddenHttpException(Yii::t('app', Constants::MESSAGE_CANNOT_ACTIVATE_SUPERVISORS));
+            throw new ForbiddenHttpException(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MESSAGE_CANNOT_ACTIVATE_SUPERVISORS));
         }
 
         if ($model->isActive()) {

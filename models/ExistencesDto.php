@@ -45,14 +45,14 @@ class ExistencesDto extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'product_id' => Yii::t('app', 'Product'),
-            'product' => Yii::t('app', 'Product'),
-            'warehouse_id' => Yii::t('app', 'Warehouse'),
-            'warehouse' => Yii::t('app', 'Warehouse'),
-            'cutoff_date' => Yii::t('app', 'Cut-off Date'),
-            'amountInput' => Yii::t('app', 'Amount Input'),
-            'amountOutput' => Yii::t('app', 'Amount Output'),
-            'amountDifference' => Yii::t('app', 'Amount'),
+            'product_id' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
+            'product' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
+            'warehouse_id' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
+            'warehouse' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
+            'cutoff_date' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_CUTOFF_DATE),
+            'amountInput' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_INPUT),
+            'amountOutput' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_OUTPUT),
+            'amountDifference' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_DIFFERENCE),
         ];
     }
 
@@ -78,7 +78,7 @@ class ExistencesDto extends \yii\db\ActiveRecord
             . "AND p.product_id = :productId ";
         if (!isset($warehouse_id) || $warehouse_id === '') {
             $sql .= "AND w.warehouse_id IS NULL ";
-        } elseif ($warehouse_id !== Constants::OPTION_ALL) {
+        } elseif ($warehouse_id !== Constants::OPTION_ALL_SELECT) {
             $sql .= "AND w.warehouse_id = :warehouseId ";
         }
         if (isset($date)) {

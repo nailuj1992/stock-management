@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
 use app\models\entities\Country;
@@ -11,10 +12,10 @@ use app\models\entities\City;
 /** @var app\models\CompanyForm $model */
 /** @var yii\bootstrap5\ActiveForm $form */
 
-$this->title = Yii::t('app', 'Update Company: {name}', ['name' => $userCompany->company->name]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Companies'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_UPDATE, ['name' => $userCompany->company->name]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $userCompany->company->name, 'url' => ['view', 'company_id' => $userCompany->company->company_id]];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Update');
+$this->params['breadcrumbs'][] = Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE);
 ?>
 <div class="company-update">
 
@@ -44,26 +45,26 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Update');
         <?php $states = State::getStates($model->country); ?>
         <?php $cities = City::getCities($model->state); ?>
         <?= $form->field($model, 'country')->dropDownList($countries, [
-            'prompt' => Yii::t('app', 'Select...'),
+            'prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT),
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/state/dynamic-states']) . '/?country_id=" + $(this).val(), function(data) {
                     $("#companyform-state").html(data);
-                    $("#companyform-city").html("<option value=\"\">' . Yii::t('app', 'Select...') . '</option>");
+                    $("#companyform-city").html("<option value=\"\">' . Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT) . '</option>");
                 });',
         ]) ?>
 
         <?= $form->field($model, 'state')->dropDownList($states, [
-            'prompt' => Yii::t('app', 'Select...'),
+            'prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT),
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/city/dynamic-cities']) . '/?state_id=" + $(this).val(), function(data) {
                     $("#companyform-city").html(data);
                 });',
         ]) ?>
 
-        <?= $form->field($model, 'city')->dropDownList($cities, ['prompt' => Yii::t('app', 'Select...')]) ?>
+        <?= $form->field($model, 'city')->dropDownList($cities, ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)]) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['class' => 'btn btn-success']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

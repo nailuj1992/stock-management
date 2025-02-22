@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
@@ -9,10 +10,10 @@ use app\models\entities\Country;
 /** @var app\models\UserCompanyForm $model */
 /** @var yii\bootstrap5\ActiveForm $form */
 
-$this->title = Yii::t('app', 'Create User');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Companies'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_BUTTON_CREATE_USER);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $company->name, 'url' => ['view', 'company_id' => $company->company_id]];
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Current Users'), 'url' => ['list-users', 'company_id' => $company->company_id]];
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_LIST_USERS_TITLE), 'url' => ['list-users', 'company_id' => $company->company_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="user-create">
@@ -40,30 +41,30 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $form->field($model, 'address')->textInput(['maxlength' => true, 'autocomplete' => false]) ?>
 
         <?php $roles = Utils::getRoles(); ?>
-        <?= $form->field($model, 'role')->dropDownList($roles, ['prompt' => Yii::t('app', 'Select...')]) ?>
+        <?= $form->field($model, 'role')->dropDownList($roles, ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)]) ?>
 
         <?php $countries = Country::getCountries(); ?>
         <?= $form->field($model, 'country')->dropDownList($countries, [
-            'prompt' => Yii::t('app', 'Select...'),
+            'prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT),
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/state/dynamic-states']) . '/?country_id=" + $(this).val(), function(data) {
                     $("#usercompanyform-state").html(data);
-                    $("#usercompanyform-city").html("<option value=\"\">' . Yii::t('app', 'Select...') . '</option>");
+                    $("#usercompanyform-city").html("<option value=\"\">' . Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT) . '</option>");
                 });',
         ]) ?>
 
         <?= $form->field($model, 'state')->dropDownList([], [
-            'prompt' => Yii::t('app', 'Select...'),
+            'prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT),
             'onchange' => '
                 $.get("' . yii\helpers\Url::to(['/city/dynamic-cities']) . '/?state_id=" + $(this).val(), function(data) {
                     $("#usercompanyform-city").html(data);
                 });',
         ]) ?>
 
-        <?= $form->field($model, 'city')->dropDownList([], ['prompt' => Yii::t('app', 'Select...')]) ?>
+        <?= $form->field($model, 'city')->dropDownList([], ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)]) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['class' => 'btn btn-success']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

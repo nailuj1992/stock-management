@@ -2,6 +2,7 @@
 
 namespace app\widgets;
 
+use app\models\Constants;
 use Yii;
 
 /**
@@ -61,7 +62,7 @@ class Alert extends \yii\bootstrap5\Widget
                     'body' => $message,
                     'closeButton' => $this->closeButton,
                     'options' => array_merge($this->options, [
-                        'id' => $this->getId() . '-' . $type . '-' . $i,
+                        'id' => $this->getId() . Constants::MINUS . $type . Constants::MINUS . $i,
                         'class' => $this->alertTypes[$type] . $appendClass,
                     ]),
                 ]);

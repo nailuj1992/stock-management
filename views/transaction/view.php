@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Constants;
+use app\models\TextConstants;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use yii\bootstrap5\ActiveForm;
@@ -10,8 +12,8 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\entities\Document $document */
 
 $name = $document->code . ' - ' . $model->num_transaction;
-$this->title = Yii::t('app', 'Transaction: {name}', ['name' => $name]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Transactions'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_TITLE_VIEW, ['name' => $name]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_TRANSACTIONS_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="transaction-view">
@@ -24,20 +26,20 @@ $this->params['breadcrumbs'][] = $this->title;
             'document',
             'num_transaction',
             [
-                'label' => Yii::t('app', 'Supplier'),
-                'value' => isset($transactionDto->supplier) && $transactionDto->supplier !== '' ? $transactionDto->supplier : Yii::t('app', 'N/A'),
+                'label' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_LINKED),
+                'value' => isset($transactionDto->linked_transaction) && $transactionDto->linked_transaction !== '' ? $transactionDto->linked_transaction : Constants::NA,
             ],
             [
-                'label' => Yii::t('app', 'Linked Transaction'),
-                'value' => isset($transactionDto->linked_transaction) && $transactionDto->linked_transaction !== '' ? $transactionDto->linked_transaction : Yii::t('app', 'N/A'),
+                'label' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
+                'value' => isset($transactionDto->supplier) && $transactionDto->supplier !== '' ? $transactionDto->supplier : Constants::NA,
             ],
             'creation_date',
             [
-                'label' => Yii::t('app', 'Expiration Date'),
-                'value' => isset($transactionDto->expiration_date) && $transactionDto->expiration_date !== '' ? $transactionDto->expiration_date : Yii::t('app', 'N/A'),
+                'label' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_EXPIRATION_DATE),
+                'value' => isset($transactionDto->expiration_date) && $transactionDto->expiration_date !== '' ? $transactionDto->expiration_date : Constants::NA,
             ],
             [
-                'label' => Yii::t('app', 'Status'),
+                'label' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
                 'value' => $model->getFullStatus(),
             ],
         ],
@@ -45,13 +47,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <table id="transaction-items-table">
         <tr>
-            <th><?= Yii::t('app', 'Product') ?></th>
-            <th><?= Yii::t('app', 'Warehouse') ?></th>
-            <th><?= Yii::t('app', 'Amount') ?></th>
-            <th><?= Yii::t('app', 'Unit Value ($)') ?></th>
-            <th><?= Yii::t('app', 'Discount Rate (%)') ?></th>
-            <th><?= Yii::t('app', 'Total Value ($)') ?></th>
-            <?= $document->hasTaxes() ? '<th>' . Yii::t('app', 'Tax Rate (%)') . '</th>' : '' ?>
+            <th><?= Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID) ?></th>
+            <th><?= Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID) ?></th>
+            <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT) ?></th>
+            <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_UNIT_VALUE) ?></th>
+            <th><?= Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_DISCOUNT_RATE) ?></th>
+            <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_TOTAL_VALUE) ?></th>
+            <?= $document->hasTaxes() ? '<th>' . Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_TAX_RATE) . '</th>' : '' ?>
         </tr>
         <?php
         $form = ActiveForm::begin();

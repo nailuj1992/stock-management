@@ -5,9 +5,10 @@ namespace app\controllers;
 use app\models\entities\City;
 use app\models\entities\State;
 use app\models\CityForm;
-use app\models\CitySearch;
 use app\models\Constants;
+use app\models\TextConstants;
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\AccessControl;
@@ -59,11 +60,21 @@ class CityController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new CitySearch();
-        $dataProvider = $searchModel->search($this->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => City::find(),
+            /*
+            'pagination' => [
+                'pageSize' => 50
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'city_id' => SORT_DESC,
+                ]
+            ],
+            */
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -169,14 +180,14 @@ class CityController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 
     public function actionDynamicCities($state_id, $city_id = '')
     {
         if (Yii::$app->request->isGet) {
             $cities = City::getCities($state_id);
-            $resp = Html::tag('option', Html::encode(Yii::t('app', 'Select...')), ['value' => '']);
+            $resp = Html::tag('option', Html::encode(Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)), ['value' => '']);
             foreach ($cities as $key => $value) {
                 $resp .= Html::tag('option', Html::encode($value), ['value' => $key, 'selected' => $city_id !== '' && $city_id == $key]);
             }

@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\bootstrap5\Html;
 use yii\bootstrap5\ActiveForm;
@@ -12,9 +14,9 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\entities\Warehouse[] $warehouses */
 
 $name = $document->code . ' - ' . $model->num_transaction;
-$this->title = Yii::t('app', 'Draft Transaction: {name}', ['name' => $name]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Transactions'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name]);
+$this->title = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_TITLE_DRAFT, ['name' => $name]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_TRANSACTIONS_TITLE), 'url' => ['index']];
+$this->params['breadcrumbs'][] = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_TITLE_DRAFT_MINI, ['name' => $name]);
 ?>
 <div class="transaction-draft">
 
@@ -23,8 +25,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
     <p>
         <?php
         if (Utils::belongsToCompany($model->company_id)) {
-            $question = Yii::t('app', "Are you sure you want to delete the transaction {code}-{name}?", ['code' => $model->document->code, 'name' => $model->num_transaction]);
-            echo Html::a(Yii::t('app', 'Delete'), ['delete-draft', 'transaction_id' => $model->transaction_id], [
+            $question = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_INDEX_CONFIRMATION_DELETE, ['code' => $model->document->code, 'name' => $model->num_transaction]);
+            echo Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_DELETE), ['delete-draft', 'transaction_id' => $model->transaction_id], [
                 'class' => "btn btn-danger",
                 'data' => [
                     'confirm' => $question,
@@ -43,9 +45,9 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
 
         <?= $form->field($transactionDto, 'num_transaction')->textInput(['disabled' => true, 'type' => 'number']) ?>
 
-        <?= $form->field($transactionDto, 'supplier')->textInput(['disabled' => true]) ?>
-
         <?= $form->field($transactionDto, 'linked_transaction')->textInput(['disabled' => true]) ?>
+
+        <?= $form->field($transactionDto, 'supplier')->textInput(['disabled' => true]) ?>
 
         <?= $form->field($transactionDto, 'creation_date')->textInput(['disabled' => true]) ?>
 
@@ -53,12 +55,12 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
 
         <table id="transaction-items-table">
             <tr>
-                <th><?= Yii::t('app', 'Product') ?></th>
-                <th><?= Yii::t('app', 'Warehouse') ?></th>
-                <th><?= Yii::t('app', 'Amount') ?></th>
-                <th><?= Yii::t('app', 'Unit Value ($)') ?></th>
-                <th><?= Yii::t('app', 'Discount Rate (%)') ?></th>
-                <th><?= Yii::t('app', 'Total Value ($)') ?></th>
+                <th><?= Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID) ?></th>
+                <th><?= Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID) ?></th>
+                <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT) ?></th>
+                <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_UNIT_VALUE) ?></th>
+                <th><?= Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_DISCOUNT_RATE) ?></th>
+                <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_TOTAL_VALUE) ?></th>
             </tr>
             <?php
             if (!empty($transactionDto->transaction_items)) {
@@ -68,7 +70,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                     <tr class="form-group">
                         <td class="col-2">
                             <?= $form->field($transaction_item, 'product_id')->dropDownList($products, [
-                                'prompt' => Yii::t('app', 'Select...'),
+                                'prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT),
                                 'id' => 'transaction-item-' . $i . '-product_id',
                                 'name' => 'TransactionItemDto[' . $i . '][product_id]',
                                 'onchange' => '
@@ -81,7 +83,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                         </td>
                         <td class="col-2">
                             <?= $form->field($transaction_item, 'warehouse_id')->dropDownList($warehouses, [
-                                'prompt' => Yii::t('app', 'Empty'),
+                                'prompt' => Yii::t(TextConstants::APP, textConstants::OPTION_EMPTY),
                                 'id' => 'transaction-item-' . $i . '-warehouse_id',
                                 'name' => 'TransactionItemDto[' . $i . '][warehouse_id]',
                                 'onchange' => '
@@ -179,8 +181,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                                 ->label(false)->error(false) ?>
                         </td>
                         <?php if (count($transactionDto->transaction_items) > 1) { ?>
-                            <td class="align-content-stretch text-align-center">
-                                <?= Html::submitButton(Yii::t('app', '-'), ['name' => 'removeRow', 'value' => 'row-' . $i, 'class' => 'btn btn-danger']) ?>
+                            <td class="col-1 align-content-stretch text-align-center">
+                                <?= Html::submitButton(Constants::MINUS, ['name' => 'removeRow', 'value' => 'row-' . $i, 'class' => 'btn btn-danger']) ?>
                             </td>
                         <?php } ?>
                     </tr>
@@ -202,8 +204,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
             ->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'number', 'disabled' => true]) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Save'), ['name' => 'save', 'value' => 'true', 'class' => 'btn btn-success']) ?>
-            <?= Html::submitButton(Yii::t('app', 'Add other item'), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SAVE), ['name' => 'save', 'value' => 'true', 'class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_BUTTON_ADD_ITEM), ['name' => 'addRow', 'value' => 'true', 'class' => 'btn btn-primary']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>

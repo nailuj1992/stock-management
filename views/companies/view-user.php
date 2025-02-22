@@ -1,6 +1,7 @@
 <?php
 
 use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -12,9 +13,9 @@ use app\models\entities\Country;
 /** @var app\models\entities\UserCompany $model */
 
 $this->title = $model->user->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Companies'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $company->name, 'url' => ['view', 'company_id' => $company->company_id]];
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Current Users'), 'url' => ['list-users', 'company_id' => $model->company_id]];
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_LIST_USERS_TITLE), 'url' => ['list-users', 'company_id' => $model->company_id]];
 $this->params['breadcrumbs'][] = $model->user->name;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -25,15 +26,15 @@ $this->params['breadcrumbs'][] = $model->user->name;
     <p>
         <?php
         if ($model->isMember()) {
-            $label = Yii::t('app', "Promote to Supervisor");
+            $label = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_PROMOTE_SUPERVISOR);
             $class = "btn btn-outline-success btn-xs";
-            $question = Yii::t('app', "Are you sure you want to promote the user {name} to {role}?", ['name' => $model->user->name, 'role' => Yii::t('app', Constants::ROLE_SUPERVISOR)]);
+            $question = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_CONFIRMATION_PROMOTE, ['name' => $model->user->name, 'role' => Yii::t(TextConstants::ROLE, TextConstants::ROLE_SUPERVISOR)]);
         } elseif ($model->isSupervisor()) {
-            $label = Yii::t('app', "Demote to Member");
+            $label = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_DEMOTE_MEMBER);
             $class = "btn btn-outline-warning btn-xs";
-            $question = Yii::t('app', "Are you sure you want to demote the user {name} to {role}?", ['name' => $model->user->name, 'role' => Yii::t('app', Constants::ROLE_MEMBER)]);
+            $question = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_USERS_CONFIRMATION_DEMOTE, ['name' => $model->user->name, 'role' => Yii::t(TextConstants::ROLE, TextConstants::ROLE_MEMBER)]);
         }
-        if (Utils::isOwnerOfCompany($model->company_id) && !$model->isOwner() && $model->user->isActive()) {
+        if (Utils::isOwnerOfCompany($model->company_id) && !$model->isOwner() && $model->user->isActive() && $model->isActive()) {
             echo Html::a($label, ['change-role', 'user_id' => $model->user_id, 'company_id' => $model->company_id], [
                 'class' => $class,
                 'data' => [
@@ -59,27 +60,27 @@ $this->params['breadcrumbs'][] = $model->user->name;
             'user.phone',
             'user.address',
             [
-                'label' => Yii::t('app', 'City'),
+                'label' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
                 'value' => $city->name,
             ],
             [
-                'label' => Yii::t('app', 'State'),
+                'label' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
                 'value' => $state->name,
             ],
             [
-                'label' => Yii::t('app', 'Country'),
+                'label' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
                 'value' => $country->name,
             ],
             [
-                'label' => Yii::t('app', 'Position'),
+                'label' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_POSITION),
                 'value' => $model->getFullRole(),
             ],
             [
-                'label' => Yii::t('app', 'User Status'),
+                'label' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_USER_STATUS),
                 'value' => $model->user->getFullStatus(),
             ],
             [
-                'label' => Yii::t('app', 'Status in Company'),
+                'label' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_STATUS_IN_COMPANY),
                 'value' => $model->getFullStatus(),
             ],
         ],

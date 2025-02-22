@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
 use app\models\entities\Country;
@@ -8,8 +9,8 @@ use app\models\entities\State;
 /** @var yii\web\View $this */
 /** @var app\models\entities\City $model */
 
-$this->title = Yii::t('app', "City info: {name}", ['name' => $model->name]);
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Cities'), 'url' => ['index']];
+$this->title = Yii::t(TextConstants::CITY, TextConstants::CITY_VIEW_TITLE, ['name' => $model->name]);
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_CITIES_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $model->name;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -18,11 +19,11 @@ $this->params['breadcrumbs'][] = $model->name;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a(Yii::t('app', 'Update'), ['update', 'city_id' => $model->city_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a(Yii::t('app', 'Delete'), ['delete', 'city_id' => $model->city_id], [
+        <?= Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE), ['update', 'city_id' => $model->city_id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_DELETE), ['delete', 'city_id' => $model->city_id], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+                'confirm' => Yii::t(TextConstants::APP, TextConstants::MESSAGE_CONFIRMATION_DELETE),
                 'method' => 'post',
             ],
         ]) ?>
@@ -40,11 +41,11 @@ $this->params['breadcrumbs'][] = $model->name;
             'code',
             'name',
             [
-                'label' => Yii::t('app', 'State'),
+                'label' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
                 'value' => $state->code . " - " . $state->name,
             ],
             [
-                'label' => Yii::t('app', 'Country'),
+                'label' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
                 'value' => $country->code . " - " . $country->name,
             ],
         ],

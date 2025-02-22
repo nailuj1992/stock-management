@@ -5,6 +5,7 @@
 /** @var string $message */
 /** @var Exception$exception */
 
+use app\models\TextConstants;
 use yii\helpers\Html;
 
 $this->title = $name;
@@ -18,10 +19,10 @@ $this->title = $name;
     </div>
 
     <p>
-        <?= Yii::t('app', 'The above error occurred while the Web server was processing your request.') ?>
+        <?= Yii::t(TextConstants::APP, TextConstants::MESSAGE_ERROR_WEB_SERVER_REQUEST) ?>
     </p>
     <p>
-        <?= Yii::t('app', 'Please contact us if you think this is a server error. Thank you.') ?>
+        <?= Yii::t(TextConstants::APP, TextConstants::MESSAGE_ERROR_CONTACT_US) ?>
     </p>
 
 </div>

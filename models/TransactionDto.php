@@ -69,17 +69,20 @@ class TransactionDto extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'transaction_id' => Yii::t('app', 'Transaction ID'),
-            'num_transaction' => Yii::t('app', '# Transaction'),
-            'document_id' => Yii::t('app', 'Document'),
-            'creation_date' => Yii::t('app', 'Creation Date'),
-            'expiration_date' => Yii::t('app', 'Expiration Date'),
-            'linked_transaction_id' => Yii::t('app', 'Linked Transaction'),
-            'supplier_id' => Yii::t('app', 'Supplier'),
-            'status' => Yii::t('app', 'Status'),
-            'total_before_taxes' => Yii::t('app', 'Subtotal'),
-            'total_taxes' => Yii::t('app', 'Taxes'),
-            'total_value' => Yii::t('app', 'Total'),
+            'transaction_id' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_ID),
+            'num_transaction' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_NUM_ID),
+            'document_id' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_ID),
+            'document' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_ID),
+            'creation_date' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_CREATION_DATE),
+            'expiration_date' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_EXPIRATION_DATE),
+            'linked_transaction_id' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_LINKED),
+            'linked_transaction' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_LINKED),
+            'supplier_id' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
+            'supplier' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
+            'status' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
+            'total_before_taxes' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_SUBTOTAL),
+            'total_taxes' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_TAXES),
+            'total_value' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_TOTAL),
         ];
     }
 

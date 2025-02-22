@@ -3,6 +3,7 @@
 namespace app\models\entities;
 
 use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 
@@ -54,16 +55,16 @@ class ApplicationCompany extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'application_id' => Yii::t('app', 'Application ID'),
-            'user_id' => Yii::t('app', 'User ID'),
-            'company_id' => Yii::t('app', 'Company ID'),
-            'status' => Yii::t('app', 'Status'),
-            'comment_user' => Yii::t('app', 'Comment'),
-            'comment_company' => Yii::t('app', 'Feedback'),
-            'created_by' => Yii::t('app', 'Created By'),
-            'created_at' => Yii::t('app', 'Created At'),
-            'updated_by' => Yii::t('app', 'Updated By'),
-            'updated_at' => Yii::t('app', 'Updated At'),
+            'application_id' => Yii::t(TextConstants::APPLICATION, TextConstants::APPLICATION_MODEL_ID),
+            'user_id' => Yii::t(TextConstants::USER, TextConstants::USER_MODEL_ID),
+            'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
+            'status' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
+            'comment_user' => Yii::t(TextConstants::APPLICATION, TextConstants::APPLICATION_MODEL_COMMENT),
+            'comment_company' => Yii::t(TextConstants::APPLICATION, TextConstants::APPLICATION_MODEL_FEEDBACK),
+            'created_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_BY),
+            'created_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_AT),
+            'updated_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_BY),
+            'updated_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_AT),
         ];
     }
 

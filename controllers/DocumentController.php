@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Constants;
 use app\models\entities\Document;
+use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
 use yii\data\ActiveDataProvider;
@@ -192,6 +193,6 @@ class DocumentController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 }

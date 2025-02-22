@@ -45,11 +45,11 @@ class CityForm extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'city_id' => Yii::t('app', 'City ID'),
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
-            'state' => Yii::t('app', 'State'),
-            'country' => Yii::t('app', 'Country'),
+            'city_id' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
+            'code' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
+            'state' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
+            'country' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
         ];
     }
 }

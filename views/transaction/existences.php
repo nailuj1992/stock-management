@@ -1,5 +1,6 @@
 <?php
 
+use app\models\TextConstants;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use yii\grid\GridView;
@@ -10,7 +11,7 @@ use yii\grid\GridView;
 /** @var app\models\entities\Warehouse[] $warehouses */
 /** @var yii\data\ArrayDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Existences');
+$this->title = Yii::t(TextConstants::INDEX, TextConstants::INDEX_EXISTENCES_TITLE);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="existences-view">
@@ -21,14 +22,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'product_id')->dropDownList($products, ['prompt' => Yii::t('app', 'Select...')]) ?>
+        <?= $form->field($model, 'product_id')->dropDownList($products, ['prompt' => Yii::t(TextConstants::APP, TextConstants::OPTION_SELECT)]) ?>
 
-        <?= $form->field($model, 'warehouse_id')->dropDownList($warehouses, ['prompt' => Yii::t('app', 'Empty')]) ?>
+        <?= $form->field($model, 'warehouse_id')->dropDownList($warehouses, ['prompt' => Yii::t(TextConstants::APP, textConstants::OPTION_EMPTY)]) ?>
 
         <?= $form->field($model, 'cutoff_date')->textInput(['maxlength' => true, 'autocomplete' => false, 'type' => 'date']) ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-success']) ?>
+            <?= Html::submitButton(Yii::t(TextConstants::APP, TextConstants::BUTTON_SEARCH), ['class' => 'btn btn-success']) ?>
         </div>
 
         <?php ActiveForm::end(); ?>
@@ -40,21 +41,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'dataProvider' => $dataProvider,
             'columns' => [
                 [
-                    'attribute' => Yii::t('app', 'Product'),
+                    'attribute' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 return $model->product;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Warehouse'),
+                    'attribute' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 return $model->warehouse;
                             },
                 ],
                 [
-                    'attribute' => Yii::t('app', 'Amount'),
+                    'attribute' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_DIFFERENCE),
                     'format' => 'raw',
                     'value' => function ($model) {
                                 return $model->amountDifference;

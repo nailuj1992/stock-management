@@ -45,7 +45,7 @@ class SupplierEdit extends \yii\db\ActiveRecord
             [['code'], 'string', 'max' => 20],
             [['name', 'email', 'address'], 'string', 'max' => 100],
             [['phone'], 'string', 'max' => 13],
-            [['phone'], 'validatePhone', 'message' => Yii::t('app', Constants::MESSAGE_VALIDATE_PHONE)],
+            [['phone'], 'validatePhone', 'message' => Yii::t(TextConstants::APP, TextConstants::MESSAGE_VALIDATE_PHONE)],
             [['email'], 'email'],
             [['code', 'company_id'], 'unique', 'targetAttribute' => ['code', 'company_id']],
             [['city'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city' => 'city_id']],
@@ -56,16 +56,16 @@ class SupplierEdit extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'supplier_id' => Yii::t('app', 'Supplier ID'),
-            'code' => Yii::t('app', 'Code'),
-            'name' => Yii::t('app', 'Name'),
-            'email' => Yii::t('app', 'Email'),
-            'phone' => Yii::t('app', 'Phone'),
-            'address' => Yii::t('app', 'Address'),
-            'country' => Yii::t('app', 'Country'),
-            'state' => Yii::t('app', 'State'),
-            'city' => Yii::t('app', 'City'),
-            'company_id' => Yii::t('app', 'Company ID'),
+            'supplier_id' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
+            'code' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_CODE),
+            'name' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
+            'email' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_EMAIL),
+            'phone' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_PHONE),
+            'address' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_ADDRESS),
+            'country' => Yii::t(TextConstants::COUNTRY, TextConstants::COUNTRY_MODEL_ID),
+            'state' => Yii::t(TextConstants::STATE, TextConstants::STATE_MODEL_ID),
+            'city' => Yii::t(TextConstants::CITY, TextConstants::CITY_MODEL_ID),
+            'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
         ];
     }
 

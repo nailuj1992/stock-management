@@ -1,6 +1,8 @@
 <?php
 
+use app\models\Constants;
 use app\models\entities\Product;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -10,7 +12,7 @@ use yii\grid\GridView;
 /** @var yii\web\View $this */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
-$this->title = Yii::t('app', 'Products');
+$this->title = Yii::t(TextConstants::INDEX, TextConstants::INDEX_PRODUCTS_TITLE);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="product-index">
@@ -20,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php
         if (Utils::isOwnerOrSupervisorOfCompany($companyId)) {
-            echo Html::a(Yii::t('app', 'Create Product'), ['create'], ['class' => 'btn btn-success']);
+            echo Html::a(Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_BUTTON_CREATE), ['create'], ['class' => 'btn btn-success']);
         }
         ?>
     </p>
@@ -30,42 +32,42 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'attribute' => '#',
+                'attribute' => Constants::NUM,
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->product_id;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Code'),
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CODE),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->code;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Name'),
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->name;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Description'),
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_DESCRIPTION),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->description;
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Has Existences?'),
+                'attribute' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_HAS_EXISTENCES),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->getFullExistences();
             },
             ],
             [
-                'attribute' => Yii::t('app', 'Status'),
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
                 'format' => 'raw',
                 'value' => function ($model) {
                 return $model->getFullStatus();
@@ -76,23 +78,23 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{view} {update} {activate}',
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
-                    return Html::a(Yii::t('app', 'View'), ['view', 'product_id' => $model->product_id], ['class' => 'btn btn-outline-info btn-xs']);
+                    return Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_VIEW), ['view', 'product_id' => $model->product_id], ['class' => 'btn btn-outline-info btn-xs']);
                 },
                     'update' => function ($url, $model, $key) {
                     if (Utils::isOwnerOrSupervisorOfCompany($model->company_id)) {
-                        return Html::a(Yii::t('app', 'Update'), ['update', 'product_id' => $model->product_id], ['class' => 'btn btn-outline-secondary btn-xs']);
+                        return Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE), ['update', 'product_id' => $model->product_id], ['class' => 'btn btn-outline-secondary btn-xs']);
                     }
                 },
                     'activate' => function ($url, $model, $key) {
                     if (Utils::isOwnerOrSupervisorOfCompany($model->company_id)) {
                         if ($model->isActive()) {
-                            $label = Yii::t('app', 'Deactivate');
+                            $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_DEACTIVATE);
                             $class = "btn btn-outline-danger btn-xs";
-                            $question = Yii::t('app', "Are you sure you want to deactivate the product {code}-{name}?", ['code' => $model->code, 'name' => $model->name]);
+                            $question = Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_INDEX_CONFIRMATION_DEACTIVATE, ['code' => $model->code, 'name' => $model->name]);
                         } elseif ($model->isInactive()) {
-                            $label = Yii::t('app', 'Activate');
+                            $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_ACTIVATE);
                             $class = "btn btn-outline-warning btn-xs";
-                            $question = Yii::t('app', "Are you sure you want to activate the product {code}-{name}?", ['code' => $model->code, 'name' => $model->name]);
+                            $question = Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_INDEX_CONFIRMATION_ACTIVATE, ['code' => $model->code, 'name' => $model->name]);
                         }
                         return Html::a($label, ['activate', 'product_id' => $model->product_id], [
                             'class' => $class,

@@ -1,5 +1,7 @@
 <?php
 
+use app\models\Constants;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
 use yii\widgets\DetailView;
@@ -8,7 +10,7 @@ use yii\widgets\DetailView;
 /** @var app\models\entities\Document $model */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Documents'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t(TextConstants::INDEX, TextConstants::INDEX_DOCUMENTS_TITLE), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -19,16 +21,16 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?php
         if (Utils::isOwnerOrSupervisorOfCompany($model->company_id)) {
-            echo Html::a(Yii::t('app', 'Update'), ['update', 'document_id' => $model->document_id], ['class' => 'btn btn-primary']);
+            echo Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE), ['update', 'document_id' => $model->document_id], ['class' => 'btn btn-primary']);
 
             if ($model->isActive()) {
-                $label = Yii::t('app', 'Deactivate');
+                $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_DEACTIVATE);
                 $class = "btn btn-danger";
-                $question = Yii::t('app', "Are you sure you want to deactivate the document {code}-{name}?", ['code' => $model->code, 'name' => $model->name]);
+                $question = Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_INDEX_CONFIRMATION_DEACTIVATE, ['code' => $model->code, 'name' => $model->name]);
             } elseif ($model->isInactive()) {
-                $label = Yii::t('app', 'Activate');
+                $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_ACTIVATE);
                 $class = "btn btn-warning";
-                $question = Yii::t('app', "Are you sure you want to activate the document {code}-{name}?", ['code' => $model->code, 'name' => $model->name]);
+                $question = Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_INDEX_CONFIRMATION_ACTIVATE, ['code' => $model->code, 'name' => $model->name]);
             }
             echo Html::a($label, ['activate', 'document_id' => $model->document_id], [
                 'class' => $class,
@@ -45,33 +47,33 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             [
-                'label' => '#',
+                'label' => Constants::NUM,
                 'value' => $model->document_id,
             ],
             'code',
             'name',
             [
-                'label' => Yii::t('app', 'Intended For'),
+                'label' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_INTENDED_FOR),
                 'value' => $model->getFullAction(),
             ],
             [
-                'label' => Yii::t('app', 'Apply For'),
+                'label' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_APPLY_FOR),
                 'value' => $model->getFullApply(),
             ],
             [
-                'label' => Yii::t('app', 'Has Taxes'),
+                'label' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_HAS_TAXES),
                 'value' => $model->getFullTaxes(),
             ],
             [
-                'label' => Yii::t('app', 'Has Expiration'),
+                'label' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_HAS_EXPIRATION),
                 'value' => $model->getFullExpiration(),
             ],
             [
-                'label' => Yii::t('app', 'Applies over other transaction?'),
+                'label' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_HAS_OTHER_TRANSACTION),
                 'value' => $model->getFullOtherTransaction(),
             ],
             [
-                'label' => Yii::t('app', 'Status'),
+                'label' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
                 'value' => $model->getFullStatus(),
             ],
         ],

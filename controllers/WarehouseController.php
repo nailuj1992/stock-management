@@ -7,6 +7,7 @@ use app\models\entities\City;
 use app\models\entities\Country;
 use app\models\entities\State;
 use app\models\entities\Warehouse;
+use app\models\TextConstants;
 use app\models\Utils;
 use app\models\WarehouseEdit;
 use Yii;
@@ -221,6 +222,6 @@ class WarehouseController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', Constants::MESSAGE_PAGE_NOT_EXISTS));
+        throw new NotFoundHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_PAGE_NOT_EXISTS));
     }
 }

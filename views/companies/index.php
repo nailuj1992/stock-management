@@ -1,6 +1,8 @@
 <?php
 
+use app\models\Constants;
 use app\models\entities\ApplicationCompany;
+use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -9,7 +11,7 @@ use yii\grid\GridView;
 /** @var yii\data\ActiveDataProvider $dataProvider */
 /** @var yii\data\ActiveDataProvider $dataProviderListUserNotBelong */
 
-$this->title = Yii::t('app', 'Companies');
+$this->title = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_TITLE);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="companies-index">
@@ -17,9 +19,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <div>
-        <span><?= Yii::t('app', 'These are the companies where you are included.') ?></span>
+        <span><?= Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_TEXT) ?></span>
         <p>
-            <?= Html::a(Yii::t('app', 'Create Company'), ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_CREATE), ['create'], ['class' => 'btn btn-success']) ?>
         </p>
     </div>
 
@@ -27,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             [
-                'attribute' => '#',
+                'attribute' => Constants::NUM,
                 'format' => 'raw',
                 'value' => function ($model) {
                         return $model->company->company_id;
@@ -37,21 +39,21 @@ $this->params['breadcrumbs'][] = $this->title;
             'company.name',
             'company.phone',
             [
-                'attribute' => Yii::t('app', 'Position'),
+                'attribute' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_POSITION),
                 'format' => 'raw',
                 'value' => function ($model) {
                         return $model->getFullRole();
                     },
             ],
             [
-                'attribute' => Yii::t('app', 'Your status'),
+                'attribute' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_YOUR_STATUS),
                 'format' => 'raw',
                 'value' => function ($model) {
                         return $model->getFullStatus();
                     },
             ],
             [
-                'attribute' => Yii::t('app', 'Company status'),
+                'attribute' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_STATUS),
                 'format' => 'raw',
                 'value' => function ($model) {
                         return $model->company->getFullStatus();
@@ -65,10 +67,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             if (Utils::hasCompanySelected() && Utils::getCompanySelected() == $model->company->company_id) {
                                 return null;
                             }
-                            $label = Yii::t('app', 'Select');
-                            $question = Yii::t('app', "Are you sure you want to select the company {name}?", ['name' => $model->company->name]);
+                            $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_SELECT);
+                            $question = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_CONFIRMATION_SELECT, ['name' => $model->company->name]);
                             return Html::a($label, ['select', 'company_id' => $model->company_id], [
-                                'class' => 'btn btn-outline-primary btn-xs',
+                                'class' => 'btn btn-primary btn-xs',
                                 'data' => [
                                     'confirm' => $question,
                                     'method' => 'post',
@@ -76,28 +78,28 @@ $this->params['breadcrumbs'][] = $this->title;
                             ]);
                         },
                     'view' => function ($url, $model, $key) {
-                            return Html::a(Yii::t('app', 'View'), ['view', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-info btn-xs']);
+                            return Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_VIEW), ['view', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-primary btn-xs']);
                         },
                     'update' => function ($url, $model, $key) {
-                            return Utils::isOwnerOfCompany($model->company->company_id) ? Html::a(Yii::t('app', 'Update'), ['update', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-secondary btn-xs']) : '';
+                            return Utils::isOwnerOfCompany($model->company->company_id) ? Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_UPDATE), ['update', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-secondary btn-xs']) : '';
                         },
                     'list-users' => function ($url, $model, $key) {
-                            return Utils::isOwnerOrSupervisorOfCompany($model->company->company_id) ? Html::a(Yii::t('app', 'List Users'), ['list-users', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-info btn-xs']) : '';
+                            return Utils::isOwnerOrSupervisorOfCompany($model->company->company_id) ? Html::a(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_BUTTON_LIST_USERS), ['list-users', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-info btn-xs']) : '';
                         },
                     'create-user' => function ($url, $model, $key) {
-                            return Utils::isOwnerOrSupervisorOfCompany($model->company->company_id) ? Html::a(Yii::t('app', 'Create User'), ['create-user', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-success btn-xs']) : '';
+                            return Utils::isOwnerOrSupervisorOfCompany($model->company->company_id) ? Html::a(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_BUTTON_CREATE_USER), ['create-user', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-success btn-xs']) : '';
                         },
                 ]
             ],
         ],
     ]); ?>
 
-    <h2><?= Html::encode("Other companies to apply") ?></h2>
+    <h2><?= Html::encode(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_OTHER_TITLE)) ?></h2>
 
     <div>
-        <span>These are the companies where you can apply to enter.</span>
+        <span><?= Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_OTHER_TEXT) ?></span>
         <p>
-            <?= Html::a('List Applications', ['/application/list'], ['class' => 'btn btn-primary']) ?>
+            <?= Html::a(Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_BUTTON_SHOW_APPLICATIONS), ['/application/list'], ['class' => 'btn btn-primary']) ?>
         </p>
     </div>
 
@@ -105,35 +107,35 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProviderListUserNotBelong,
         'columns' => [
             [
-                'attribute' => '#',
+                'attribute' => Constants::NUM,
                 'format' => 'raw',
                 'value' => function ($model) {
                     return $model->company_id;
                 },
             ],
             [
-                'attribute' => 'Code',
+                'attribute' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_CODE),
                 'format' => 'raw',
                 'value' => function ($model) {
                     return $model->code;
                 }
             ],
             [
-                'attribute' => 'Name',
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_NAME),
                 'format' => 'raw',
                 'value' => function ($model) {
                     return $model->name;
                 }
             ],
             [
-                'attribute' => 'Phone',
+                'attribute' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_PHONE),
                 'format' => 'raw',
                 'value' => function ($model) {
                     return $model->phone;
                 }
             ],
             [
-                'attribute' => 'Company status',
+                'attribute' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_STATUS),
                 'format' => 'raw',
                 'value' => function ($model) {
                     return $model->getFullStatus();
@@ -144,12 +146,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'template' => '{list-applications} {create-application}',
                 'buttons' => [
                     'list-applications' => function ($url, $model, $key) {
-                        return Html::a('List', ['application/', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-primary btn-xs']);
+                        return Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_VIEW), ['application/', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-primary btn-xs']);
                     },
                     'create-application' => function ($url, $model, $key) {
                         $user_id = \Yii::$app->user->identity->user_id;
                         if (count(ApplicationCompany::getPendingApplicationsForCompany($model->company_id, $user_id)) == 0) {
-                            return Html::a('Create', ['application/create', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-success btn-xs']);
+                            return Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_CREATE), ['application/create', 'company_id' => $model->company_id], ['class' => 'btn btn-outline-success btn-xs']);
                         }
                     },
                 ]
