@@ -68,12 +68,12 @@ class TransactionItemDto extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'transaction_item_id' => Yii::t('app', 'Transaction Item ID'),
-            'amount' => Yii::t('app', 'Amount'),
-            'unit_value' => Yii::t('app', 'Unit Value'),
-            'total_value' => Yii::t('app', 'Total Value'),
-            'tax_rate' => Yii::t('app', 'Tax Rate'),
-            'discount_rate' => Yii::t('app', 'Discount Rate'),
+            'transaction_item_id' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_ITEM_ID),
+            'amount' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT),
+            'unit_value' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_UNIT_VALUE),
+            'total_value' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_TOTAL_VALUE),
+            'tax_rate' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_TAX_RATE),
+            'discount_rate' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_DISCOUNT_RATE),
             'product_id' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
             'product' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
             'warehouse_id' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),

@@ -49,10 +49,10 @@ class ExistencesDto extends \yii\db\ActiveRecord
             'product' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
             'warehouse_id' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
             'warehouse' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
-            'cutoff_date' => Yii::t('app', 'Cut-off Date'),
-            'amountInput' => Yii::t('app', 'Amount Input'),
-            'amountOutput' => Yii::t('app', 'Amount Output'),
-            'amountDifference' => Yii::t('app', 'Amount'),
+            'cutoff_date' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_CUTOFF_DATE),
+            'amountInput' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_INPUT),
+            'amountOutput' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_OUTPUT),
+            'amountDifference' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT_DIFFERENCE),
         ];
     }
 

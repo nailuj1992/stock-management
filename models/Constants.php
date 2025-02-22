@@ -46,5 +46,6 @@ class Constants
 
     const MINUS = '-';
     const NUM = '#';
+    const NA = "N/A";
 
 }

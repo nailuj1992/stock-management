@@ -66,12 +66,12 @@ class Transaction extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'transaction_id' => Yii::t('app', 'Transaction ID'),
-            'num_transaction' => Yii::t('app', '# Transaction'),
+            'transaction_id' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_ID),
+            'num_transaction' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_NUM_ID),
             'document_id' => Yii::t(TextConstants::DOCUMENT, TextConstants::DOCUMENT_MODEL_ID),
-            'creation_date' => Yii::t('app', 'Creation Date'),
-            'expiration_date' => Yii::t('app', 'Expiration Date'),
-            'linked_transaction_id' => Yii::t('app', 'Linked Transaction'),
+            'creation_date' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_CREATION_DATE),
+            'expiration_date' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_EXPIRATION_DATE),
+            'linked_transaction_id' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_LINKED),
             'supplier_id' => Yii::t(TextConstants::SUPPLIER, TextConstants::SUPPLIER_MODEL_ID),
             'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
             'status' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),

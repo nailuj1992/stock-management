@@ -44,7 +44,7 @@ class KardexSearchDto extends \yii\db\ActiveRecord
             'product' => Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID),
             'warehouse_id' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
             'warehouse' => Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID),
-            'cutoff_date' => Yii::t('app', 'Cut-off Date'),
+            'cutoff_date' => Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_CUTOFF_DATE),
         ];
     }
 

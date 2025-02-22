@@ -25,8 +25,8 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
     <p>
         <?php
         if (Utils::belongsToCompany($model->company_id)) {
-            $question = Yii::t('app', "Are you sure you want to delete the transaction {code}-{name}?", ['code' => $model->document->code, 'name' => $model->num_transaction]);
-            echo Html::a(Yii::t('app', 'Delete'), ['delete-draft', 'transaction_id' => $model->transaction_id], [
+            $question = Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_INDEX_CONFIRMATION_DELETE, ['code' => $model->document->code, 'name' => $model->num_transaction]);
+            echo Html::a(Yii::t(TextConstants::APP, TextConstants::BUTTON_DELETE), ['delete-draft', 'transaction_id' => $model->transaction_id], [
                 'class' => "btn btn-danger",
                 'data' => [
                     'confirm' => $question,
@@ -55,12 +55,12 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
 
         <table id="transaction-items-table">
             <tr>
-                <th><?= Yii::t('app', 'Product') ?></th>
-                <th><?= Yii::t('app', 'Warehouse') ?></th>
-                <th><?= Yii::t('app', 'Amount') ?></th>
-                <th><?= Yii::t('app', 'Unit Value ($)') ?></th>
-                <th><?= Yii::t('app', 'Discount Rate (%)') ?></th>
-                <th><?= Yii::t('app', 'Total Value ($)') ?></th>
+                <th><?= Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_ID) ?></th>
+                <th><?= Yii::t(TextConstants::WAREHOUSE, TextConstants::WAREHOUSE_MODEL_ID) ?></th>
+                <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_AMOUNT) ?></th>
+                <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_UNIT_VALUE) ?></th>
+                <th><?= Yii::t(TextConstants::PRODUCT, TextConstants::PRODUCT_MODEL_DISCOUNT_RATE) ?></th>
+                <th><?= Yii::t(TextConstants::TRANSACTION, TextConstants::TRANSACTION_MODEL_TOTAL_VALUE) ?></th>
             </tr>
             <?php
             if (!empty($transactionDto->transaction_items)) {
@@ -83,7 +83,7 @@ $this->params['breadcrumbs'][] = Yii::t('app', 'Draft: {name}', ['name' => $name
                         </td>
                         <td class="col-2">
                             <?= $form->field($transaction_item, 'warehouse_id')->dropDownList($warehouses, [
-                                'prompt' => Yii::t('app', 'Empty'),
+                                'prompt' => Yii::t(TextConstants::APP, textConstants::OPTION_EMPTY),
                                 'id' => 'transaction-item-' . $i . '-warehouse_id',
                                 'name' => 'TransactionItemDto[' . $i . '][warehouse_id]',
                                 'onchange' => '
