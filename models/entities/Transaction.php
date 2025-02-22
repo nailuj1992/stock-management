@@ -184,4 +184,21 @@ class Transaction extends \yii\db\ActiveRecord
         }
         return $transaction->supplier_id;
     }
+
+    public static function companyHasTransactions($company_id)
+    {
+        $sql = "SELECT COUNT(transaction_id) countTransactions FROM transaction WHERE company_id = :companyId AND status NOT IN (:status)";
+
+        $connection = Yii::$app->getDb();
+        $command = $connection->createCommand($sql, [
+            ':companyId' => $company_id,
+            ':status' => Constants::STATUS_DELETED_DB,
+        ]);
+        $result = $command->queryAll();
+
+        if (!isset($result) || empty($result)) {
+            return false;
+        }
+        return $result[0]['countTransactions'] > 0;
+    }
 }

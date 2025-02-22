@@ -6,6 +6,33 @@ use app\models\Utils;
 
 $this->title = Yii::$app->name;
 ?>
+<style>
+    .row-center {
+        display: flex;
+        justify-content: center;
+    }
+
+    .flex-box-right {
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+        align-self: center;
+    }
+
+    .flex-box-left {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        align-self: center;
+    }
+
+    .flex-box-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        align-self: center;
+    }
+</style>
 <div class="site-index">
 
     <?php

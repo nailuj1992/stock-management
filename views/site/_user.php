@@ -1,6 +1,7 @@
 <?php
 use app\models\entities\ApplicationCompany;
 use app\models\entities\Company;
+use app\models\entities\Transaction;
 use app\models\TextConstants;
 use app\models\Utils;
 use app\models\entities\UserCompany;
@@ -16,7 +17,7 @@ use yii\helpers\Html;
     if (Utils::isActiveUser()) {
         echo '<p class="lead">' . Yii::t(TextConstants::INDEX, TextConstants::INDEX_MESSAGE_WELCOME_APP) . '</p>';
         if (count(UserCompany::getCompaniesForUser()) == 0) {
-            echo '<p>' . Html::a(Yii::t(TextConstants::APP, TextConstants::INDEX_CREATE_COMPANY), ['/companies/create'], ['class' => 'btn btn-lg btn-success']) . '</p>';
+            echo '<p>' . Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CREATE_COMPANY), ['/companies/create'], ['class' => 'btn btn-lg btn-success']) . '</p>';
             if (count(ApplicationCompany::getPendingApplicationsForUser()) == 0) {
                 ?>
                 <span>
@@ -54,8 +55,8 @@ use yii\helpers\Html;
     <?php
     if (Utils::isActiveUser()) {
         ?>
-        <div class="row">
-            <div class="col-lg-6 mb-3">
+        <div class="row row-center">
+            <div class="col-lg-4 mb-3 flex-box-center">
                 <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_COMPANIES_TITLE) ?></h2>
 
                 <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_COMPANIES_PARAGRAPH_1) ?></p>
@@ -70,7 +71,7 @@ use yii\helpers\Html;
                 $company_id = Utils::getCompanySelected();
                 $company = Company::findCompany($company_id);
                 ?>
-                <div class="col-lg-6 mb-3">
+                <div class="col-lg-4 mb-3 flex-box-center">
                     <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_SELECTED_COMPANY) ?></h2>
                     <h3><?= $company->name ?></h3>
                     <h6><?= Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_CODE) ?>: <?= $company->code ?></h6>
@@ -83,7 +84,7 @@ use yii\helpers\Html;
         if (count(UserCompany::getCompaniesForUser()) > 0) {
             if (!Utils::hasCompanySelected()) {
                 ?>
-                <div class="alert alert-danger">
+                <div class="alert alert-danger text-center">
                     <?= nl2br(Html::encode(Yii::t(TextConstants::APP, TextConstants::MESSAGE_SELECT_COMPANY))) ?>
                 </div>
                 <?php
@@ -91,42 +92,8 @@ use yii\helpers\Html;
                 $company_id = Utils::getCompanySelected();
                 if (Utils::belongsToCompany($company_id)) {
                     ?>
-                    <div class="row">
-                        <div class="col-lg-3 mb-3">
-                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_DOCUMENTS_TITLE) ?></h2>
-
-                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_DOCUMENTS_PARAGRAPH) ?></p>
-
-                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/document/'], ['class' => 'btn btn-outline-info']) ?>
-                            </p>
-                        </div>
-                        <div class="col-lg-3 mb-3">
-                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_PRODUCTS_TITLE) ?></h2>
-
-                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_PRODUCTS_PARAGRAPH) ?></p>
-
-                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/product/'], ['class' => 'btn btn-outline-info']) ?>
-                            </p>
-                        </div>
-                        <div class="col-lg-3 mb-3">
-                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_WAREHOUSES_TITLE) ?></h2>
-
-                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_WAREHOUSES_PARAGRAPH) ?></p>
-
-                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/warehouse/'], ['class' => 'btn btn-outline-info']) ?>
-                            </p>
-                        </div>
-                        <div class="col-lg-3 mb-3">
-                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_SUPPLIERS_TITLE) ?></h2>
-
-                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_SUPPLIERS_PARAGRAPH) ?></p>
-
-                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/supplier/'], ['class' => 'btn btn-outline-info']) ?>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-lg-3 mb-3">
+                    <div class="row row-center text-center">
+                        <div class="col-lg-3 mb-3 flex-box-center">
                             <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_TRANSACTIONS_TITLE) ?></h2>
 
                             <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_TRANSACTIONS_PARAGRAPH) ?>
@@ -134,21 +101,57 @@ use yii\helpers\Html;
 
                             <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/transaction/'], ['class' => 'btn btn-outline-info']) ?>
                         </div>
-                        <div class="col-lg-3 mb-3">
-                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_EXISTENCES_TITLE) ?></h2>
+                        <?php if (Transaction::companyHasTransactions($company_id)) { ?>
+                            <div class="col-lg-3 mb-3 flex-box-center">
+                                <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_EXISTENCES_TITLE) ?></h2>
 
-                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_EXISTENCES_PARAGRAPH) ?>
+                                <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_EXISTENCES_PARAGRAPH) ?>
+                                </p>
+
+                                <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/transaction/existences'], ['class' => 'btn btn-outline-info']) ?>
+                            </div>
+                            <div class="col-lg-3 mb-3 flex-box-center">
+                                <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_KARDEX_TITLE) ?></h2>
+
+                                <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_KARDEX_PARAGRAPH) ?>
+                                </p>
+
+                                <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/transaction/kardex'], ['class' => 'btn btn-outline-info']) ?>
+                            </div>
+                        <?php } ?>
+                    </div>
+                    <div class="row row-center text-center">
+                        <div class="col-lg-3 mb-3 flex-box-center">
+                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_DOCUMENTS_TITLE) ?></h2>
+
+                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_DOCUMENTS_PARAGRAPH) ?></p>
+
+                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/document/'], ['class' => 'btn btn-outline-info']) ?>
                             </p>
-
-                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/transaction/existences'], ['class' => 'btn btn-outline-info']) ?>
                         </div>
-                        <div class="col-lg-3 mb-3">
-                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_KARDEX_TITLE) ?></h2>
+                        <div class="col-lg-3 mb-3 flex-box-center">
+                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_PRODUCTS_TITLE) ?></h2>
 
-                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_KARDEX_PARAGRAPH) ?>
+                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_PRODUCTS_PARAGRAPH) ?></p>
+
+                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/product/'], ['class' => 'btn btn-outline-info']) ?>
                             </p>
+                        </div>
+                        <div class="col-lg-3 mb-3 flex-box-center">
+                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_WAREHOUSES_TITLE) ?></h2>
 
-                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/transaction/kardex'], ['class' => 'btn btn-outline-info']) ?>
+                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_WAREHOUSES_PARAGRAPH) ?></p>
+
+                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/warehouse/'], ['class' => 'btn btn-outline-info']) ?>
+                            </p>
+                        </div>
+                        <div class="col-lg-3 mb-3 flex-box-center">
+                            <h2><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_SUPPLIERS_TITLE) ?></h2>
+
+                            <p><?= Yii::t(TextConstants::INDEX, TextConstants::INDEX_SUPPLIERS_PARAGRAPH) ?></p>
+
+                            <p><?= Html::a(Yii::t(TextConstants::INDEX, TextConstants::INDEX_CONTINUE, ['symbol' => '&raquo;']), ['/supplier/'], ['class' => 'btn btn-outline-info']) ?>
+                            </p>
                         </div>
                     </div>
                     <?php
