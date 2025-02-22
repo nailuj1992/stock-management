@@ -518,6 +518,7 @@ class TransactionController extends Controller
 
         $subtotal = 0;
         $taxes = 0;
+        $total = 0;
 
         foreach ($transactionDto->transaction_items as $transactionItemDto) {
             $subtotal += $transactionItemDto->total_value;
