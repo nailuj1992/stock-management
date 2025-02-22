@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Constants;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -134,14 +135,14 @@ class SiteController extends Controller
     public function actionSetLang($lang)
     {
         switch ($lang) {
-            case "en":
-                Yii::$app->language = "en-US";
+            case Constants::EN:
+                Yii::$app->language = Constants::EN_US;
                 break;
-            case "es":
-                Yii::$app->language = "es-CO";
+            case Constants::ES:
+                Yii::$app->language = Constants::ES_CO;
                 break;
             default:
-                Yii::$app->language = "en-US";
+                Yii::$app->language = Constants::EN_US;
         }
         $this->goBack();
     }

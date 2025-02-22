@@ -9,6 +9,10 @@ namespace app\models;
  */
 class Constants
 {
+    const EN = "en";
+    const ES = "es";
+    const EN_US = "en-US";
+    const ES_CO = "es-CO";
 
     const STATUS_ACTIVE_DB = "A";
     const STATUS_INACTIVE_DB = "I";

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 22, 2025 at 05:15 PM
+-- Generation Time: Feb 22, 2025 at 07:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -23,12 +23,27 @@ SET time_zone = "+00:00";
 CREATE DATABASE IF NOT EXISTS `stock_management` DEFAULT CHARACTER SET utf32 COLLATE utf32_general_ci;
 USE `stock_management`;
 
+DELIMITER $$
+--
+-- Procedures
+--
+DROP PROCEDURE IF EXISTS `UpdateUserStatus`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateUserStatus` ()   BEGIN
+    -- Update users whose password update date is older than 1 month
+    UPDATE user
+    SET status = 'I'
+    WHERE updated_pwd_at IS NULL OR updated_pwd_at <= DATE_SUB(NOW(), INTERVAL 1 MONTH);
+END$$
+
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `application_company`
 --
 
+DROP TABLE IF EXISTS `application_company`;
 CREATE TABLE `application_company` (
   `application_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED DEFAULT NULL,
@@ -61,6 +76,7 @@ INSERT INTO `application_company` (`application_id`, `user_id`, `company_id`, `s
 -- Table structure for table `auth_assignment`
 --
 
+DROP TABLE IF EXISTS `auth_assignment`;
 CREATE TABLE `auth_assignment` (
   `item_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
@@ -88,6 +104,7 @@ INSERT INTO `auth_assignment` (`item_name`, `user_id`, `created_at`) VALUES
 -- Table structure for table `auth_item`
 --
 
+DROP TABLE IF EXISTS `auth_item`;
 CREATE TABLE `auth_item` (
   `name` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `type` smallint(6) NOT NULL,
@@ -112,6 +129,7 @@ INSERT INTO `auth_item` (`name`, `type`, `description`, `rule_name`, `data`, `cr
 -- Table structure for table `auth_item_child`
 --
 
+DROP TABLE IF EXISTS `auth_item_child`;
 CREATE TABLE `auth_item_child` (
   `parent` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `child` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
@@ -130,6 +148,7 @@ INSERT INTO `auth_item_child` (`parent`, `child`) VALUES
 -- Table structure for table `auth_rule`
 --
 
+DROP TABLE IF EXISTS `auth_rule`;
 CREATE TABLE `auth_rule` (
   `name` varchar(64) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   `data` blob DEFAULT NULL,
@@ -143,6 +162,7 @@ CREATE TABLE `auth_rule` (
 -- Table structure for table `city`
 --
 
+DROP TABLE IF EXISTS `city`;
 CREATE TABLE `city` (
   `city_id` int(10) UNSIGNED NOT NULL,
   `code` varchar(10) NOT NULL,
@@ -183,6 +203,7 @@ INSERT INTO `city` (`city_id`, `code`, `name`, `state_id`) VALUES
 -- Table structure for table `company`
 --
 
+DROP TABLE IF EXISTS `company`;
 CREATE TABLE `company` (
   `company_id` int(10) UNSIGNED NOT NULL,
   `code` varchar(20) NOT NULL,
@@ -212,6 +233,7 @@ INSERT INTO `company` (`company_id`, `code`, `name`, `phone`, `address`, `city`,
 -- Table structure for table `country`
 --
 
+DROP TABLE IF EXISTS `country`;
 CREATE TABLE `country` (
   `country_id` int(10) UNSIGNED NOT NULL,
   `code` varchar(10) NOT NULL,
@@ -234,6 +256,7 @@ INSERT INTO `country` (`country_id`, `code`, `name`) VALUES
 -- Table structure for table `document`
 --
 
+DROP TABLE IF EXISTS `document`;
 CREATE TABLE `document` (
   `document_id` int(10) UNSIGNED NOT NULL,
   `code` varchar(5) NOT NULL,
@@ -267,6 +290,7 @@ INSERT INTO `document` (`document_id`, `code`, `name`, `intended_for`, `apply_fo
 -- Table structure for table `message`
 --
 
+DROP TABLE IF EXISTS `message`;
 CREATE TABLE `message` (
   `id` int(11) NOT NULL,
   `language` varchar(16) NOT NULL,
@@ -741,7 +765,13 @@ INSERT INTO `message` (`id`, `language`, `translation`) VALUES
 (231, 'en-US', 'Final Date'),
 (231, 'es-CO', 'Fecha Final'),
 (232, 'en-US', 'INITIAL BALANCE'),
-(232, 'es-CO', 'INVENTARIO INICIAL');
+(232, 'es-CO', 'INVENTARIO INICIAL'),
+(233, 'en-US', 'Old Password'),
+(233, 'es-CO', 'Contraseña Anterior'),
+(234, 'en-US', 'Old Password is not correct.'),
+(234, 'es-CO', 'La contraseña anterior no es correcta.'),
+(235, 'en-US', 'New Password should be different to the Old Password.'),
+(235, 'es-CO', 'La nueva contraseña debe ser diferente de la anterior.');
 
 -- --------------------------------------------------------
 
@@ -749,6 +779,7 @@ INSERT INTO `message` (`id`, `language`, `translation`) VALUES
 -- Table structure for table `product`
 --
 
+DROP TABLE IF EXISTS `product`;
 CREATE TABLE `product` (
   `product_id` int(10) UNSIGNED NOT NULL,
   `code` varchar(20) NOT NULL,
@@ -780,6 +811,7 @@ INSERT INTO `product` (`product_id`, `code`, `name`, `description`, `has_existen
 -- Table structure for table `source_message`
 --
 
+DROP TABLE IF EXISTS `source_message`;
 CREATE TABLE `source_message` (
   `id` int(11) NOT NULL,
   `category` varchar(255) DEFAULT NULL,
@@ -1022,7 +1054,10 @@ INSERT INTO `source_message` (`id`, `category`, `message`) VALUES
 (229, 'transaction', 'TRANSACTION_MESSAGE_FINAL_LATER_INITIAL_DATE'),
 (230, 'transaction', 'TRANSACTION_MODEL_INITIAL_DATE'),
 (231, 'transaction', 'TRANSACTION_MODEL_FINAL_DATE'),
-(232, 'transaction', 'TRANSACTION_KARDEX_INITIAL_STOCK');
+(232, 'transaction', 'TRANSACTION_KARDEX_INITIAL_STOCK'),
+(233, 'user', 'USER_MODEL_OLD_PASSWORD'),
+(234, 'app', 'MESSAGE_OLD_PASSWORD_NOT_MATCH'),
+(235, 'app', 'MESSAGE_NEW_OLD_PASSWORD_DIFFERENT');
 
 -- --------------------------------------------------------
 
@@ -1030,6 +1065,7 @@ INSERT INTO `source_message` (`id`, `category`, `message`) VALUES
 -- Table structure for table `state`
 --
 
+DROP TABLE IF EXISTS `state`;
 CREATE TABLE `state` (
   `state_id` int(10) UNSIGNED NOT NULL,
   `code` varchar(10) NOT NULL,
@@ -1064,6 +1100,7 @@ INSERT INTO `state` (`state_id`, `code`, `name`, `country_id`) VALUES
 -- Table structure for table `supplier`
 --
 
+DROP TABLE IF EXISTS `supplier`;
 CREATE TABLE `supplier` (
   `supplier_id` int(10) UNSIGNED NOT NULL,
   `code` varchar(20) NOT NULL,
@@ -1094,6 +1131,7 @@ INSERT INTO `supplier` (`supplier_id`, `code`, `name`, `email`, `phone`, `addres
 -- Table structure for table `transaction`
 --
 
+DROP TABLE IF EXISTS `transaction`;
 CREATE TABLE `transaction` (
   `transaction_id` int(10) UNSIGNED NOT NULL,
   `num_transaction` varchar(20) NOT NULL,
@@ -1139,6 +1177,7 @@ INSERT INTO `transaction` (`transaction_id`, `num_transaction`, `document_id`, `
 -- Table structure for table `transaction_item`
 --
 
+DROP TABLE IF EXISTS `transaction_item`;
 CREATE TABLE `transaction_item` (
   `transaction_item_id` int(10) UNSIGNED NOT NULL,
   `transaction_id` int(10) UNSIGNED NOT NULL,
@@ -1185,6 +1224,7 @@ INSERT INTO `transaction_item` (`transaction_item_id`, `transaction_id`, `amount
 -- Table structure for table `user`
 --
 
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `email` varchar(100) NOT NULL,
@@ -1199,23 +1239,24 @@ CREATE TABLE `user` (
   `created_by` int(11) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_by` int(11) UNSIGNED DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT current_timestamp()
+  `updated_at` timestamp NULL DEFAULT current_timestamp(),
+  `updated_pwd_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`user_id`, `email`, `password`, `auth_key`, `access_token`, `name`, `phone`, `address`, `city`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
-(1, 'admin@admin.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'Admin', '12345678', 'Admin address', 1, 'A', 1, '2024-08-14 05:34:25', 1, '2024-08-17 04:06:19'),
-(5, 'user@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'user 1', '1234232342', 'calle user asd123', 17, 'A', 1, '2024-08-15 07:20:16', 5, '2024-08-17 07:34:58'),
-(6, 'user2@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User two', '433654987', 'fake street 12345', 1, 'A', 1, '2024-08-15 23:04:34', 6, '2024-08-17 05:26:35'),
-(7, 'user3@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User 3', '12344433', 'fake street 456', 5, 'A', 1, '2024-08-16 05:15:23', 7, '2024-08-16 14:15:57'),
-(23, 'user4@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'user # four', '213424546754', '341 Buchanan Ave', 12, 'A', 5, '2024-08-16 23:34:18', 23, '2024-08-21 04:00:17'),
-(24, 'user5@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User 5', '234534213', 'fake street 123', 20, 'A', 23, '2024-08-16 23:57:54', 24, '2024-08-17 09:02:05'),
-(25, 'user6@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User six', '34332324', 'fake street 123', 19, 'I', 24, '2024-08-17 02:28:41', 25, '2024-08-21 04:32:50'),
-(26, 'user7@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User 7', '1234443321', 'fake street 123', 15, 'N', 1, '2024-08-17 03:55:37', 26, '2024-08-17 12:55:59'),
-(27, 'user8@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'Usuario Ocho', '541201133', 'algo 123 # 456 - 78', 11, 'A', 6, '2024-08-17 04:04:39', 27, '2024-08-17 13:16:24');
+INSERT INTO `user` (`user_id`, `email`, `password`, `auth_key`, `access_token`, `name`, `phone`, `address`, `city`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`, `updated_pwd_at`) VALUES
+(1, 'admin@admin.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'Admin', '12345678', 'Admin address', 1, 'A', 1, '2024-08-14 05:34:25', 1, '2025-02-22 23:54:10', '2025-02-22 23:54:10'),
+(5, 'user@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'user 1', '1234232342', 'calle user asd123', 17, 'A', 1, '2024-08-15 07:20:16', 5, '2025-02-22 23:54:36', '2025-02-22 23:54:36'),
+(6, 'user2@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User two', '433654987', 'fake street 12345', 1, 'A', 1, '2024-08-15 23:04:34', 6, '2025-02-22 23:55:04', '2025-02-22 23:55:04'),
+(7, 'user3@user.com', 'ca0ee3d7b56fbeb00d909bd0bf9c86dbf4f7361ed570d2ee9e7bb670466e994a', NULL, NULL, 'User 3', '12344433', 'fake street 456', 5, 'A', 1, '2024-08-16 05:15:23', 7, '2025-02-22 23:55:39', '2025-02-22 23:55:39'),
+(23, 'user4@user.com', '1398b8a4076328726d2802b0c5acfb81c83188a42fe18ed1887a8482d1b0b8a8', NULL, NULL, 'user # four', '213424546754', '341 Buchanan Ave', 12, 'I', 5, '2024-08-16 23:34:18', 23, '2024-08-21 04:00:17', NULL),
+(24, 'user5@user.com', '1398b8a4076328726d2802b0c5acfb81c83188a42fe18ed1887a8482d1b0b8a8', NULL, NULL, 'User 5', '234534213', 'fake street 123', 20, 'I', 23, '2024-08-16 23:57:54', 24, '2024-08-17 09:02:05', NULL),
+(25, 'user6@user.com', '1398b8a4076328726d2802b0c5acfb81c83188a42fe18ed1887a8482d1b0b8a8', NULL, NULL, 'User six', '34332324', 'fake street 123', 19, 'I', 24, '2024-08-17 02:28:41', 25, '2024-08-21 04:32:50', NULL),
+(26, 'user7@user.com', '1398b8a4076328726d2802b0c5acfb81c83188a42fe18ed1887a8482d1b0b8a8', NULL, NULL, 'User 7', '1234443321', 'fake street 123', 15, 'I', 1, '2024-08-17 03:55:37', 26, '2024-08-17 12:55:59', NULL),
+(27, 'user8@user.com', '1398b8a4076328726d2802b0c5acfb81c83188a42fe18ed1887a8482d1b0b8a8', NULL, NULL, 'Usuario Ocho', '541201133', 'algo 123 # 456 - 78', 11, 'I', 6, '2024-08-17 04:04:39', 27, '2024-08-17 13:16:24', NULL);
 
 -- --------------------------------------------------------
 
@@ -1223,6 +1264,7 @@ INSERT INTO `user` (`user_id`, `email`, `password`, `auth_key`, `access_token`, 
 -- Table structure for table `user_company`
 --
 
+DROP TABLE IF EXISTS `user_company`;
 CREATE TABLE `user_company` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `company_id` int(10) UNSIGNED NOT NULL,
@@ -1255,6 +1297,7 @@ INSERT INTO `user_company` (`user_id`, `company_id`, `role`, `status`, `created_
 -- Table structure for table `warehouse`
 --
 
+DROP TABLE IF EXISTS `warehouse`;
 CREATE TABLE `warehouse` (
   `warehouse_id` int(10) UNSIGNED NOT NULL,
   `code` varchar(5) NOT NULL,
@@ -1477,7 +1520,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `source_message`
 --
 ALTER TABLE `source_message`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=233;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=236;
 
 --
 -- AUTO_INCREMENT for table `state`
@@ -1625,6 +1668,17 @@ ALTER TABLE `user_company`
 ALTER TABLE `warehouse`
   ADD CONSTRAINT `fk_warehouse_city` FOREIGN KEY (`city`) REFERENCES `city` (`city_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   ADD CONSTRAINT `fk_warehouse_company` FOREIGN KEY (`company_id`) REFERENCES `company` (`company_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+DELIMITER $$
+--
+-- Events
+--
+DROP EVENT IF EXISTS `DailyUpdateUserStatus`$$
+CREATE DEFINER=`root`@`localhost` EVENT `DailyUpdateUserStatus` ON SCHEDULE EVERY 1 DAY STARTS '2025-02-22 06:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    CALL UpdateUserStatus();
+END$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
