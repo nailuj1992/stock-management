@@ -2,6 +2,8 @@
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$cookies_expiration_time = 7 * 24 * 60 * 60;// 1 week
+$session_expiration_time = 60 * 60;// 1 hour
 
 $config = [
     'id' => 'basic',
@@ -28,7 +30,14 @@ $config = [
         ],
         'user' => [
             'identityClass' => 'app\models\UserLogin',
-            'enableAutoLogin' => true,
+            'enableAutoLogin' => false,
+            'authTimeout' => $session_expiration_time, // auth expire
+        ],
+        'session' => [
+            'class' => 'yii\web\Session',
+            'cookieParams' => ['httponly' => true, 'lifetime' => $cookies_expiration_time],
+            'timeout' => $session_expiration_time, //session expire
+            'useCookies' => true,
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
