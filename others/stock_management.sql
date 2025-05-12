@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 22, 2025 at 07:04 PM
+-- Generation Time: May 12, 2025 at 05:56 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -771,7 +771,13 @@ INSERT INTO `message` (`id`, `language`, `translation`) VALUES
 (234, 'en-US', 'Old Password is not correct.'),
 (234, 'es-CO', 'La contraseña anterior no es correcta.'),
 (235, 'en-US', 'New Password should be different to the Old Password.'),
-(235, 'es-CO', 'La nueva contraseña debe ser diferente de la anterior.');
+(235, 'es-CO', 'La nueva contraseña debe ser diferente de la anterior.'),
+(236, 'en-US', 'Selected'),
+(236, 'es-CO', 'Seleccionada'),
+(237, 'en-US', 'Clear selection'),
+(237, 'es-CO', 'Quitar selección'),
+(238, 'en-US', 'Are you sure you want to clear the selection of the company {name}?'),
+(238, 'es-CO', '¿Estás seguro de que de quieres quitar la selección de la empresa {name}?');
 
 -- --------------------------------------------------------
 
@@ -1057,7 +1063,10 @@ INSERT INTO `source_message` (`id`, `category`, `message`) VALUES
 (232, 'transaction', 'TRANSACTION_KARDEX_INITIAL_STOCK'),
 (233, 'user', 'USER_MODEL_OLD_PASSWORD'),
 (234, 'app', 'MESSAGE_OLD_PASSWORD_NOT_MATCH'),
-(235, 'app', 'MESSAGE_NEW_OLD_PASSWORD_DIFFERENT');
+(235, 'app', 'MESSAGE_NEW_OLD_PASSWORD_DIFFERENT'),
+(236, 'company', 'COMPANY_MODEL_SELECTED'),
+(237, 'app', 'BUTTON_UNSELECT'),
+(238, 'company', 'COMPANY_INDEX_CONFIRMATION_UNSELECT');
 
 -- --------------------------------------------------------
 
@@ -1269,6 +1278,7 @@ CREATE TABLE `user_company` (
   `user_id` int(10) UNSIGNED NOT NULL,
   `company_id` int(10) UNSIGNED NOT NULL,
   `role` varchar(1) NOT NULL,
+  `selected_company` tinyint(4) NOT NULL DEFAULT 0,
   `status` varchar(1) NOT NULL DEFAULT 'A',
   `created_by` int(10) UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
@@ -1280,16 +1290,16 @@ CREATE TABLE `user_company` (
 -- Dumping data for table `user_company`
 --
 
-INSERT INTO `user_company` (`user_id`, `company_id`, `role`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
-(5, 1, 'O', 'A', 5, '2024-08-16 06:18:03', 5, '2024-08-16 06:18:03'),
-(6, 2, 'O', 'A', 6, '2024-08-16 18:40:44', 6, '2024-08-16 18:40:44'),
-(6, 3, 'O', 'A', 6, '2024-08-17 04:03:21', 6, '2024-08-17 04:03:21'),
-(7, 1, 'S', 'A', 24, '2024-08-20 21:48:35', 24, '2024-08-20 21:48:35'),
-(7, 3, 'M', 'A', 6, '2024-08-20 22:13:37', 6, '2024-08-20 22:13:37'),
-(23, 1, 'S', 'I', 5, '2024-08-16 23:34:18', 5, '2024-08-16 23:34:18'),
-(24, 1, 'M', 'A', 23, '2024-08-16 23:57:54', 23, '2024-08-16 23:57:54'),
-(25, 1, 'S', 'I', 24, '2024-08-17 02:28:41', 24, '2024-08-17 02:28:41'),
-(27, 3, 'S', 'A', 6, '2024-08-17 04:04:39', 6, '2024-08-17 04:04:39');
+INSERT INTO `user_company` (`user_id`, `company_id`, `role`, `selected_company`, `status`, `created_by`, `created_at`, `updated_by`, `updated_at`) VALUES
+(5, 1, 'O', 0, 'A', 5, '2024-08-16 06:18:03', 5, '2024-08-16 06:18:03'),
+(6, 2, 'O', 0, 'A', 6, '2024-08-16 18:40:44', 6, '2024-08-16 18:40:44'),
+(6, 3, 'O', 0, 'A', 6, '2024-08-17 04:03:21', 6, '2024-08-17 04:03:21'),
+(7, 1, 'S', 1, 'A', 24, '2024-08-20 21:48:35', 24, '2024-08-20 21:48:35'),
+(7, 3, 'M', 0, 'A', 6, '2024-08-20 22:13:37', 6, '2024-08-20 22:13:37'),
+(23, 1, 'S', 0, 'I', 5, '2024-08-16 23:34:18', 5, '2024-08-16 23:34:18'),
+(24, 1, 'M', 0, 'A', 23, '2024-08-16 23:57:54', 23, '2024-08-16 23:57:54'),
+(25, 1, 'S', 0, 'I', 24, '2024-08-17 02:28:41', 24, '2024-08-17 02:28:41'),
+(27, 3, 'S', 0, 'A', 6, '2024-08-17 04:04:39', 6, '2024-08-17 04:04:39');
 
 -- --------------------------------------------------------
 
@@ -1520,7 +1530,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `source_message`
 --
 ALTER TABLE `source_message`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=236;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=239;
 
 --
 -- AUTO_INCREMENT for table `state`

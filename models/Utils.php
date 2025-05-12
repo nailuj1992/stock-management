@@ -218,6 +218,11 @@ class Utils
         return ArrayHelper::map($resp, 'code', 'name');
     }
 
+    public static function isTrue($value): bool
+    {
+        return $value === Constants::TRUE;
+    }
+
     public static function isActive($status)
     {
         return $status === Constants::STATUS_ACTIVE_DB;
@@ -320,20 +325,19 @@ class Utils
 
     public static function validateCompanySelected()
     {
-        $session = Yii::$app->session;
-        if (!$session->has(Constants::SELECTED_COMPANY_ID)) {
+        if (!UserCompany::hasCompanySelected()) {
             throw new ForbiddenHttpException(Yii::t(TextConstants::APP, TextConstants::MESSAGE_SELECT_COMPANY));
         }
     }
 
     public static function getCompanySelected()
     {
-        return Yii::$app->session->get(Constants::SELECTED_COMPANY_ID);
+        return UserCompany::getCompanySelected();
     }
 
     public static function hasCompanySelected()
     {
-        return Yii::$app->session->has(Constants::SELECTED_COMPANY_ID);
+        return UserCompany::hasCompanySelected();
     }
 
     public static function validateCompanyMatches($company_id)

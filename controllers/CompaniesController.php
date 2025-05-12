@@ -39,7 +39,7 @@ class CompaniesController extends Controller
                     'rules' => [
                         [
                             'allow' => true,
-                            'actions' => ['view', 'index', 'create', 'update', 'list-users', 'view-user', 'create-user', 'change-role', 'activate', 'select'],
+                            'actions' => ['view', 'index', 'create', 'update', 'list-users', 'view-user', 'create-user', 'change-role', 'activate', 'select', 'unselect'],
                             'roles' => [Constants::ROLE_USER],
                         ],
                     ],
@@ -50,6 +50,7 @@ class CompaniesController extends Controller
                         'change-role' => ['POST'],
                         'activate' => ['POST'],
                         'select' => ['POST'],
+                        'unselect' => ['POST'],
                     ],
                 ],
             ]
@@ -399,10 +400,53 @@ class CompaniesController extends Controller
         Utils::validateActiveUser();
         Utils::validateBelongsToCompany($company_id);
 
-        $session = Yii::$app->session;
-        $session->set(Constants::SELECTED_COMPANY_ID, $company_id);
+        $companiesUser = UserCompany::getCompaniesForUser();
+        foreach ($companiesUser as $item) {
+            $entity = new UserCompany();
+            $entity->user_id = $item['user_id'];
+            $entity->company_id = $item['company_id'];
+            $entity->role = $item['role'];
+            $entity->status = $item['status'];
+            $entity->created_by = $item['created_by'];
+            $entity->created_at = $item['created_at'];
+            $entity->updated_by = $item['updated_by'];
+            $entity->updated_at = $item['updated_at'];
+            $entity->setIsNewRecord(false);
+            if ($entity->company_id == $company_id) {
+                $entity->selected_company = Constants::TRUE;
+            } else {
+                $entity->selected_company = Constants::FALSE;
+            }
+            $entity->save();
+        }
 
         return $this->redirect(['/']);
+    }
+
+    public function actionUnselect($company_id)
+    {
+        Utils::validateActiveUser();
+        Utils::validateBelongsToCompany($company_id);
+
+        $companiesUser = UserCompany::getCompaniesForUser();
+        foreach ($companiesUser as $item) {
+            $entity = new UserCompany();
+            $entity->user_id = $item['user_id'];
+            $entity->company_id = $item['company_id'];
+            $entity->role = $item['role'];
+            $entity->status = $item['status'];
+            $entity->created_by = $item['created_by'];
+            $entity->created_at = $item['created_at'];
+            $entity->updated_by = $item['updated_by'];
+            $entity->updated_at = $item['updated_at'];
+            $entity->setIsNewRecord(false);
+            if ($entity->company_id == $company_id) {
+                $entity->selected_company = Constants::FALSE;
+                $entity->save();
+            }
+        }
+
+        return $this->redirect(['companies/']);
     }
 
 }

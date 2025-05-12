@@ -20,6 +20,9 @@ class Constants
     const STATUS_DRAFT_DB = "B";
     const STATUS_DELETED_DB = "D";
 
+    const TRUE = 1;
+    const FALSE = 0;
+
     const STATUS_APPROVED_DB = "A";
     const STATUS_REJECTED_DB = "R";
     const STATUS_PENDING_DB = "P";
@@ -43,8 +46,6 @@ class Constants
 
     const OPTION_YES_DB = "Y";
     const OPTION_NO_DB = "N";
-
-    const SELECTED_COMPANY_ID = 'selected_company_id';
 
     const MAX_LENGTH_NUM_TRANSACTION = 10;
 

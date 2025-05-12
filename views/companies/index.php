@@ -2,6 +2,7 @@
 
 use app\models\Constants;
 use app\models\entities\ApplicationCompany;
+use app\models\entities\UserCompany;
 use app\models\TextConstants;
 use app\models\Utils;
 use yii\helpers\Html;
@@ -65,7 +66,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     'select' => function ($url, $model, $key) {
                             if (Utils::hasCompanySelected() && Utils::getCompanySelected() == $model->company->company_id) {
-                                return null;
+                                $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_UNSELECT);
+                                $question = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_CONFIRMATION_UNSELECT, ['name' => $model->company->name]);
+                                return Html::a($label, ['unselect', 'company_id' => $model->company_id], [
+                                    'class' => 'btn btn-outline-danger btn-xs',
+                                    'data' => [
+                                        'confirm' => $question,
+                                        'method' => 'post',
+                                    ],
+                                ]);
                             }
                             $label = Yii::t(TextConstants::APP, TextConstants::BUTTON_SELECT);
                             $question = Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_INDEX_CONFIRMATION_SELECT, ['name' => $model->company->name]);

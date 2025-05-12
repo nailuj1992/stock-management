@@ -6,6 +6,7 @@ use app\models\Constants;
 use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
+use function PHPUnit\Framework\isEmpty;
 
 /**
  * This is the model class for table "user_company".
@@ -13,6 +14,7 @@ use Yii;
  * @property int $user_id
  * @property int $company_id
  * @property string $role
+ * @property int $selected_company
  * @property string $status
  * @property int|null $created_by
  * @property string|null $created_at
@@ -38,8 +40,8 @@ class UserCompany extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'company_id', 'role'], 'required'],
-            [['user_id', 'company_id', 'created_by', 'updated_by'], 'integer'],
+            [['user_id', 'company_id', 'selected_company', 'role'], 'required'],
+            [['user_id', 'company_id', 'selected_company', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['role', 'status'], 'string', 'max' => 1],
             [['user_id', 'company_id'], 'unique', 'targetAttribute' => ['user_id', 'company_id']],
@@ -58,6 +60,7 @@ class UserCompany extends \yii\db\ActiveRecord
             'company_id' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ID),
             'role' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_ROLE),
             'status' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_STATUS),
+            'selected_company' => Yii::t(TextConstants::COMPANY, TextConstants::COMPANY_MODEL_SELECTED),
             'created_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_BY),
             'created_at' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_CREATED_AT),
             'updated_by' => Yii::t(TextConstants::ATTRIBUTE, TextConstants::ATTRIBUTE_MODEL_UPDATED_BY),
@@ -118,6 +121,34 @@ class UserCompany extends \yii\db\ActiveRecord
     public function getFullStatus()
     {
         return Utils::getFullStatus($this->status);
+    }
+
+    public function isSelected()
+    {
+        return Utils::isTrue($this->selected_company);
+    }
+
+    private static function queryCompanySelected(): array
+    {
+        $user_id = Yii::$app->user->identity->user_id;
+        $query = self::find()->joinWith('company')->joinWith('user')
+            ->where(['like', 'user.status', Constants::STATUS_ACTIVE_DB])
+            ->andWhere(['like', 'user_company.status', Constants::STATUS_ACTIVE_DB])
+            ->andWhere(['=', 'user.user_id', $user_id])
+            ->andWhere(['=', 'user_company.selected_company', Constants::TRUE]);
+        return $query->all();
+    }
+
+    public static function getCompanySelected()
+    {
+        $results = self::queryCompanySelected();
+        return !empty($results) ? $results[0]->company_id : null;
+    }
+
+    public static function hasCompanySelected(): bool
+    {
+        $results = self::queryCompanySelected();
+        return !empty($results);
     }
 
     public static function isUserInRolesOfCompany($company_id, array $roles)
