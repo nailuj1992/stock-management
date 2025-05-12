@@ -142,6 +142,7 @@ class CompaniesController extends Controller
                     $userCompany->company_id = $company->company_id;
                     $userCompany->role = Constants::ROLE_OWNER_DB;
                     $userCompany->status = Constants::STATUS_ACTIVE_DB;
+                    $userCompany->selected_company = Constants::FALSE;
                     $userCompany->created_by = $user_id;
                     $userCompany->updated_by = $user_id;
 
@@ -297,6 +298,7 @@ class CompaniesController extends Controller
                     $userCompany->company_id = $company_id;
                     $userCompany->role = $model->role;
                     $userCompany->status = Constants::STATUS_ACTIVE_DB;
+                    $userCompany->selected_company = Constants::FALSE;
                     $userCompany->created_by = $user_id;
                     $userCompany->updated_by = $user_id;
 

@@ -6,7 +6,6 @@ use app\models\Constants;
 use app\models\TextConstants;
 use app\models\Utils;
 use Yii;
-use function PHPUnit\Framework\isEmpty;
 
 /**
  * This is the model class for table "user_company".
