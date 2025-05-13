@@ -204,6 +204,7 @@ class ApplicationController extends Controller
             $userCompany->company_id = $model->company_id;
             $userCompany->role = Constants::ROLE_MEMBER_DB;
             $userCompany->status = Constants::STATUS_ACTIVE_DB;
+            $userCompany->selected_company = Constants::FALSE;
             $userCompany->created_by = $user_id;
             $userCompany->updated_by = $user_id;
         }
